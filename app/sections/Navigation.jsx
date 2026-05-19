@@ -1,6 +1,7 @@
 "use client";
 
-const html = `<div class="nav-wrap">
+const html = `<div class="nav-scroll-trigger" nav-scroll-trigger=""></div>
+<div class="nav-wrap">
 <div class="nav-scroll-wrap" nav-scroll-wrap="">
 <div class="nav-logo">
 <a class="logo-wrap w-inline-block text-white" href="#lander" instant-scroll=""><svg class="nav-logo-full text-white" fill="none" viewbox="0 0 118 59" width="100%" xmlns="http://www.w3.org/2000/svg">
