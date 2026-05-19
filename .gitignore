@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+.next/
+out/
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Vercel
+.vercel/

@@ -1,0 +1,46 @@
+body {
+  font-size: 0.8333333333333334vw;
+}
+
+@media screen and (min-width: 1920px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  body {
+    font-size: 8.258333333333335px;
+  }
+}
+
+.language-controller {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(10px);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 0.85rem;
+}
+
+.language-controller select {
+  border: 0;
+  outline: 0;
+  color: #fff;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.language-controller option {
+  color: #000;
+}
