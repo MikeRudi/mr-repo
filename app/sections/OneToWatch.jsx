@@ -20,7 +20,7 @@ const html = `<div class="section-sticky-wrap">
 <div class="container full-cover">
 <div class="flex-center layout-6 flex-center" id="w-node-_744b1c79-21a2-69f7-a7f7-98660bc319be-26c53010">
 <div class="content-comp text-white">
-<div class="badge-wrap"><img alt="" class="img-abs" loading="lazy" sizes="(max-width: 794px) 100vw, 794px" src="images/one-to-watch.webp" srcset="images/one-to-watch-p-500.webp 500w, images/one-to-watch.webp 794w"/></div>
+<div class="badge-wrap"><img alt="" class="img-abs" loading="lazy" sizes="(max-width: 794px) 100vw, 794px" src="/webflow/images/one-to-watch.webp" srcset="/webflow/images/one-to-watch-p-500.webp 500w, images/one-to-watch.webp 794w"/></div>
 <div class="centent-header-gap _2">
 <div class="lang-text-wrap">
 <div class="text active-lang text-h2" lang-text="english">One to Watch</div>
@@ -41,7 +41,7 @@ const html = `<div class="section-sticky-wrap">
 </div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="(max-width: 1920px) 100vw, 1920px" src="images/391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp" srcset="images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-500.webp 500w, images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-800.webp 800w, images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-1080.webp 1080w, images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-1600.webp 1600w, images/391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp 1920w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="(max-width: 1920px) 100vw, 1920px" src="/webflow/images/391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp" srcset="/webflow/images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-500.webp 500w, images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-800.webp 800w, images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-1080.webp 1080w, images/44f15484b116960ac8b01711a6bccccc_391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-1600.webp 1600w, images/391258_sadsWoman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp 1920w"/>
 </div>
 </div>`;
 

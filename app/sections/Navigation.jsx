@@ -43,7 +43,7 @@ const html = `<div class="nav-wrap">
 </div>
 </div>
 <a class="anchor-link-wrap w-inline-block" href="#lounge-of-year" instant-scroll="" link-underline-hover="">
-<div class="m-nav-img"><img alt="" class="img-abs" loading="lazy" src="images/mobile-menu-01.png"/></div>
+<div class="m-nav-img"><img alt="" class="img-abs" loading="lazy" src="/webflow/images/mobile-menu-01.png"/></div>
 <div class="lang-text-wrap">
 <div class="text active-lang text-nav text-caps is-mobile-menu" lang-text="english">lounge of the year</div>
 <div class="text text-nav text-caps is-mobile-menu" lang-text="chineseSimplified">lounge of the year</div>
@@ -64,7 +64,7 @@ const html = `<div class="nav-wrap">
 </a>
 <div class="m-n-line"></div>
 <a class="anchor-link-wrap w-inline-block" href="#one-to-watch" instant-scroll="" link-underline-hover="">
-<div class="m-nav-img"><img alt="" class="img-abs" loading="lazy" src="images/mobile-menu-02.png"/></div>
+<div class="m-nav-img"><img alt="" class="img-abs" loading="lazy" src="/webflow/images/mobile-menu-02.png"/></div>
 <div class="lang-text-wrap">
 <div class="text active-lang text-nav text-caps is-mobile-menu" lang-text="english">one to watch</div>
 <div class="text text-nav text-caps is-mobile-menu" lang-text="chineseSimplified">one to watch</div>

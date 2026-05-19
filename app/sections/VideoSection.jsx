@@ -59,7 +59,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 </div>
 </div>
 <div class="layout-full" id="w-node-c74cd1f3-09a3-96b6-4be7-84f192f7c468-26c53010">
-<div class="img-wrap intro-img ratio-vid-img vid-scroll"><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="images/391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp" srcset="images/179d8032c922b6980bd0beb66d188b63_391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-500.webp 500w, images/179d8032c922b6980bd0beb66d188b63_391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-800.webp 800w, images/391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp 1072w"/>
+<div class="img-wrap intro-img ratio-vid-img vid-scroll"><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp" srcset="/webflow/images/179d8032c922b6980bd0beb66d188b63_391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-500.webp 500w, images/179d8032c922b6980bd0beb66d188b63_391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1-p-800.webp 800w, images/391258_Woman-Suitcase-Airport-Cell-Phone_By_BublikHaus_Artlist_4K-1.webp 1072w"/>
 <div class="lander-vid-wrap">
 <div class="vid-item modal_trigger_btn_wrap" cursor-play="" video-target="video-1">
 <div class="html-video-player w-embed"><video autoplay="" class="vid-item-embed" f-data-video="video-element" loop="" muted="" playsinline="">
@@ -95,7 +95,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 </div>
 </div>
 <div class="vid-play-btn play-btn magnet">
-<div class="vid-play-svg"><img alt="" loading="lazy" src="images/Polygon-3.webp"/></div>
+<div class="vid-play-svg"><img alt="" loading="lazy" src="/webflow/images/Polygon-3.webp"/></div>
 </div>
 </div>
 </div>

@@ -4,7 +4,7 @@ const html = `<div class="lander-wrap">
 <div class="section is-lander full-height" id="lander">
 <div class="lander-wrapper">
 <div class="star-wrap pointer-events-off">
-<div class="badge-lander-wrap"><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="images/lander.webp" srcset="images/lander-p-500.webp 500w, images/lander.webp 786w"/></div>
+<div class="badge-lander-wrap"><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/lander.webp" srcset="/webflow/images/lander-p-500.webp 500w, images/lander.webp 786w"/></div>
 <div class="star-line-horizontal is-lander">
 <div class="line-horizontal"></div>
 </div>
@@ -15,7 +15,7 @@ const html = `<div class="lander-wrap">
 <div class="container full-cover">
 <div class="flex-center layout-6 flex-center" id="w-node-_3c9d925d-1aa3-6e5c-73e8-a87e90edab1f-26c53010">
 <div class="content-comp text-white">
-<div class="mobile-badge"><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="images/lander.webp" srcset="images/lander-p-500.webp 500w, images/lander.webp 786w"/></div>
+<div class="mobile-badge"><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/lander.webp" srcset="/webflow/images/lander-p-500.webp 500w, images/lander.webp 786w"/></div>
 <div class="centent-header-gap _2">
 <div class="lang-text-wrap">
 <div class="text active-lang eyebrow text-center text-gold-light" lang-text="english">celebrating excellence</div>
@@ -70,7 +70,7 @@ const html = `<div class="lander-wrap">
 </div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="images/sOpt-3.webp" srcset="images/sOpt-3-p-500.png 500w, images/sOpt-3-p-800.png 800w, images/sOpt-3-p-1080.png 1080w, images/sOpt-3.webp 3840w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/sOpt-3.webp" srcset="/webflow/images/sOpt-3-p-500.png 500w, images/sOpt-3-p-800.png 800w, images/sOpt-3-p-1080.png 1080w, images/sOpt-3.webp 3840w"/>
 </div>
 </div>
 </div>`;

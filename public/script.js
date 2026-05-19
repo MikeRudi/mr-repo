@@ -479,7 +479,7 @@ function languageSwitch() {
 
   if (initialLocale) {
     updateHtmlLang(initialLocale);
-    updateLanguageUrl(`/${initialLocale}/excellenceawards`);
+    // updateLanguageUrl(`/${initialLocale}/excellenceawards`); // disabled: no locale routing
     updateExternalLinks(initialLocale);
   }
 
@@ -494,7 +494,7 @@ function languageSwitch() {
     updateHtmlLang(locale);
     setLanguage(selectedLang);
     localStorage.setItem("selectedLang", selectedLang);
-    updateLanguageUrl(newPath);
+    // updateLanguageUrl(newPath); // disabled: no locale routing
     updateExternalLinks(locale);
   });
 }
@@ -503,18 +503,17 @@ languageSwitch();
 // LANGUAGE ACTIVE STATE end
 
 // LANGUAGE URL INIT start
-function languageUrlInit() {
-  const path = window.location.pathname;
-  const savedLangPath = localStorage.getItem("selectedLangPath");
-
-  if (path === "/" || path === "") {
-    const target = savedLangPath || "/en-GB/excellenceawards";
-    window.history.replaceState({}, "", target);
-    trackLanguagePageView(target);
-  }
-}
-
-languageUrlInit();
+// Disabled: site now runs at root URL without locale routing
+// function languageUrlInit() {
+//   const path = window.location.pathname;
+//   const savedLangPath = localStorage.getItem("selectedLangPath");
+//   if (path === "/" || path === "") {
+//     const target = savedLangPath || "/en-GB/excellenceawards";
+//     window.history.replaceState({}, "", target);
+//     trackLanguagePageView(target);
+//   }
+// }
+// languageUrlInit();
 // LANGUAGE URL INIT end
 
 //CLIP SECTION ON SCROLL start

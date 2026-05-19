@@ -102,7 +102,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 </div>
 <div card-hover="" class="card-small-wrap" mobile-filter-item="2">
 <div class="card-small-img card-small">
-<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="images/Frame-2147204769.webp" srcset="images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
+<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
 <div card-hover-star="" class="card-star"><svg fill="none" viewbox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
 <path d="M24 0L26.3759 21.6241L48 24L26.3759 26.3759L24 48L21.6241 26.3759L0 24L21.6241 21.6241L24 0Z" fill="currentColor"></path>
 </svg></div>
@@ -124,7 +124,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 <div class="text text-small text-faded text-white-desktop" lang-text="turkish">Catania Havalimanı’nda, İtalyan tarzını konfor ve işlevsellikle birleştiren, yeni tasarlanmış bir dinlenme salonu. Aydınlık alanlar, pist manzaraları ve özel çalışma alanları, kaliteli espressoyla birlikte rahat bir uçuş öncesi deneyimi vadeder.</div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="images/image-2591.webp" srcset="images/38375c6495481e82ebcc47e5a214331c_image-2591-p-500.webp 500w, images/image-2591.webp 571w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/image-2591.webp" srcset="/webflow/images/38375c6495481e82ebcc47e5a214331c_image-2591-p-500.webp 500w, images/image-2591.webp 571w"/>
 </div>
 <div class="card-small-flex bot-margin">
 <div class="lang-text-wrap">
@@ -223,7 +223,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 </div>
 <div card-hover="" class="card-small-wrap" mobile-filter-item="1">
 <div class="card-small-img card-small">
-<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="images/Frame-2147204769.webp" srcset="images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
+<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
 <div card-hover-star="" class="card-star"><svg fill="none" viewbox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
 <path d="M24 0L26.3759 21.6241L48 24L26.3759 26.3759L24 48L21.6241 26.3759L0 24L21.6241 21.6241L24 0Z" fill="currentColor"></path>
 </svg></div>
@@ -245,7 +245,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 <div class="text text-small text-faded text-white-desktop" lang-text="turkish">Retro Japonya’dan ilham alan, benzerlerinden ayrılan tasarımıyla öne çıkan, özgün bir dinlenme salonu. Siparişe göre özel olarak hazırlanan yemekler ve klasik kafe tarzı favori lezzetler, benzersiz iç mekan tasarımıyla bir araya gelerek unutulmaz bir uçuş öncesi deneyimi yaratır.</div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="images/000.-Hero_NRT13_04-1.webp" srcset="images/000.-Hero_NRT13_04-1-p-500.webp 500w, images/000.-Hero_NRT13_04-1-p-800.webp 800w, images/000.-Hero_NRT13_04-1-p-1080.webp 1080w, images/000.-Hero_NRT13_04-1.webp 1600w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_NRT13_04-1.webp" srcset="/webflow/images/000.-Hero_NRT13_04-1-p-500.webp 500w, images/000.-Hero_NRT13_04-1-p-800.webp 800w, images/000.-Hero_NRT13_04-1-p-1080.webp 1080w, images/000.-Hero_NRT13_04-1.webp 1600w"/>
 </div>
 <div class="card-small-flex bot-margin">
 <div class="lang-text-wrap">
@@ -344,7 +344,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 </div>
 <div card-hover="" class="card-small-wrap" mobile-filter-item="3">
 <div class="card-small-img card-small">
-<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="images/Frame-2147204769.webp" srcset="images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
+<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
 <div card-hover-star="" class="card-star"><svg fill="none" viewbox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
 <path d="M24 0L26.3759 21.6241L48 24L26.3759 26.3759L24 48L21.6241 26.3759L0 24L21.6241 21.6241L24 0Z" fill="currentColor"></path>
 </svg></div>
@@ -366,7 +366,7 @@ const html = `<div class="section index-5" clip-bottom-trigger="" clip-item-bott
 <div class="text text-small text-faded text-white-desktop" lang-text="turkish">Rahat oturma alanları ve özel çalışma alanlarıyla her detayı düşünülerek tasarlanmış bir dinlenme salonu. Sadece yetişkinlerin kullanabildiği bir alanın ve özel bir toplantı odasının yanı sıra daha sessiz bir dinlenme alanının yer aldığı bu dinlenme salonu, daha odaklı ve konforlu bir uçuş öncesi deneyimi sunar.</div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="images/000.-Hero_IMG_0247-1.webp" srcset="images/000.-Hero_IMG_0247-1-p-500.webp 500w, images/000.-Hero_IMG_0247-1-p-800.webp 800w, images/000.-Hero_IMG_0247-1-p-1080.webp 1080w, images/000.-Hero_IMG_0247-1.webp 1600w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_IMG_0247-1.webp" srcset="/webflow/images/000.-Hero_IMG_0247-1-p-500.webp 500w, images/000.-Hero_IMG_0247-1-p-800.webp 800w, images/000.-Hero_IMG_0247-1-p-1080.webp 1080w, images/000.-Hero_IMG_0247-1.webp 1600w"/>
 </div>
 <div class="card-small-flex bot-margin">
 <div class="lang-text-wrap">
