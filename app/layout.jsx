@@ -11,7 +11,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en-GB">
+    <html data-wf-page="69d4c3eac1b59a7426c53010" data-wf-site="69d4c3e8c1b59a7426c52fe8" lang="en-GB">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

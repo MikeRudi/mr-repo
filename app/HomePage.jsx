@@ -1,4 +1,5 @@
 import AnimationScripts from "./components/AnimationScripts";
+import UtilityClasses from "./sections/UtilityClasses";
 import VideoPopup from "./sections/VideoPopup";
 import Navigation from "./sections/Navigation";
 import HeroSection from "./sections/HeroSection";
@@ -12,8 +13,9 @@ import Footer from "./sections/Footer";
 export default function HomePage() {
   return (
     <>
-      <VideoPopup />
+      <UtilityClasses />
       <div className="page-wrap">
+        <VideoPopup />
         <div className="page-main">
           <Navigation />
           <HeroSection />
