@@ -147,7 +147,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 </a>
 </div>
-<div class="ratio-global-lounge"><img alt="" class="img-abs" loading="lazy" sizes="(max-width: 1500px) 100vw, 1500px" src="/webflow/images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1.webp" srcset="/webflow/images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1-p-500.webp 500w, images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1-p-800.webp 800w, images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1-p-1080.webp 1080w, images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1.webp 1500w"/></div>
+<div class="ratio-global-lounge"><img alt="" class="img-abs" loading="lazy" sizes="(max-width: 1500px) 100vw, 1500px" src="/webflow/images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1.webp" srcset="/webflow/images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1-p-500.webp 500w, /webflow/images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1-p-800.webp 800w, /webflow/images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1-p-1080.webp 1080w, /webflow/images/000.-Hero_Escape-Lounge-PDX-MULTI-USE-1-1.webp 1500w"/></div>
 </div>
 </div>
 </div>
@@ -214,7 +214,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 <div class="card-flex-top">
 <div card-hover="" class="card-small-wrap">
 <div class="card-small-img">
-<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
+<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, /webflow/images/Frame-2147204769.webp 864w"/>
 <div card-hover-star="" class="card-star"><svg fill="none" viewbox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
 <path d="M24 0L26.3759 21.6241L48 24L26.3759 26.3759L24 48L21.6241 26.3759L0 24L21.6241 21.6241L24 0Z" fill="currentColor"></path>
 </svg></div>
@@ -236,7 +236,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 <div class="text text-main text-faded text-white-desktop" lang-text="turkish">Avusturya’ya özgü tasarım anlayışını en iyi yerel ve uluslararası lezzetlerle birleştiren bu amiral gemisi dinlenme salonu, güçlü kimliğiyle öne çıkar. Geniş ve iyi donanımlı dinlenme salonu, premium alanlarıyla işlerinize vakit ayırmayı veya sadece gevşemeyi keyifli hale getirir.</div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Photo-1-1.webp" srcset="/webflow/images/000.-Hero_Photo-1-1-p-500.webp 500w, images/000.-Hero_Photo-1-1-p-800.webp 800w, images/000.-Hero_Photo-1-1-p-1080.webp 1080w, images/000.-Hero_Photo-1-1.webp 1600w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Photo-1-1.webp" srcset="/webflow/images/000.-Hero_Photo-1-1-p-500.webp 500w, /webflow/images/000.-Hero_Photo-1-1-p-800.webp 800w, /webflow/images/000.-Hero_Photo-1-1-p-1080.webp 1080w, /webflow/images/000.-Hero_Photo-1-1.webp 1600w"/>
 </div>
 <div class="card-small-flex bot-margin">
 <div class="lang-text-wrap">
@@ -335,7 +335,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div card-hover="" class="card-small-wrap">
 <div class="card-small-img">
-<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
+<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, /webflow/images/Frame-2147204769.webp 864w"/>
 <div card-hover-star="" class="card-star"><svg fill="none" viewbox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
 <path d="M24 0L26.3759 21.6241L48 24L26.3759 26.3759L24 48L21.6241 26.3759L0 24L21.6241 21.6241L24 0Z" fill="currentColor"></path>
 </svg></div>
@@ -357,7 +357,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 <div class="text text-main text-faded text-white-desktop" lang-text="turkish">Güçlü kimliğiyle ve zarif tasarımıyla öne çıkan, pist manzaralı, ferah ve aydınlık bir dinlenme salonu. Misafirler, konfor, gastronomi ve üretkenlik arasında olağanüstü bir denge kuran bu dinlenme salonunda yerel Fukuoka yemeklerinin, kafe kalitesinde kahvenin ve iyi tasarlanmış çalışma alanlarının keyfini çıkarabilir. </div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_FUK3_04-1.png" srcset="/webflow/images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-500.png 500w, images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-800.png 800w, images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-1080.png 1080w, images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-1600.png 1600w, images/000.-Hero_FUK3_04-1.png 1728w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_FUK3_04-1.png" srcset="/webflow/images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-500.png 500w, /webflow/images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-800.png 800w, /webflow/images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-1080.png 1080w, /webflow/images/0e8110cfd83d94e3517e0b0cbc61b03b_000.-Hero_FUK3_04-1-p-1600.png 1600w, /webflow/images/000.-Hero_FUK3_04-1.png 1728w"/>
 </div>
 <div class="card-small-flex bot-margin">
 <div class="lang-text-wrap">
@@ -458,7 +458,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 <div class="card-flex">
 <div card-hover="" class="card-small-wrap">
 <div class="card-small-img">
-<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
+<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, /webflow/images/Frame-2147204769.webp 864w"/>
 <div card-hover-star="" class="card-star"><svg fill="none" viewbox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
 <path d="M24 0L26.3759 21.6241L48 24L26.3759 26.3759L24 48L21.6241 26.3759L0 24L21.6241 21.6241L24 0Z" fill="currentColor"></path>
 </svg></div>
@@ -480,7 +480,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 <div class="text text-main text-faded text-white-desktop" lang-text="turkish">Uçuş öncesinde seçkin bir deneyim sunan, şık ve modern bir tasarıma sahip, konforlu ve tam donanımlı bir dinlenme salonu. Misafirler burada duş alarak tazelenebilir, özel olarak hazırlanmış fotoğraf galerisini gezebilir, Jamaika’ya özgü yiyecek ve içeceklerin tadını çıkarabilir ve isteğe bağlı güzellik bakımlarından yararlanabilirler.</div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_CK_2_9_25_0029-1.webp" srcset="/webflow/images/000.-Hero_CK_2_9_25_0029-1-p-500.webp 500w, images/000.-Hero_CK_2_9_25_0029-1-p-800.webp 800w, images/000.-Hero_CK_2_9_25_0029-1-p-1080.webp 1080w, images/000.-Hero_CK_2_9_25_0029-1.webp 1600w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_CK_2_9_25_0029-1.webp" srcset="/webflow/images/000.-Hero_CK_2_9_25_0029-1-p-500.webp 500w, /webflow/images/000.-Hero_CK_2_9_25_0029-1-p-800.webp 800w, /webflow/images/000.-Hero_CK_2_9_25_0029-1-p-1080.webp 1080w, /webflow/images/000.-Hero_CK_2_9_25_0029-1.webp 1600w"/>
 </div>
 <div class="card-small-flex bot-margin">
 <div class="lang-text-wrap">
@@ -579,7 +579,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div card-hover="" class="card-small-wrap">
 <div class="card-small-img">
-<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, images/Frame-2147204769.webp 864w"/>
+<div card-hover-popup="" class="card-hover-wrap"><img alt="" card-bg="" class="img-abs op-0" loading="lazy" sizes="(max-width: 864px) 100vw, 864px" src="/webflow/images/Frame-2147204769.webp" srcset="/webflow/images/Frame-2147204769-p-500.webp 500w, /webflow/images/Frame-2147204769.webp 864w"/>
 <div card-hover-star="" class="card-star"><svg fill="none" viewbox="0 0 48 48" width="100%" xmlns="http://www.w3.org/2000/svg">
 <path d="M24 0L26.3759 21.6241L48 24L26.3759 26.3759L24 48L21.6241 26.3759L0 24L21.6241 21.6241L24 0Z" fill="currentColor"></path>
 </svg></div>
@@ -601,7 +601,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 <div class="text text-main text-faded text-white-desktop" lang-text="turkish">O. R. Tambo Uluslararası Havalimanı’nda yer alan bu geniş köşe, yolcular için yüksek kaliteli ve güvenilir bir deneyim sunar. Hem iş hem de tatil amaçlı kullanım için tasarlanmış olan dinlenme salonu, çalışmak ve dinlenmek için uygun, iyi donanımlı alanların yanı sıra yemek seçeneklerine de sahiptir.</div>
 </div>
 </div>
-</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Bidvest_2019-12-21-2-1.png" srcset="/webflow/images/000.-Hero_Bidvest_2019-12-21-2-1-p-500.png 500w, images/000.-Hero_Bidvest_2019-12-21-2-1-p-800.png 800w, images/000.-Hero_Bidvest_2019-12-21-2-1.png 1000w"/>
+</div><img alt="" class="img-abs" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Bidvest_2019-12-21-2-1.png" srcset="/webflow/images/000.-Hero_Bidvest_2019-12-21-2-1-p-500.png 500w, /webflow/images/000.-Hero_Bidvest_2019-12-21-2-1-p-800.png 800w, /webflow/images/000.-Hero_Bidvest_2019-12-21-2-1.png 1000w"/>
 </div>
 <div class="card-small-flex bot-margin">
 <div class="lang-text-wrap">
@@ -801,7 +801,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div aa-item-bottom="1" class="aa-item-bot">
 <div class="aa-bot-flex">
-<div class="aa-mobile-img"><img aa-img-src="1" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp" srcset="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-500.webp 500w, images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-800.webp 800w, images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-1080.webp 1080w, images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp 1600w"/></div>
+<div class="aa-mobile-img"><img aa-img-src="1" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp" srcset="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-500.webp 500w, /webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-800.webp 800w, /webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-1080.webp 1080w, /webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp 1600w"/></div>
 <div class="aa-pad-top">
 <div class="lang-text-wrap">
 <div class="text active-lang text-main" lang-text="english">Concourse A, Kansas City MO International, United States</div>
@@ -864,7 +864,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div class="h-line is-aa">
 <div aa-progress-fill="1" class="aa-progress"></div>
-</div><img aa-img-src="1" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp" srcset="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-500.webp 500w, images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-800.webp 800w, images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-1080.webp 1080w, images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp 1600w"/>
+</div><img aa-img-src="1" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp" srcset="/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-500.webp 500w, /webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-800.webp 800w, /webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1-p-1080.webp 1080w, /webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp 1600w"/>
 </div>
 <div aa-item="1" class="aa-item">
 <div class="aa-item-top">
@@ -903,7 +903,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div aa-item-bottom="1" class="aa-item-bot">
 <div class="aa-bot-flex">
-<div class="aa-mobile-img"><img aa-img-src="2" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7.webp" srcset="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-500.webp 500w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-800.webp 800w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-1080.webp 1080w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-1600.webp 1600w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-2000.webp 2000w, images/000._Hero_Image_Sala_VIP_Advantage_7.webp 2144w"/></div>
+<div class="aa-mobile-img"><img aa-img-src="2" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7.webp" srcset="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-500.webp 500w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-800.webp 800w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-1080.webp 1080w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-1600.webp 1600w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-2000.webp 2000w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7.webp 2144w"/></div>
 <div class="aa-pad-top">
 <div class="lang-text-wrap">
 <div class="text active-lang text-main" lang-text="english">Terminal 1 Domestic, Campinas Viracopos International, Brazil</div>
@@ -966,7 +966,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div class="h-line is-aa">
 <div aa-progress-fill="1" class="aa-progress"></div>
-</div><img aa-img-src="2" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7.webp" srcset="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-500.webp 500w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-800.webp 800w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-1080.webp 1080w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-1600.webp 1600w, images/000._Hero_Image_Sala_VIP_Advantage_7-p-2000.webp 2000w, images/000._Hero_Image_Sala_VIP_Advantage_7.webp 2144w"/>
+</div><img aa-img-src="2" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7.webp" srcset="/webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-500.webp 500w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-800.webp 800w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-1080.webp 1080w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-1600.webp 1600w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7-p-2000.webp 2000w, /webflow/images/000._Hero_Image_Sala_VIP_Advantage_7.webp 2144w"/>
 </div>
 <div aa-item="1" class="aa-item">
 <div class="aa-item-top">
@@ -1005,7 +1005,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div aa-item-bottom="1" class="aa-item-bot">
 <div class="aa-bot-flex">
-<div class="aa-mobile-img"><img aa-img-src="3" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Canon-0149-2-1.webp" srcset="/webflow/images/000.-Hero_Canon-0149-2-1-p-500.webp 500w, images/000.-Hero_Canon-0149-2-1-p-800.webp 800w, images/000.-Hero_Canon-0149-2-1-p-1080.webp 1080w, images/000.-Hero_Canon-0149-2-1.webp 1600w"/></div>
+<div class="aa-mobile-img"><img aa-img-src="3" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Canon-0149-2-1.webp" srcset="/webflow/images/000.-Hero_Canon-0149-2-1-p-500.webp 500w, /webflow/images/000.-Hero_Canon-0149-2-1-p-800.webp 800w, /webflow/images/000.-Hero_Canon-0149-2-1-p-1080.webp 1080w, /webflow/images/000.-Hero_Canon-0149-2-1.webp 1600w"/></div>
 <div class="aa-pad-top">
 <div class="lang-text-wrap">
 <div class="text active-lang text-main" lang-text="english">Jersey Airport, Jersey</div>
@@ -1068,7 +1068,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div class="h-line is-aa">
 <div aa-progress-fill="1" class="aa-progress"></div>
-</div><img aa-img-src="3" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Canon-0149-2-1.webp" srcset="/webflow/images/000.-Hero_Canon-0149-2-1-p-500.webp 500w, images/000.-Hero_Canon-0149-2-1-p-800.webp 800w, images/000.-Hero_Canon-0149-2-1-p-1080.webp 1080w, images/000.-Hero_Canon-0149-2-1.webp 1600w"/>
+</div><img aa-img-src="3" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Canon-0149-2-1.webp" srcset="/webflow/images/000.-Hero_Canon-0149-2-1-p-500.webp 500w, /webflow/images/000.-Hero_Canon-0149-2-1-p-800.webp 800w, /webflow/images/000.-Hero_Canon-0149-2-1-p-1080.webp 1080w, /webflow/images/000.-Hero_Canon-0149-2-1.webp 1600w"/>
 </div>
 <div aa-item="1" class="aa-item">
 <div class="aa-item-top">
@@ -1107,7 +1107,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div aa-item-bottom="1" class="aa-item-bot">
 <div class="aa-bot-flex">
-<div class="aa-mobile-img"><img aa-img-src="4" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Kyra-Lounge-3-1.webp" srcset="/webflow/images/000.-Hero_Kyra-Lounge-3-1-p-500.webp 500w, images/000.-Hero_Kyra-Lounge-3-1-p-800.webp 800w, images/000.-Hero_Kyra-Lounge-3-1-p-1080.webp 1080w, images/000.-Hero_Kyra-Lounge-3-1.webp 1600w"/></div>
+<div class="aa-mobile-img"><img aa-img-src="4" alt="" class="aa-m-img" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Kyra-Lounge-3-1.webp" srcset="/webflow/images/000.-Hero_Kyra-Lounge-3-1-p-500.webp 500w, /webflow/images/000.-Hero_Kyra-Lounge-3-1-p-800.webp 800w, /webflow/images/000.-Hero_Kyra-Lounge-3-1-p-1080.webp 1080w, /webflow/images/000.-Hero_Kyra-Lounge-3-1.webp 1600w"/></div>
 <div class="aa-pad-top">
 <div class="lang-text-wrap">
 <div class="text active-lang text-main" lang-text="english">Terminal 1, Hong Kong Chek Lap Kok International, Hong Kong</div>
@@ -1170,7 +1170,7 @@ const html = `<div class="section-wrap index-5" clip-bottom-trigger="" clip-item
 </div>
 <div class="h-line is-aa">
 <div aa-progress-fill="1" class="aa-progress"></div>
-</div><img aa-img-src="4" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Kyra-Lounge-3-1.webp" srcset="/webflow/images/000.-Hero_Kyra-Lounge-3-1-p-500.webp 500w, images/000.-Hero_Kyra-Lounge-3-1-p-800.webp 800w, images/000.-Hero_Kyra-Lounge-3-1-p-1080.webp 1080w, images/000.-Hero_Kyra-Lounge-3-1.webp 1600w"/>
+</div><img aa-img-src="4" alt="" class="aa-img-src" loading="lazy" sizes="100vw" src="/webflow/images/000.-Hero_Kyra-Lounge-3-1.webp" srcset="/webflow/images/000.-Hero_Kyra-Lounge-3-1-p-500.webp 500w, /webflow/images/000.-Hero_Kyra-Lounge-3-1-p-800.webp 800w, /webflow/images/000.-Hero_Kyra-Lounge-3-1-p-1080.webp 1080w, /webflow/images/000.-Hero_Kyra-Lounge-3-1.webp 1600w"/>
 </div>
 </div>
 </div>
