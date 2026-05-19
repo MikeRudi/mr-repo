@@ -1075,6 +1075,18 @@ function navScroll() {
         ease: "power1.out",
       },
       0
+    )
+    .fromTo(
+      "[nav-scroll-wrap] .text-white",
+      {
+        color: "#ffffff",
+      },
+      {
+        color: "#363534",
+        duration: 0.3,
+        ease: "power1.out",
+      },
+      0
     );
 
   ScrollTrigger.create({
