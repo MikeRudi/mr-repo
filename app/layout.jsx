@@ -21,8 +21,7 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="/styles.css" />
         <link rel="shortcut icon" href="/webflow/images/favicon.png" type="image/x-icon" />
         <link rel="apple-touch-icon" href="/webflow/images/webclip.png" />
-        <meta name="google-site-verification" content="2ouT_fMuuznOx9EeYjMYpDX_yBh9f9fzbfoywh119Qc" />
-        <link rel="alternate" hrefLang="x-default" href="/en-GB" />
+        <meta name="google-site-verification" content="2ouT_fMuuznOx9EeYjMYpDX_yBh9fzbfoywh119Qc" />
       </head>
       <body>
         {children}

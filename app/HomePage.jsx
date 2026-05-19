@@ -1,4 +1,3 @@
-import LanguageController from "./components/LanguageController";
 import AnimationScripts from "./components/AnimationScripts";
 import VideoPopup from "./sections/VideoPopup";
 import Navigation from "./sections/Navigation";
@@ -13,7 +12,6 @@ import Footer from "./sections/Footer";
 export default function HomePage() {
   return (
     <>
-      <LanguageController />
       <VideoPopup />
       <div className="page-wrap">
         <div className="page-main">
