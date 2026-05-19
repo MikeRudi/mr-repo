@@ -137,3 +137,10 @@ body {
 .mobile-hamburger.is-closed .ham-close {
   opacity: 1;
 }
+
+.nav-wrap {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
