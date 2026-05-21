@@ -122,8 +122,14 @@ function formatElementLabel(el) {
 }
 
 function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChange, onTextArrayChange, onStyleChange, buttonVariants, typographyVariants, cardVariants }) {
+  const { key, index, sub, linkIndex } = elementKey;
   const sKey = styleKey(elementKey);
   const currentStyles = elementStyles[sKey] ?? {};
+
+  // Determine what kind of editor to show based on the key
+  const isCta = key.toLowerCase().includes("cta");
+  const isButton = key.toLowerCase().includes("button") || isCta;
+  const v = value[key] ?? "";
 
   const styleSection = (
     <div className="flex flex-col gap-3 mt-2 pt-4 border-t border-[var(--chrome-border)]">
@@ -142,11 +148,6 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
       />
     </div>
   );
-  const { key, index, sub, linkIndex } = elementKey;
-
-  // Determine what kind of editor to show based on the key
-  const isCta = key.toLowerCase().includes("cta");
-  const isButton = key.toLowerCase().includes("button") || isCta;
 
   // Array item with sub-field (testimonials, carousel, footer groups)
   if (index != null && sub) {
@@ -193,8 +194,7 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
     );
   }
 
-  // Simple prop — text, heading, or CTA/button
-  const v = value[key] ?? "";
+  // Simple prop — text, heading, or CTA/button (v is already defined above)
 
   if (isButton && typeof v === "object") {
     return (
