@@ -1,301 +1,379 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  DEFAULT_TOKENS,
+  BASE_REM_PX,
+  normalizeTokens,
+} from "../../lib/styleguide-defaults.js";
+import { generateCss } from "../../lib/styleguide-css.js";
 
-const SURFACES = [
-  { key: "ground", label: "Ground", default: "#fdfcfc" },
-  { key: "surface", label: "Surface", default: "#ffffff" },
-  { key: "surfaceMuted", label: "Surface — muted", default: "#f5f3f1" },
-  { key: "surfaceInverse", label: "Surface — inverse", default: "#000000" },
+import SectionBlock from "./_components/SectionBlock.jsx";
+import CssExport from "./_components/CssExport.jsx";
+import WizardryEditor from "./_components/editors/WizardryEditor.jsx";
+import ColorsEditor from "./_components/editors/ColorsEditor.jsx";
+import TypographyEditor from "./_components/editors/TypographyEditor.jsx";
+import SpacingEditor from "./_components/editors/SpacingEditor.jsx";
+import RadiiEditor from "./_components/editors/RadiiEditor.jsx";
+import CardEditor from "./_components/editors/CardEditor.jsx";
+import ButtonEditor from "./_components/editors/ButtonEditor.jsx";
+import LinksEditor from "./_components/editors/LinksEditor.jsx";
+import {
+  WizardryPreview,
+  ColorsPreview,
+  TypographyPreview,
+  SpacingPreview,
+  RadiiPreview,
+  CardPreview,
+  ButtonPreview,
+  LinksPreview,
+} from "./_components/Previews.jsx";
+
+const SECTIONS = [
+  { id: "wizardry",   eyebrow: "01",  title: "Wizardry",       description: "Set the container max-width. The site uses a fluid rem on desktop anchored to this width, and a static rem from 991px down." },
+  { id: "colors",     eyebrow: "02",  title: "Colors",         description: "Light, dark, brand. Add custom colors as needed. Opacity, tint, and shade variants are computed at the point of use." },
+  { id: "typography", eyebrow: "03",  title: "Typography",     description: "Nine scales × desktop and mobile. Sizes are in px; the published CSS converts them to rem so they scale with the fluid rem." },
+  { id: "spacing",    eyebrow: "04",  title: "Spacing",        description: "Section padding tokens. Desktop values render as em (scale with the fluid rem); mobile values render as rem (static below 992px)." },
+  { id: "radii",      eyebrow: "05",  title: "Border radius",  description: "Three radii — small, medium, large. Each has a desktop and a mobile value." },
+  { id: "card",       eyebrow: "06",  title: "Card",           description: "Filter between card variants. Each is composed from the colors and radii above." },
+  { id: "button",     eyebrow: "07",  title: "Button",         description: "Three button variants. Hover the preview to see the hover state apply." },
+  { id: "links",      eyebrow: "08",  title: "Links",          description: "Named URLs that footer, contact, or legal sections will reference later." },
 ];
-
-const FOREGROUND = [
-  { key: "fg", label: "Foreground", default: "#000000" },
-  { key: "fgMuted", label: "Foreground — muted", default: "#777169" },
-  { key: "fgSubtle", label: "Foreground — subtle", default: "#a59f97" },
-  { key: "fgDisabled", label: "Foreground — disabled", default: "#b1b0b0" },
-  { key: "fgInverse", label: "Foreground — inverse", default: "#fdfcfc" },
-];
-
-const BORDERS = [
-  { key: "border", label: "Border", default: "#e5e5e5" },
-  { key: "borderStrong", label: "Border — strong", default: "#000000" },
-];
-
-const ACCENTS = [
-  { key: "accent", label: "Accent", default: "#2c8a5a" },
-  { key: "danger", label: "Danger", default: "#b54141" },
-  { key: "success", label: "Success", default: "#2c8a5a" },
-  { key: "warning", label: "Warning", default: "#b07a1f" },
-];
-
-const FONTS = [
-  {
-    key: "fontDisplay",
-    label: "Display font stack",
-    default: '"Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif',
-    long: true,
-  },
-  {
-    key: "fontBody",
-    label: "Body font stack",
-    default: '"Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif',
-    long: true,
-  },
-  {
-    key: "fontMono",
-    label: "Mono font stack",
-    default: '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
-    long: true,
-  },
-];
-
-const SPACING = [
-  { key: "space1", label: "1", default: "4" },
-  { key: "space2", label: "2", default: "8" },
-  { key: "space3", label: "3", default: "12" },
-  { key: "space4", label: "4", default: "16" },
-  { key: "space5", label: "5", default: "20" },
-  { key: "space6", label: "6", default: "24" },
-  { key: "space8", label: "8", default: "32" },
-  { key: "space10", label: "10", default: "40" },
-  { key: "space12", label: "12", default: "48" },
-  { key: "space16", label: "16", default: "64" },
-  { key: "space20", label: "20", default: "80" },
-  { key: "space24", label: "24", default: "96" },
-];
-
-const RADII = [
-  { key: "radius1", label: "Radius 1", default: "3" },
-  { key: "radius2", label: "Radius 2", default: "6" },
-  { key: "radius3", label: "Radius 3", default: "10" },
-  { key: "radiusCard", label: "Radius — card", default: "16" },
-  { key: "radiusPill", label: "Radius — pill", default: "999" },
-];
-
-function defaultsFor(group) {
-  return Object.fromEntries(group.map((f) => [f.key, f.default]));
-}
-
-const INITIAL = {
-  ...defaultsFor(SURFACES),
-  ...defaultsFor(FOREGROUND),
-  ...defaultsFor(BORDERS),
-  ...defaultsFor(ACCENTS),
-  ...defaultsFor(FONTS),
-  ...defaultsFor(SPACING),
-  ...defaultsFor(RADII),
-};
 
 export default function StyleGuideForm() {
-  const [name, setName] = useState("");
-  const [tokens, setTokens] = useState(INITIAL);
+  const [guides, setGuides] = useState([]);
+  const [currentId, setCurrentId] = useState(null);
+  const [name, setName] = useState("Default");
+  const [tokens, setTokens] = useState(DEFAULT_TOKENS);
+  const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState({ kind: "idle" });
+  const [loadingList, setLoadingList] = useState(false);
 
-  const update = (key) => (e) =>
-    setTokens((prev) => ({ ...prev, [key]: e.target.value }));
+  // Active variant state for the filter pills in the Card / Button sections.
+  const [activeCardId, setActiveCardId] = useState(DEFAULT_TOKENS.cards[0].id);
+  const [activeBtnId, setActiveBtnId] = useState(DEFAULT_TOKENS.buttons[0].id);
 
-  async function onSubmit(e) {
-    e.preventDefault();
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      setLoadingList(true);
+      try {
+        const res = await fetch("/api/styleguides");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!alive) return;
+        const list = data?.styleGuides ?? [];
+        setGuides(list);
+        if (list.length > 0 && !currentId) {
+          await load(list[0].id);
+        }
+      } catch {
+        // offline / Neon not provisioned
+      } finally {
+        if (alive) setLoadingList(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function load(id) {
+    try {
+      const res = await fetch(`/api/styleguides/${id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const g = data?.styleGuide;
+      if (!g) return;
+      setCurrentId(g.id);
+      setName(g.name ?? "Untitled");
+      const merged = normalizeTokens(g.tokens);
+      setTokens(merged);
+      // Reset active variants if the loaded guide doesn't include the current ones.
+      if (!merged.cards?.find((c) => c.id === activeCardId)) {
+        setActiveCardId(merged.cards?.[0]?.id ?? "default");
+      }
+      if (!merged.buttons?.find((b) => b.id === activeBtnId)) {
+        setActiveBtnId(merged.buttons?.[0]?.id ?? "primary");
+      }
+      setDirty(false);
+      setStatus({ kind: "loaded", msg: `Loaded ${g.name}` });
+    } catch (err) {
+      setStatus({ kind: "error", msg: err?.message ?? "Failed to load" });
+    }
+  }
+
+  function startNew() {
+    setCurrentId(null);
+    setName("New style guide");
+    setTokens(DEFAULT_TOKENS);
+    setActiveCardId(DEFAULT_TOKENS.cards[0].id);
+    setActiveBtnId(DEFAULT_TOKENS.buttons[0].id);
+    setDirty(true);
+    setStatus({ kind: "idle" });
+  }
+
+  function update(patch) {
+    setTokens((prev) => ({ ...prev, ...patch }));
+    setDirty(true);
+  }
+
+  async function save() {
     if (!name.trim()) {
       setStatus({ kind: "error", msg: "Add a name first." });
       return;
     }
     setStatus({ kind: "saving" });
     try {
-      const res = await fetch("/api/styleguides", {
-        method: "POST",
+      const url = currentId
+        ? `/api/styleguides/${currentId}`
+        : "/api/styleguides";
+      const method = currentId ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name.trim(), tokens }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        const msg =
-          data?.error ??
-          (res.status === 500
-            ? "Server error. Has Neon been provisioned in the Vercel Storage tab?"
-            : `Failed (${res.status}).`);
-        setStatus({ kind: "error", msg });
+        setStatus({
+          kind: "error",
+          msg:
+            data?.error ??
+            (res.status === 500
+              ? "Server error. Has Neon been provisioned?"
+              : `Failed (${res.status}).`),
+        });
         return;
       }
-      setStatus({
-        kind: "saved",
-        id: data.styleGuide.id,
-        msg: `Saved as ${data.styleGuide.name}`,
-      });
+      const saved = data.styleGuide;
+      setCurrentId(saved.id);
+      setName(saved.name);
+      setDirty(false);
+      setStatus({ kind: "saved", msg: `Saved ${saved.name}`, id: saved.id });
+      fetch("/api/styleguides")
+        .then((r) => r.json())
+        .then((d) => setGuides(d?.styleGuides ?? []))
+        .catch(() => {});
     } catch (err) {
       setStatus({ kind: "error", msg: err?.message ?? "Network error" });
     }
   }
 
-  function preview() {
-    const cssLines = Object.entries(tokens)
-      .map(([k, v]) => `--${camelToKebab(k)}: ${v};`)
-      .join("\n");
-    return `:root {\n  ${cssLines.replace(/\n/g, "\n  ")}\n}`;
-  }
+  const scopedCss = useMemo(
+    () => generateCss(tokens, ".sg-canvas", { scoped: true }),
+    [tokens]
+  );
+  const exportCss = useMemo(() => generateCss(tokens, ":root"), [tokens]);
 
   return (
-    <form onSubmit={onSubmit} className="space-y-10">
-      <Group title="Identity">
-        <Field
-          label="Name"
-          hint="A label so you can find this style guide later. e.g. 'Acme · Brand v1'"
+    <div className="grid grid-cols-1 lg:grid-cols-[200px_minmax(0,1fr)] gap-8">
+      <aside className="hidden lg:block">
+        <nav
+          aria-label="Style guide sections"
+          className="sticky top-24 flex flex-col gap-1"
         >
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="My brand"
-            className="h-10 w-full px-3 rounded-(--chrome-radius-2) bg-(--chrome-ground) border border-(--chrome-border) text-[14px]"
-          />
-        </Field>
-      </Group>
-
-      <Group title="Surfaces">
-        <ColorGrid fields={SURFACES} tokens={tokens} update={update} />
-      </Group>
-      <Group title="Foreground">
-        <ColorGrid fields={FOREGROUND} tokens={tokens} update={update} />
-      </Group>
-      <Group title="Borders">
-        <ColorGrid fields={BORDERS} tokens={tokens} update={update} />
-      </Group>
-      <Group title="Accents + state">
-        <ColorGrid fields={ACCENTS} tokens={tokens} update={update} />
-      </Group>
-
-      <Group title="Typography">
-        <div className="grid grid-cols-1 gap-4">
-          {FONTS.map((f) => (
-            <Field key={f.key} label={f.label}>
-              <input
-                value={tokens[f.key]}
-                onChange={update(f.key)}
-                className="h-10 w-full px-3 rounded-(--chrome-radius-2) bg-(--chrome-ground) border border-(--chrome-border) font-[family-name:var(--chrome-font-mono)] text-[12px]"
-              />
-            </Field>
+          <p className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)] mb-2 px-3">
+            Sections
+          </p>
+          {SECTIONS.map((s) => (
+            <a
+              key={s.id}
+              href={`#${s.id}`}
+              className="px-3 py-1.5 rounded-[8px] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:bg-[var(--chrome-surface)]"
+            >
+              {s.eyebrow}  {s.title}
+            </a>
           ))}
+          <a
+            href="#css"
+            className="mt-2 px-3 py-1.5 rounded-[8px] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:bg-[var(--chrome-surface)]"
+          >
+            CSS export
+          </a>
+        </nav>
+      </aside>
+
+      <main>
+        <div className="sticky top-0 z-30 -mx-4 px-4 pt-4 pb-4 bg-[var(--chrome-ground)]/95 backdrop-blur border-b border-[var(--chrome-border)]">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="sg-pick"
+                className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]"
+              >
+                Guide
+              </label>
+              <select
+                id="sg-pick"
+                value={currentId ?? ""}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v === "__new__") startNew();
+                  else if (v) load(v);
+                }}
+                className="h-9 px-2 rounded-[8px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[12px] min-w-[180px]"
+              >
+                {loadingList && guides.length === 0 ? (
+                  <option value="">Loading…</option>
+                ) : null}
+                {!loadingList && guides.length === 0 ? (
+                  <option value="">No saved guides yet</option>
+                ) : null}
+                {guides.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))}
+                <option value="__new__">+ New style guide</option>
+              </select>
+            </div>
+
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                setDirty(true);
+              }}
+              placeholder="Style guide name"
+              className="h-9 px-3 rounded-[8px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[13px] min-w-[200px] flex-1"
+            />
+
+            <button
+              type="button"
+              onClick={save}
+              disabled={status.kind === "saving"}
+              className="h-9 px-4 rounded-full bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[12px] disabled:opacity-50"
+            >
+              {status.kind === "saving"
+                ? "Saving…"
+                : currentId
+                  ? dirty
+                    ? "Save changes"
+                    : "Saved"
+                  : "Create"}
+            </button>
+
+            <span className="text-[11px] text-[var(--chrome-fg-subtle)] min-h-4">
+              {status.kind === "saved" ? `✓ ${status.msg}` : null}
+              {status.kind === "loaded" ? status.msg : null}
+              {status.kind === "error" ? (
+                <span className="text-[var(--chrome-track-experimental)]">
+                  {status.msg}
+                </span>
+              ) : null}
+              {status.kind === "idle" && dirty ? "Unsaved changes" : null}
+            </span>
+          </div>
         </div>
-      </Group>
 
-      <Group title="Spacing (px)">
-        <ScaleGrid fields={SPACING} tokens={tokens} update={update} suffix="px" />
-      </Group>
-      <Group title="Radii (px)">
-        <ScaleGrid fields={RADII} tokens={tokens} update={update} suffix="px" />
-      </Group>
+        <div className="sg-canvas" style={{ fontSize: `${BASE_REM_PX}px` }}>
+          <style dangerouslySetInnerHTML={{ __html: scopedCss }} />
 
-      <Group title="Preview · CSS">
-        <pre className="text-[12px] font-[family-name:var(--chrome-font-mono)] bg-(--chrome-ground) border border-(--chrome-border) rounded-(--chrome-radius-2) p-4 overflow-x-auto whitespace-pre">
-          {preview()}
-        </pre>
-      </Group>
+          <SectionBlock
+            {...SECTIONS[0]}
+            editor={
+              <WizardryEditor
+                value={tokens.wizardry}
+                onChange={(v) => update({ wizardry: v })}
+              />
+            }
+            preview={<WizardryPreview tokens={tokens} />}
+          />
 
-      <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={status.kind === "saving"}
-          className="h-10 px-5 rounded-(--chrome-radius-pill) bg-(--chrome-fg) text-(--chrome-fg-inverse) text-[13px] disabled:opacity-50"
-        >
-          {status.kind === "saving" ? "Saving…" : "Save style guide"}
-        </button>
-        {status.kind === "saved" ? (
-          <span className="text-[13px] text-(--chrome-fg-muted)">
-            {status.msg}
-            {status.id ? (
-              <span className="ml-2 font-[family-name:var(--chrome-font-mono)] text-[11px] text-(--chrome-fg-subtle)">
-                {status.id}
-              </span>
-            ) : null}
-          </span>
-        ) : null}
-        {status.kind === "error" ? (
-          <span className="text-[13px] text-[var(--chrome-track-experimental)]">
-            {status.msg}
-          </span>
-        ) : null}
-      </div>
-    </form>
-  );
-}
+          <SectionBlock
+            {...SECTIONS[1]}
+            editor={
+              <ColorsEditor
+                value={tokens.colors}
+                onChange={(v) => update({ colors: v })}
+              />
+            }
+            preview={<ColorsPreview tokens={tokens} />}
+          />
 
-function Group({ title, children }) {
-  return (
-    <fieldset className="border-t border-(--chrome-border) pt-6">
-      <legend className="text-[12px] uppercase tracking-[0.08em] text-(--chrome-fg-subtle) mb-4">
-        {title}
-      </legend>
-      {children}
-    </fieldset>
-  );
-}
+          <SectionBlock
+            {...SECTIONS[2]}
+            editor={
+              <TypographyEditor
+                value={tokens.typography}
+                fonts={tokens.fonts}
+                onChange={(v) => update({ typography: v })}
+                onFontsChange={(v) => update({ fonts: v })}
+              />
+            }
+            preview={<TypographyPreview tokens={tokens} />}
+          />
 
-function Field({ label, hint, children }) {
-  return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-[12px] text-(--chrome-fg)">{label}</span>
-      {children}
-      {hint ? (
-        <span className="text-[11px] text-(--chrome-fg-subtle)">{hint}</span>
-      ) : null}
-    </label>
-  );
-}
+          <SectionBlock
+            {...SECTIONS[3]}
+            editor={
+              <SpacingEditor
+                value={tokens.spacing}
+                onChange={(v) => update({ spacing: v })}
+              />
+            }
+            preview={<SpacingPreview tokens={tokens} />}
+          />
 
-function ColorGrid({ fields, tokens, update }) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {fields.map((f) => (
-        <Field key={f.key} label={f.label}>
-          <div className="flex items-center gap-2 h-10 rounded-(--chrome-radius-2) bg-(--chrome-ground) border border-(--chrome-border) px-2">
-            <span
-              aria-hidden
-              className="size-6 rounded-(--chrome-radius-1) border border-(--chrome-border)"
-              style={{ background: tokens[f.key] }}
-            />
-            <input
-              type="color"
-              value={isHex(tokens[f.key]) ? tokens[f.key] : "#000000"}
-              onChange={update(f.key)}
-              className="size-6 cursor-pointer bg-transparent"
-              aria-label={`${f.label} color picker`}
-            />
-            <input
-              value={tokens[f.key]}
-              onChange={update(f.key)}
-              className="flex-1 h-full bg-transparent font-[family-name:var(--chrome-font-mono)] text-[12px] outline-none"
-            />
+          <SectionBlock
+            {...SECTIONS[4]}
+            editor={
+              <RadiiEditor
+                value={tokens.radii}
+                onChange={(v) => update({ radii: v })}
+              />
+            }
+            preview={<RadiiPreview tokens={tokens} />}
+          />
+
+          <SectionBlock
+            {...SECTIONS[5]}
+            editor={
+              <CardEditor
+                value={tokens.cards}
+                colors={tokens.colors}
+                activeId={activeCardId}
+                onActiveChange={setActiveCardId}
+                onChange={(v) => update({ cards: v })}
+              />
+            }
+            preview={<CardPreview activeId={activeCardId} />}
+          />
+
+          <SectionBlock
+            {...SECTIONS[6]}
+            editor={
+              <ButtonEditor
+                value={tokens.buttons}
+                colors={tokens.colors}
+                activeId={activeBtnId}
+                onActiveChange={setActiveBtnId}
+                onChange={(v) => update({ buttons: v })}
+              />
+            }
+            preview={<ButtonPreview activeId={activeBtnId} />}
+          />
+
+          <SectionBlock
+            {...SECTIONS[7]}
+            editor={
+              <LinksEditor
+                value={tokens.links}
+                onChange={(v) => update({ links: v })}
+              />
+            }
+            preview={<LinksPreview tokens={tokens} />}
+          />
+
+          <div id="css">
+            <CssExport css={exportCss} />
           </div>
-        </Field>
-      ))}
+        </div>
+      </main>
     </div>
   );
 }
 
-function ScaleGrid({ fields, tokens, update, suffix }) {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-      {fields.map((f) => (
-        <Field key={f.key} label={f.label}>
-          <div className="flex items-center gap-1.5 h-10 rounded-(--chrome-radius-2) bg-(--chrome-ground) border border-(--chrome-border) px-2">
-            <input
-              value={tokens[f.key]}
-              onChange={update(f.key)}
-              className="flex-1 h-full bg-transparent font-[family-name:var(--chrome-font-mono)] text-[12px] outline-none"
-              inputMode="numeric"
-            />
-            <span className="text-[11px] text-(--chrome-fg-subtle)">{suffix}</span>
-          </div>
-        </Field>
-      ))}
-    </div>
-  );
-}
-
-function isHex(v) {
-  return typeof v === "string" && /^#[0-9a-fA-F]{3,8}$/.test(v.trim());
-}
-
-function camelToKebab(s) {
-  return s.replace(/[A-Z0-9]/g, (c) => `-${c.toLowerCase()}`);
-}
