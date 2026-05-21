@@ -136,6 +136,9 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
         buttonVariants={buttonVariants}
         typographyVariants={typographyVariants}
         cardVariants={cardVariants}
+        isButton={isButton}
+        currentVariant={isButton && typeof v === "object" ? v.variant : null}
+        onVariantChange={(variant) => onChange({ ...value, [key]: { ...v, variant } })}
       />
     </div>
   );
@@ -236,7 +239,7 @@ function styleKey(el) {
   return parts.join(":");
 }
 
-function StyleEditor({ styles, onChange, buttonVariants, typographyVariants, cardVariants }) {
+function StyleEditor({ styles, onChange, buttonVariants, typographyVariants, cardVariants, isButton, currentVariant, onVariantChange }) {
   const fields = [
     { key: "color", label: "Text color", type: "color" },
     { key: "backgroundColor", label: "Background", type: "color" },
@@ -254,6 +257,24 @@ function StyleEditor({ styles, onChange, buttonVariants, typographyVariants, car
           <label className="text-[10px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
             Styleguide presets
           </label>
+          {isButton && buttonVariants.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {buttonVariants.map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => onVariantChange(v)}
+                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
+                    currentVariant === v
+                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
+                  }`}
+                >
+                  {v === "primary" ? "Primary" : v.charAt(0).toUpperCase() + v.slice(1)}
+                </button>
+              ))}
+            </div>
+          )}
           {typographyVariants.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {typographyVariants.map((v) => (
