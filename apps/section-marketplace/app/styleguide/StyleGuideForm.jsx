@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { DEFAULT_TOKENS } from "../../lib/styleguide-defaults.js";
+import {
+  DEFAULT_TOKENS,
+  BASE_REM_PX,
+  normalizeTokens,
+} from "../../lib/styleguide-defaults.js";
 import { generateCss } from "../../lib/styleguide-css.js";
 
 import SectionBlock from "./_components/SectionBlock.jsx";
@@ -26,18 +30,17 @@ import {
 } from "./_components/Previews.jsx";
 
 const SECTIONS = [
-  { id: "wizardry",   eyebrow: "01",  title: "Wizardry",   description: "Set the container max width and the fluid rem ranges. Below the tablet breakpoint the mobile range takes over." },
-  { id: "colors",     eyebrow: "02",  title: "Colors",     description: "Three primaries — light, dark, brand. The builder UI generates opacity, tint, and shade variants at the point of use." },
-  { id: "typography", eyebrow: "03",  title: "Typography", description: "Nine scales. Each scale has a desktop and a mobile config. Font sizes in rem; letter-spacing in em; line-height unitless." },
-  { id: "spacing",    eyebrow: "04",  title: "Spacing",    description: "Section padding tokens. Desktop values in em scale with the fluid rem; mobile values in rem stay anchored below the breakpoint." },
-  { id: "radii",      eyebrow: "05",  title: "Border radius", description: "Three radii — small, medium, large. Used by every card, button, and surface in the system." },
-  { id: "card",       eyebrow: "06",  title: "Card",       description: "Composed from the tokens above. Used by every section that needs a contained surface." },
-  { id: "button",     eyebrow: "07",  title: "Button",     description: "One canonical button. Default and hover states reference colour tokens directly." },
-  { id: "links",      eyebrow: "08",  title: "Links",      description: "Named URLs that sections (footers, contact, legal) can reference later by key." },
+  { id: "wizardry",   eyebrow: "01",  title: "Wizardry",       description: "Set the container max-width. The site uses a fluid rem on desktop anchored to this width, and a static rem from 991px down." },
+  { id: "colors",     eyebrow: "02",  title: "Colors",         description: "Light, dark, brand. Add custom colors as needed. Opacity, tint, and shade variants are computed at the point of use." },
+  { id: "typography", eyebrow: "03",  title: "Typography",     description: "Nine scales × desktop and mobile. Sizes are in px; the published CSS converts them to rem so they scale with the fluid rem." },
+  { id: "spacing",    eyebrow: "04",  title: "Spacing",        description: "Section padding tokens. Desktop values render as em (scale with the fluid rem); mobile values render as rem (static below 992px)." },
+  { id: "radii",      eyebrow: "05",  title: "Border radius",  description: "Three radii — small, medium, large. Each has a desktop and a mobile value." },
+  { id: "card",       eyebrow: "06",  title: "Card",           description: "Filter between card variants. Each is composed from the colors and radii above." },
+  { id: "button",     eyebrow: "07",  title: "Button",         description: "Three button variants. Hover the preview to see the hover state apply." },
+  { id: "links",      eyebrow: "08",  title: "Links",          description: "Named URLs that footer, contact, or legal sections will reference later." },
 ];
 
 export default function StyleGuideForm() {
-  // -- guide list + current selection
   const [guides, setGuides] = useState([]);
   const [currentId, setCurrentId] = useState(null);
   const [name, setName] = useState("Default");
@@ -46,7 +49,10 @@ export default function StyleGuideForm() {
   const [status, setStatus] = useState({ kind: "idle" });
   const [loadingList, setLoadingList] = useState(false);
 
-  // -- bootstrap: load existing guides
+  // Active variant state for the filter pills in the Card / Button sections.
+  const [activeCardId, setActiveCardId] = useState(DEFAULT_TOKENS.cards[0].id);
+  const [activeBtnId, setActiveBtnId] = useState(DEFAULT_TOKENS.buttons[0].id);
+
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -58,12 +64,11 @@ export default function StyleGuideForm() {
         if (!alive) return;
         const list = data?.styleGuides ?? [];
         setGuides(list);
-        // Auto-load most recent if nothing is loaded yet
         if (list.length > 0 && !currentId) {
           await load(list[0].id);
         }
       } catch {
-        // offline / Neon not provisioned — fine, work locally
+        // offline / Neon not provisioned
       } finally {
         if (alive) setLoadingList(false);
       }
@@ -83,8 +88,15 @@ export default function StyleGuideForm() {
       if (!g) return;
       setCurrentId(g.id);
       setName(g.name ?? "Untitled");
-      // Merge with defaults so newer fields populate when loading old rows
-      setTokens(mergeDeep(DEFAULT_TOKENS, g.tokens ?? {}));
+      const merged = normalizeTokens(g.tokens);
+      setTokens(merged);
+      // Reset active variants if the loaded guide doesn't include the current ones.
+      if (!merged.cards?.find((c) => c.id === activeCardId)) {
+        setActiveCardId(merged.cards?.[0]?.id ?? "default");
+      }
+      if (!merged.buttons?.find((b) => b.id === activeBtnId)) {
+        setActiveBtnId(merged.buttons?.[0]?.id ?? "primary");
+      }
       setDirty(false);
       setStatus({ kind: "loaded", msg: `Loaded ${g.name}` });
     } catch (err) {
@@ -96,6 +108,8 @@ export default function StyleGuideForm() {
     setCurrentId(null);
     setName("New style guide");
     setTokens(DEFAULT_TOKENS);
+    setActiveCardId(DEFAULT_TOKENS.cards[0].id);
+    setActiveBtnId(DEFAULT_TOKENS.buttons[0].id);
     setDirty(true);
     setStatus({ kind: "idle" });
   }
@@ -138,7 +152,6 @@ export default function StyleGuideForm() {
       setName(saved.name);
       setDirty(false);
       setStatus({ kind: "saved", msg: `Saved ${saved.name}`, id: saved.id });
-      // Refresh list silently
       fetch("/api/styleguides")
         .then((r) => r.json())
         .then((d) => setGuides(d?.styleGuides ?? []))
@@ -148,26 +161,20 @@ export default function StyleGuideForm() {
     }
   }
 
-  // -- CSS
   const scopedCss = useMemo(
     () => generateCss(tokens, ".sg-canvas", { scoped: true }),
     [tokens]
   );
   const exportCss = useMemo(() => generateCss(tokens, ":root"), [tokens]);
 
-  // Apply the desktop anchor rem as the scope's font-size so em values inside
-  // the canvas behave like rem-from-anchor.
-  const anchorRemPx = tokens.wizardry?.rem?.desktop?.anchorRem ?? 16;
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[200px_minmax(0,1fr)] gap-8">
-      {/* Sticky side nav */}
       <aside className="hidden lg:block">
         <nav
           aria-label="Style guide sections"
           className="sticky top-24 flex flex-col gap-1"
         >
-          <p className="text-[10px] uppercase tracking-[0.16em] text-[var(--chrome-fg-subtle)] mb-2 px-3">
+          <p className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)] mb-2 px-3">
             Sections
           </p>
           {SECTIONS.map((s) => (
@@ -189,13 +196,12 @@ export default function StyleGuideForm() {
       </aside>
 
       <main>
-        {/* Top toolbar */}
         <div className="sticky top-0 z-30 -mx-4 px-4 pt-4 pb-4 bg-[var(--chrome-ground)]/95 backdrop-blur border-b border-[var(--chrome-border)]">
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <label
                 htmlFor="sg-pick"
-                className="text-[11px] uppercase tracking-[0.12em] text-[var(--chrome-fg-subtle)]"
+                className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]"
               >
                 Guide
               </label>
@@ -263,15 +269,11 @@ export default function StyleGuideForm() {
           </div>
         </div>
 
-        {/* Live-styled canvas wraps every preview so they inherit the generated CSS */}
-        <div className="sg-canvas" style={{ fontSize: `${anchorRemPx}px` }}>
+        <div className="sg-canvas" style={{ fontSize: `${BASE_REM_PX}px` }}>
           <style dangerouslySetInnerHTML={{ __html: scopedCss }} />
 
           <SectionBlock
-            id={SECTIONS[0].id}
-            eyebrow={SECTIONS[0].eyebrow}
-            title={SECTIONS[0].title}
-            description={SECTIONS[0].description}
+            {...SECTIONS[0]}
             editor={
               <WizardryEditor
                 value={tokens.wizardry}
@@ -282,10 +284,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            id={SECTIONS[1].id}
-            eyebrow={SECTIONS[1].eyebrow}
-            title={SECTIONS[1].title}
-            description={SECTIONS[1].description}
+            {...SECTIONS[1]}
             editor={
               <ColorsEditor
                 value={tokens.colors}
@@ -296,10 +295,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            id={SECTIONS[2].id}
-            eyebrow={SECTIONS[2].eyebrow}
-            title={SECTIONS[2].title}
-            description={SECTIONS[2].description}
+            {...SECTIONS[2]}
             editor={
               <TypographyEditor
                 value={tokens.typography}
@@ -312,10 +308,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            id={SECTIONS[3].id}
-            eyebrow={SECTIONS[3].eyebrow}
-            title={SECTIONS[3].title}
-            description={SECTIONS[3].description}
+            {...SECTIONS[3]}
             editor={
               <SpacingEditor
                 value={tokens.spacing}
@@ -326,10 +319,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            id={SECTIONS[4].id}
-            eyebrow={SECTIONS[4].eyebrow}
-            title={SECTIONS[4].title}
-            description={SECTIONS[4].description}
+            {...SECTIONS[4]}
             editor={
               <RadiiEditor
                 value={tokens.radii}
@@ -340,38 +330,35 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            id={SECTIONS[5].id}
-            eyebrow={SECTIONS[5].eyebrow}
-            title={SECTIONS[5].title}
-            description={SECTIONS[5].description}
+            {...SECTIONS[5]}
             editor={
               <CardEditor
-                value={tokens.card}
-                onChange={(v) => update({ card: v })}
+                value={tokens.cards}
+                colors={tokens.colors}
+                activeId={activeCardId}
+                onActiveChange={setActiveCardId}
+                onChange={(v) => update({ cards: v })}
               />
             }
-            preview={<CardPreview />}
+            preview={<CardPreview activeId={activeCardId} />}
           />
 
           <SectionBlock
-            id={SECTIONS[6].id}
-            eyebrow={SECTIONS[6].eyebrow}
-            title={SECTIONS[6].title}
-            description={SECTIONS[6].description}
+            {...SECTIONS[6]}
             editor={
               <ButtonEditor
-                value={tokens.button}
-                onChange={(v) => update({ button: v })}
+                value={tokens.buttons}
+                colors={tokens.colors}
+                activeId={activeBtnId}
+                onActiveChange={setActiveBtnId}
+                onChange={(v) => update({ buttons: v })}
               />
             }
-            preview={<ButtonPreview />}
+            preview={<ButtonPreview activeId={activeBtnId} />}
           />
 
           <SectionBlock
-            id={SECTIONS[7].id}
-            eyebrow={SECTIONS[7].eyebrow}
-            title={SECTIONS[7].title}
-            description={SECTIONS[7].description}
+            {...SECTIONS[7]}
             editor={
               <LinksEditor
                 value={tokens.links}
@@ -390,15 +377,3 @@ export default function StyleGuideForm() {
   );
 }
 
-// Deep merge that lets stored data override defaults without dropping new
-// default keys when loading a row saved before they existed.
-function mergeDeep(base, override) {
-  if (Array.isArray(override)) return override;
-  if (override == null) return base;
-  if (typeof override !== "object" || typeof base !== "object") return override;
-  const out = { ...base };
-  for (const k of Object.keys(override)) {
-    out[k] = mergeDeep(base?.[k], override[k]);
-  }
-  return out;
-}

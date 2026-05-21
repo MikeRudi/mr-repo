@@ -1,26 +1,26 @@
 // Canonical shape for a MakeReign style guide.
 // Stored as a single JSONB blob in style_guides.tokens.
 //
-// Conventions:
-//   - Typography sizes are always in rem so they scale with the fluid html
-//     font-size set by the "wizardry technique" (see styleguide-css.js).
-//   - Spacing & radii hold a `desktop` value in em (scales with the fluid rem)
-//     and a `mobile` value in rem (locked to the html font-size below the
-//     tablet breakpoint).
-//   - Colours: only the 3 primaries are stored. Opacity / lighten / darken
-//     happen at the point of use via the builder UI.
+// All numeric inputs are in px. The generated CSS converts them:
+//   - typography size: px → rem (px / BASE_REM_PX)
+//   - spacing / radius / padding desktop: px → em
+//   - spacing / radius / padding mobile:  px → rem
+//   - border widths stay in px
+//
+// The "wizardry" technique runs on desktop only:
+//   :root { font-size: (BASE_REM_PX / containerMaxWidth * 100)vw }
+//   capped at BASE_REM_PX above containerMaxWidth.
+// Below 991.98px the html font-size becomes a single static rem px value.
+
+export const BASE_REM_PX = 16;
+export const TABLET_BREAKPOINT = 992; // px — 991.98 and below = mobile
 
 export const DEFAULT_TOKENS = {
   name: "Default",
 
   wizardry: {
-    container: { maxWidth: 1920 }, // px
-    breakpoint: { tablet: 992 },   // px (the desktop -> tablet/mobile split)
-    rem: {
-      // vw font-size = (anchorRem / anchorViewport) * 100
-      desktop: { anchorViewport: 1920, anchorRem: 16 },
-      mobile:  { anchorViewport: 992,  anchorRem: 16 },
-    },
+    container: { maxWidth: 1920 }, // the only wizardry input shown to users
+    mobileRemPx: 16,                // static html font-size below 992px
   },
 
   colors: {
@@ -29,126 +29,173 @@ export const DEFAULT_TOKENS = {
     brand: "#2c8a5a",
   },
 
+  // Three named font stacks — the only places typography references families.
+  fonts: {
+    primary:   'Lay Grotesk, "Inter Variable", Inter, system-ui, sans-serif',
+    secondary: '"Inter Variable", Inter, system-ui, sans-serif',
+    tertiary:  '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+  },
+
+  // Each scale: per-breakpoint { family (primary|secondary|tertiary), size (px),
+  // weight (number), letterSpacing (em as a number), lineHeight (unitless number) }.
   typography: {
     h1: {
-      desktop: { family: "display", size: "6rem",   weight: 500, letterSpacing: "-0.02em",  lineHeight: 0.98 },
-      mobile:  { family: "display", size: "3.25rem",weight: 500, letterSpacing: "-0.015em", lineHeight: 1.02 },
+      desktop: { family: "primary", size: 96,   weight: 500, letterSpacing: -0.02,  lineHeight: 0.98 },
+      mobile:  { family: "primary", size: 52,   weight: 500, letterSpacing: -0.015, lineHeight: 1.02 },
     },
     h2: {
-      desktop: { family: "display", size: "4rem",   weight: 500, letterSpacing: "-0.015em", lineHeight: 1.02 },
-      mobile:  { family: "display", size: "2.5rem", weight: 500, letterSpacing: "-0.01em",  lineHeight: 1.08 },
+      desktop: { family: "primary", size: 64,   weight: 500, letterSpacing: -0.015, lineHeight: 1.02 },
+      mobile:  { family: "primary", size: 40,   weight: 500, letterSpacing: -0.01,  lineHeight: 1.08 },
     },
     h3: {
-      desktop: { family: "display", size: "2.75rem",weight: 500, letterSpacing: "-0.01em",  lineHeight: 1.08 },
-      mobile:  { family: "display", size: "2rem",   weight: 500, letterSpacing: "-0.005em", lineHeight: 1.12 },
+      desktop: { family: "primary", size: 44,   weight: 500, letterSpacing: -0.01,  lineHeight: 1.08 },
+      mobile:  { family: "primary", size: 32,   weight: 500, letterSpacing: -0.005, lineHeight: 1.12 },
     },
     h4: {
-      desktop: { family: "display", size: "2rem",   weight: 500, letterSpacing: "-0.005em", lineHeight: 1.15 },
-      mobile:  { family: "display", size: "1.625rem",weight: 500, letterSpacing: "0em",     lineHeight: 1.2 },
+      desktop: { family: "primary", size: 32,   weight: 500, letterSpacing: -0.005, lineHeight: 1.15 },
+      mobile:  { family: "primary", size: 26,   weight: 500, letterSpacing: 0,      lineHeight: 1.2 },
     },
     h5: {
-      desktop: { family: "display", size: "1.5rem", weight: 500, letterSpacing: "0em",      lineHeight: 1.2 },
-      mobile:  { family: "display", size: "1.25rem",weight: 500, letterSpacing: "0em",      lineHeight: 1.25 },
+      desktop: { family: "primary", size: 24,   weight: 500, letterSpacing: 0,      lineHeight: 1.2 },
+      mobile:  { family: "primary", size: 20,   weight: 500, letterSpacing: 0,      lineHeight: 1.25 },
     },
     h6: {
-      desktop: { family: "display", size: "1.125rem",weight: 600, letterSpacing: "0em",     lineHeight: 1.3 },
-      mobile:  { family: "display", size: "1rem",   weight: 600, letterSpacing: "0em",      lineHeight: 1.35 },
+      desktop: { family: "primary", size: 18,   weight: 600, letterSpacing: 0,      lineHeight: 1.3 },
+      mobile:  { family: "primary", size: 16,   weight: 600, letterSpacing: 0,      lineHeight: 1.35 },
     },
     textLarge: {
-      desktop: { family: "body", size: "1.25rem",  weight: 400, letterSpacing: "0em",      lineHeight: 1.5 },
-      mobile:  { family: "body", size: "1.125rem", weight: 400, letterSpacing: "0em",      lineHeight: 1.5 },
+      desktop: { family: "secondary", size: 20, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
+      mobile:  { family: "secondary", size: 18, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
     },
     textMain: {
-      desktop: { family: "body", size: "1rem",     weight: 400, letterSpacing: "0em",      lineHeight: 1.55 },
-      mobile:  { family: "body", size: "1rem",     weight: 400, letterSpacing: "0em",      lineHeight: 1.55 },
+      desktop: { family: "secondary", size: 16, weight: 400, letterSpacing: 0,      lineHeight: 1.55 },
+      mobile:  { family: "secondary", size: 16, weight: 400, letterSpacing: 0,      lineHeight: 1.55 },
     },
     textSmall: {
-      desktop: { family: "body", size: "0.875rem", weight: 400, letterSpacing: "0em",      lineHeight: 1.5 },
-      mobile:  { family: "body", size: "0.875rem", weight: 400, letterSpacing: "0em",      lineHeight: 1.5 },
+      desktop: { family: "secondary", size: 14, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
+      mobile:  { family: "secondary", size: 14, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
     },
   },
 
-  // Reusable font stacks referenced by typography[*].desktop.family / .mobile.family
-  fonts: {
-    display: 'Lay Grotesk, "Inter Variable", Inter, system-ui, sans-serif',
-    body:    '"Inter Variable", Inter, system-ui, sans-serif',
-    mono:    '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
-  },
-
+  // All numeric (px). Desktop renders as em in the published CSS, mobile as rem.
   spacing: {
-    sectionTopLarge: { desktop: "8em",   mobile: "4rem"   },
-    sectionTopSmall: { desktop: "3em",   mobile: "2rem"   },
-    sectionYLarge:   { desktop: "8em",   mobile: "4rem"   },
-    sectionYSmall:   { desktop: "3em",   mobile: "2rem"   },
+    sectionTopLarge: { desktop: 128, mobile: 64 },
+    sectionTopSmall: { desktop: 48,  mobile: 32 },
+    sectionYLarge:   { desktop: 128, mobile: 64 },
+    sectionYSmall:   { desktop: 48,  mobile: 32 },
   },
 
   radii: {
-    small:  { desktop: "0.375em", mobile: "0.375rem" },
-    medium: { desktop: "0.75em",  mobile: "0.75rem"  },
-    large:  { desktop: "1.5em",   mobile: "1.5rem"   },
+    small:  { desktop: 6,  mobile: 6  },
+    medium: { desktop: 12, mobile: 12 },
+    large:  { desktop: 24, mobile: 24 },
   },
 
-  card: {
-    padding:    { desktop: "1.75em", mobile: "1.25rem" },
-    radius:     "medium",          // → radii.medium
-    background: "light",           // → colors.light
-    foreground: "dark",            // → colors.dark
-    border: {
-      color:    "dark",
-      width:    "1px",
-      opacity:  0.08,
+  // Two card variants out of the box, filterable in the editor.
+  cards: [
+    {
+      id: "default",
+      name: "Default",
+      padding:    { desktop: 28, mobile: 20 },
+      radius:     "medium",
+      background: "light",
+      foreground: "dark",
+      border: { color: "dark", width: 1, opacity: 0.08 },
     },
-    shadow:     "0 1px 2px rgba(0,0,0,0.04)",
-  },
-
-  button: {
-    padding:     { desktop: "0.875em 1.5em", mobile: "0.875rem 1.5rem" },
-    radius:      "small",
-    background:  "dark",
-    foreground:  "light",
-    border: {
-      color:     "dark",
-      width:     "1px",
-      opacity:   1,
-    },
-    hover: {
-      background: "brand",
+    {
+      id: "feature",
+      name: "Feature",
+      padding:    { desktop: 40, mobile: 28 },
+      radius:     "large",
+      background: "dark",
       foreground: "light",
+      border: { color: "dark", width: 0, opacity: 0 },
     },
-  },
-
-  links: [
-    // { name: "Privacy policy", url: "/privacy" }
   ],
+
+  // Three button variants out of the box, filterable in the editor.
+  buttons: [
+    {
+      id: "primary",
+      name: "Primary",
+      padding:    { desktop: 16, mobile: 14 },
+      paddingX:   { desktop: 28, mobile: 24 },
+      radius:     "small",
+      background: "dark",
+      foreground: "light",
+      border:     { color: "dark", width: 1, opacity: 1 },
+      hover:      { background: "brand", foreground: "light" },
+    },
+    {
+      id: "secondary",
+      name: "Secondary",
+      padding:    { desktop: 16, mobile: 14 },
+      paddingX:   { desktop: 28, mobile: 24 },
+      radius:     "small",
+      background: "light",
+      foreground: "dark",
+      border:     { color: "dark", width: 1, opacity: 1 },
+      hover:      { background: "dark", foreground: "light" },
+    },
+    {
+      id: "ghost",
+      name: "Ghost",
+      padding:    { desktop: 14, mobile: 12 },
+      paddingX:   { desktop: 20, mobile: 16 },
+      radius:     "small",
+      background: "transparent",
+      foreground: "dark",
+      border:     { color: "dark", width: 0, opacity: 0 },
+      hover:      { background: "dark", foreground: "light" },
+    },
+  ],
+
+  links: [],
 };
 
-// Lifted helpers used by both the form and the live preview.
+// Detect rows saved before the px-numeric / cards[] / buttons[] shape and
+// safely fall back to defaults. Old rows lose their saved values (a one-time
+// reset) but keep working without breaking the editor.
+export function normalizeTokens(loaded) {
+  if (!loaded || typeof loaded !== "object") return DEFAULT_TOKENS;
+  const isNewShape =
+    Array.isArray(loaded.cards) &&
+    Array.isArray(loaded.buttons) &&
+    typeof loaded?.typography?.h1?.desktop?.size === "number" &&
+    typeof loaded?.spacing?.sectionTopLarge?.desktop === "number";
+  if (!isNewShape) return DEFAULT_TOKENS;
+  return mergeDeep(DEFAULT_TOKENS, loaded);
+}
 
-export function resolveColor(tokens, key, { alpha = 1 } = {}) {
-  const hex = tokens.colors?.[key] ?? key; // accept either a key or a raw value
-  if (alpha >= 1) return hex;
-  return colorWithAlpha(hex, alpha);
+function mergeDeep(base, override) {
+  if (Array.isArray(override)) return override;
+  if (override == null) return base;
+  if (typeof override !== "object" || typeof base !== "object") return override;
+  const out = { ...base };
+  for (const k of Object.keys(override)) {
+    out[k] = mergeDeep(base?.[k], override[k]);
+  }
+  return out;
 }
 
 export function colorWithAlpha(hex, alpha) {
-  // accept #rgb / #rrggbb
   let v = hex?.trim().replace("#", "");
   if (v?.length === 3) v = v.split("").map((c) => c + c).join("");
   if (!v || v.length !== 6) return hex;
   const r = parseInt(v.slice(0, 2), 16);
   const g = parseInt(v.slice(2, 4), 16);
   const b = parseInt(v.slice(4, 6), 16);
+  if (alpha >= 1) return `#${v}`;
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-// Order used by all editors so headings, controls, and the preview stay in sync.
 export const TYPOGRAPHY_SCALES = [
-  ["h1", "Heading 1"],
-  ["h2", "Heading 2"],
-  ["h3", "Heading 3"],
-  ["h4", "Heading 4"],
-  ["h5", "Heading 5"],
-  ["h6", "Heading 6"],
+  ["h1", "H1"],
+  ["h2", "H2"],
+  ["h3", "H3"],
+  ["h4", "H4"],
+  ["h5", "H5"],
+  ["h6", "H6"],
   ["textLarge", "Text large"],
   ["textMain",  "Text main"],
   ["textSmall", "Text small"],
@@ -166,3 +213,15 @@ export const RADIUS_TOKENS = [
   ["medium", "Medium"],
   ["large",  "Large"],
 ];
+
+// Helpers used by the CSS generator + previews to keep conversions consistent.
+export const px = {
+  toRem: (n) => `${round(n / BASE_REM_PX)}rem`,
+  toEm:  (n) => `${round(n / BASE_REM_PX)}em`,
+};
+
+function round(n) {
+  if (!Number.isFinite(n)) return 0;
+  // Trim long decimals
+  return Math.round(n * 1e4) / 1e4;
+}

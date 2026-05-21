@@ -103,6 +103,34 @@ export function SelectInput({ value, onChange, options, id }) {
   );
 }
 
+// Filter pills with a filled background style + hover.
+// Used by Typography (scale picker), Cards, Buttons.
+export function FilterPills({ items, activeId, onSelect }) {
+  return (
+    <div role="tablist" className="flex flex-wrap gap-1.5">
+      {items.map(({ id, label }) => {
+        const sel = id === activeId;
+        return (
+          <button
+            key={id}
+            role="tab"
+            type="button"
+            aria-selected={sel}
+            onClick={() => onSelect(id)}
+            className={`inline-flex items-center h-7 px-3 rounded-full text-[11px] font-medium transition-colors ${
+              sel
+                ? "bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                : "bg-[var(--chrome-ground)] text-[var(--chrome-fg-muted)] hover:bg-[var(--chrome-fg)] hover:text-[var(--chrome-fg-inverse)]"
+            }`}
+          >
+            {label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function Stack({ children, cols = 2 }) {
   const c =
     cols === 1

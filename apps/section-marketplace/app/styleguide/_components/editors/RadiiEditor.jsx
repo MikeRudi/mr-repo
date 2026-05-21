@@ -1,7 +1,7 @@
 "use client";
 
 import { RADIUS_TOKENS } from "../../../../lib/styleguide-defaults.js";
-import { Field, TextInput, Stack } from "../Fields.jsx";
+import { Field, NumberInput, Stack } from "../Fields.jsx";
 import { GroupHeading } from "../SectionBlock.jsx";
 
 export default function RadiiEditor({ value, onChange }) {
@@ -17,20 +17,20 @@ export default function RadiiEditor({ value, onChange }) {
         <div key={key}>
           <GroupHeading>{label}</GroupHeading>
           <Stack cols={2}>
-            <Field label="Desktop (em)" htmlFor={`r-${key}-d`}>
-              <TextInput
+            <Field label="Desktop" htmlFor={`r-${key}-d`}>
+              <NumberInput
                 id={`r-${key}-d`}
                 value={value?.[key]?.desktop}
                 onChange={(v) => set(key, "desktop", v)}
-                placeholder="0.5em"
+                suffix="px"
               />
             </Field>
-            <Field label="Mobile (rem)" htmlFor={`r-${key}-m`}>
-              <TextInput
+            <Field label="Mobile" htmlFor={`r-${key}-m`}>
+              <NumberInput
                 id={`r-${key}-m`}
                 value={value?.[key]?.mobile}
                 onChange={(v) => set(key, "mobile", v)}
-                placeholder="0.5rem"
+                suffix="px"
               />
             </Field>
           </Stack>

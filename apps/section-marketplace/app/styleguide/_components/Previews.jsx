@@ -4,32 +4,28 @@ import {
   TYPOGRAPHY_SCALES,
   SPACING_TOKENS,
   RADIUS_TOKENS,
+  BASE_REM_PX,
+  TABLET_BREAKPOINT,
   colorWithAlpha,
 } from "../../../lib/styleguide-defaults.js";
 
-// Sample copy used by typography + card + button demos.
 const PANGRAM = "Bright vixens jump; dozy fowl quack.";
 
 export function WizardryPreview({ tokens }) {
-  const w = tokens.wizardry ?? {};
-  const d = w.rem?.desktop ?? {};
-  const m = w.rem?.mobile ?? {};
-  const desktopVw = formula(d.anchorRem, d.anchorViewport);
-  const mobileVw = formula(m.anchorRem, m.anchorViewport);
-  const max = w.container?.maxWidth ?? 1920;
-  const bp = w.breakpoint?.tablet ?? 992;
-
+  const max = tokens.wizardry?.container?.maxWidth ?? 1920;
+  const mobileRem = tokens.wizardry?.mobileRemPx ?? BASE_REM_PX;
+  const vw = ((BASE_REM_PX / max) * 100).toFixed(4);
   return (
     <div className="flex flex-col gap-4">
       <Caption>Generated declarations</Caption>
       <Code>
         {[
-          `:root { font-size: ${desktopVw}; }`,
-          `@media (min-width: ${d.anchorViewport ?? 1920}px) {`,
-          `  :root { font-size: ${d.anchorRem ?? 16}px; }`,
+          `:root { font-size: ${vw}vw; }`,
+          `@media (min-width: ${max}px) {`,
+          `  :root { font-size: ${BASE_REM_PX}px; }`,
           `}`,
-          `@media (max-width: ${bp - 0.02}px) {`,
-          `  :root { font-size: ${mobileVw}; }`,
+          `@media (max-width: ${TABLET_BREAKPOINT - 0.02}px) {`,
+          `  :root { font-size: ${mobileRem}px; }`,
           `}`,
           ``,
           `.sg-container { max-width: ${max}px; }`,
@@ -50,28 +46,24 @@ export function WizardryPreview({ tokens }) {
 
 export function ColorsPreview({ tokens }) {
   const c = tokens.colors ?? {};
-  const TOKENS = [
-    ["light", "Light", c.light],
-    ["dark", "Dark", c.dark],
-    ["brand", "Brand", c.brand],
-  ];
+  const entries = Object.entries(c);
   const ALPHAS = [1, 0.7, 0.4, 0.15, 0.06];
 
   return (
     <div className="flex flex-col gap-5">
-      <Caption>Primaries</Caption>
-      <div className="grid grid-cols-3 gap-3">
-        {TOKENS.map(([key, label, hex]) => (
+      <Caption>Palette ({entries.length})</Caption>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {entries.map(([key, hex]) => (
           <div
             key={key}
             className="rounded-[10px] overflow-hidden border border-[var(--chrome-border)] bg-[var(--chrome-ground)]"
           >
-            <div className="h-20" style={{ background: hex || "#000" }} />
+            <div className="h-16" style={{ background: hex || "#000" }} />
             <div className="px-3 py-2">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--chrome-fg-subtle)]">
-                {label}
+              <p className="text-[11px] uppercase tracking-[0.06em] font-bold text-[var(--chrome-fg)]">
+                {key}
               </p>
-              <p className="text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg)] mt-0.5">
+              <p className="text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)] mt-0.5">
                 {hex || "—"}
               </p>
             </div>
@@ -79,13 +71,13 @@ export function ColorsPreview({ tokens }) {
         ))}
       </div>
       <Caption>Opacity ladder (computed at use site)</Caption>
-      <div className="grid grid-cols-3 gap-3">
-        {TOKENS.map(([key, , hex]) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {entries.slice(0, 3).map(([key, hex]) => (
           <div key={key} className="flex flex-col gap-1">
             {ALPHAS.map((a) => (
               <div
                 key={a}
-                className="h-7 rounded-[6px] flex items-center justify-between px-2 text-[10px] font-[family-name:var(--chrome-font-mono)]"
+                className="h-6 rounded-[6px] flex items-center justify-between px-2 text-[10px] font-[family-name:var(--chrome-font-mono)]"
                 style={{
                   background: hex ? colorWithAlpha(hex, a) : "transparent",
                   color: key === "light" ? "#0a0b0d" : "#fff",
@@ -118,10 +110,10 @@ export function TypographyPreview({ tokens }) {
               key={key}
               className="grid grid-cols-[80px_1fr] gap-3 items-baseline"
             >
-              <span className="text-[10px] uppercase tracking-[0.12em] text-[var(--chrome-fg-subtle)] font-[family-name:var(--chrome-font-mono)] pt-1">
+              <span className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)] font-[family-name:var(--chrome-font-mono)] pt-1">
                 {label}
                 <br />
-                <span className="opacity-60">{scale.size}</span>
+                <span className="opacity-60 font-normal">{scale.size ?? "—"}px</span>
               </span>
               <span className={`${cls} text-[var(--chrome-fg)] break-words`}>
                 {PANGRAM}
@@ -137,24 +129,24 @@ export function TypographyPreview({ tokens }) {
 export function SpacingPreview({ tokens }) {
   return (
     <div className="flex flex-col gap-3">
-      <Caption>Vertical rhythm (desktop em values)</Caption>
+      <Caption>Vertical rhythm (desktop px → em on site)</Caption>
       <div className="rounded-[10px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] overflow-hidden">
         {SPACING_TOKENS.map(([key, label]) => {
-          const v = tokens.spacing?.[key]?.desktop ?? "1em";
+          const v = tokens.spacing?.[key]?.desktop ?? 16;
           return (
             <div
               key={key}
-              className="grid grid-cols-[120px_1fr_72px] items-center text-[11px] border-b border-[var(--chrome-border)] last:border-b-0"
+              className="grid grid-cols-[140px_1fr_72px] items-center text-[11px] border-b border-[var(--chrome-border)] last:border-b-0"
             >
-              <span className="px-3 py-2 text-[var(--chrome-fg-subtle)] uppercase tracking-[0.08em]">
+              <span className="px-3 py-2 text-[var(--chrome-fg)] font-bold uppercase tracking-[0.04em]">
                 {label}
               </span>
               <span
                 className="bg-[var(--chrome-fg)]/8 border-y border-[var(--chrome-border-strong)]"
-                style={{ height: v }}
+                style={{ height: `${v}px` }}
               />
               <span className="px-3 py-2 text-right font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)]">
-                {v}
+                {v}px
               </span>
             </div>
           );
@@ -170,18 +162,18 @@ export function RadiiPreview({ tokens }) {
       <Caption>Corner radii</Caption>
       <div className="grid grid-cols-3 gap-3">
         {RADIUS_TOKENS.map(([key, label]) => {
-          const v = tokens.radii?.[key]?.desktop ?? "0.5em";
+          const v = tokens.radii?.[key]?.desktop ?? 6;
           return (
             <div
               key={key}
               className="aspect-[4/3] bg-[var(--chrome-fg)]/8 border border-[var(--chrome-border-strong)] flex items-end justify-between p-3"
-              style={{ borderRadius: v }}
+              style={{ borderRadius: `${v}px` }}
             >
-              <span className="text-[11px] uppercase tracking-[0.12em] text-[var(--chrome-fg-muted)]">
+              <span className="text-[11px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)]">
                 {label}
               </span>
               <span className="text-[10px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-subtle)]">
-                {v}
+                {v}px
               </span>
             </div>
           );
@@ -191,11 +183,12 @@ export function RadiiPreview({ tokens }) {
   );
 }
 
-export function CardPreview() {
+export function CardPreview({ activeId }) {
+  const cls = `sg-card${activeId === "default" ? "" : `-${activeId}`}`;
   return (
     <div className="flex flex-col gap-3">
-      <Caption>Card with live tokens</Caption>
-      <div className="sg-card">
+      <Caption>{activeId} card with live tokens</Caption>
+      <div className={cls}>
         <p className="sg-text-small" style={{ opacity: 0.7 }}>
           Sample card
         </p>
@@ -203,51 +196,26 @@ export function CardPreview() {
           Considered, calm, in service of the work.
         </h3>
         <p className="sg-text-main" style={{ marginTop: "0.75em" }}>
-          This card is rendered with the live token values: padding, radius,
-          background, foreground, border, and shadow all come from the editor
-          on the left.
+          This card is rendered with the live tokens for the {activeId} variant.
+          Switch the filter to compare.
         </p>
-        <div style={{ marginTop: "1em", display: "flex", gap: "0.5em" }}>
-          <button type="button" className="sg-button">Primary action</button>
-        </div>
       </div>
     </div>
   );
 }
 
-export function ButtonPreview() {
+export function ButtonPreview({ activeId }) {
+  const cls = `sg-button${activeId === "primary" ? "" : `-${activeId}`}`;
   return (
     <div className="flex flex-col gap-4">
-      <Caption>Button — default & hover</Caption>
-      <div className="flex flex-wrap gap-3">
-        <button type="button" className="sg-button">Default</button>
-        <button
-          type="button"
-          className="sg-button"
-          style={{
-            background: "var(--sg-button-hover-background)",
-            color: "var(--sg-button-hover-foreground)",
-          }}
-        >
-          Hover state
+      <Caption>{activeId} button — hover to see the hover state</Caption>
+      <div className="flex flex-wrap items-center gap-4">
+        <button type="button" className={cls}>
+          Start a project
         </button>
-      </div>
-      <Caption>In context</Caption>
-      <div className="sg-card">
-        <p className="sg-text-main">
-          Talk to our team about your launch, your rebrand, or the system
-          underneath both.
-        </p>
-        <div style={{ marginTop: "1em", display: "flex", gap: "0.5em" }}>
-          <button type="button" className="sg-button">Start a project</button>
-          <button
-            type="button"
-            className="sg-button"
-            style={{ background: "transparent", color: "var(--sg-color-dark)" }}
-          >
-            Read the brief
-          </button>
-        </div>
+        <span className="text-[11px] text-[var(--chrome-fg-subtle)]">
+          ← hover the button
+        </span>
       </div>
     </div>
   );
@@ -260,8 +228,7 @@ export function LinksPreview({ tokens }) {
       <Caption>Named links</Caption>
       {items.length === 0 ? (
         <p className="text-[12px] text-[var(--chrome-fg-muted)]">
-          Empty. Sections like footer-minimal can reference these by name once
-          you add them.
+          Empty. Add a name and URL on the left, then hit Add link.
         </p>
       ) : (
         <ul className="flex flex-col gap-1">
@@ -286,7 +253,7 @@ export function LinksPreview({ tokens }) {
 
 function Caption({ children }) {
   return (
-    <p className="text-[10px] uppercase tracking-[0.16em] text-[var(--chrome-fg-subtle)]">
+    <p className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)]">
       {children}
     </p>
   );
@@ -298,11 +265,6 @@ function Code({ children }) {
       {children}
     </pre>
   );
-}
-
-function formula(rem, vp) {
-  if (!rem || !vp) return "—";
-  return `${Number(((Number(rem) / Number(vp)) * 100).toFixed(4))}vw`;
 }
 
 function kebab(s) {
