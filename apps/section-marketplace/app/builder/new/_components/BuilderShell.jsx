@@ -348,6 +348,8 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             }}
             onBack={() => setSelectedElementKey(null)}
             buttonVariants={tokens.buttons?.map((b) => b.id) ?? []}
+            typographyVariants={Object.keys(tokens.typography ?? {})}
+            cardVariants={tokens.cards?.map((c) => c.id) ?? []}
             onMoveUp={() => moveSection(selectedSectionId, -1)}
             onMoveDown={() => moveSection(selectedSectionId, +1)}
             onRemove={() => removeSection(selectedSectionId)}
@@ -514,7 +516,10 @@ function NavInstance({ instance, meta, selected, selectedElementKey, elementStyl
       onClick={(e) => {
         if (e.target.closest("button")) return;
         const el = findElementKey(e.target);
-        if (el) onSelectElement(el);
+        if (el) {
+          e.preventDefault();
+          onSelectElement(el);
+        }
         else onSelect();
       }}
     >
@@ -555,7 +560,10 @@ function SectionInstance({
       onClick={(e) => {
         if (e.target.closest("button")) return;
         const el = findElementKey(e.target);
-        if (el) onSelectElement(el);
+        if (el) {
+          e.preventDefault();
+          onSelectElement(el);
+        }
         else onSelect();
       }}
     >

@@ -12,6 +12,8 @@ export default function InspectorPanel({
   onClose,
   onBack,
   buttonVariants = [],
+  typographyVariants = [],
+  cardVariants = [],
   onMoveUp,
   onMoveDown,
   onRemove,
@@ -96,7 +98,9 @@ export default function InspectorPanel({
             onArrayChange={setArrayItem}
             onTextArrayChange={setTextArrayItem}
             onStyleChange={setElementStyle}
-            variants={buttonVariants}
+            buttonVariants={buttonVariants}
+            typographyVariants={typographyVariants}
+            cardVariants={cardVariants}
           />
         ) : (
           <SectionControls
@@ -117,7 +121,7 @@ function formatElementLabel(el) {
   return el.key;
 }
 
-function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChange, onTextArrayChange, onStyleChange, variants }) {
+function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChange, onTextArrayChange, onStyleChange, buttonVariants, typographyVariants, cardVariants }) {
   const sKey = styleKey(elementKey);
   const currentStyles = elementStyles[sKey] ?? {};
 
@@ -129,6 +133,9 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
       <StyleEditor
         styles={currentStyles}
         onChange={(prop, val) => onStyleChange(sKey, prop, val)}
+        buttonVariants={buttonVariants}
+        typographyVariants={typographyVariants}
+        cardVariants={cardVariants}
       />
     </div>
   );
@@ -229,7 +236,7 @@ function styleKey(el) {
   return parts.join(":");
 }
 
-function StyleEditor({ styles, onChange }) {
+function StyleEditor({ styles, onChange, buttonVariants, typographyVariants, cardVariants }) {
   const fields = [
     { key: "color", label: "Text color", type: "color" },
     { key: "backgroundColor", label: "Background", type: "color" },
@@ -240,7 +247,76 @@ function StyleEditor({ styles, onChange }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <>
+      {/* Styleguide presets */}
+      {(typographyVariants.length > 0 || cardVariants.length > 0 || buttonVariants.length > 0) && (
+        <div className="flex flex-col gap-2 mb-3">
+          <label className="text-[10px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
+            Styleguide presets
+          </label>
+          {typographyVariants.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {typographyVariants.map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => {
+                    onChange("fontSize", "");
+                    onChange("fontWeight", "");
+                    onChange("fontFamily", "");
+                    // Apply typography preset
+                    if (v === "h1") { onChange("fontSize", "96px"); onChange("fontWeight", "500"); }
+                    else if (v === "h2") { onChange("fontSize", "64px"); onChange("fontWeight", "500"); }
+                    else if (v === "h3") { onChange("fontSize", "44px"); onChange("fontWeight", "500"); }
+                    else if (v === "h4") { onChange("fontSize", "32px"); onChange("fontWeight", "500"); }
+                    else if (v === "h5") { onChange("fontSize", "24px"); onChange("fontWeight", "500"); }
+                    else if (v === "h6") { onChange("fontSize", "18px"); onChange("fontWeight", "600"); }
+                    else if (v === "textLarge") { onChange("fontSize", "20px"); onChange("fontWeight", "400"); }
+                    else if (v === "textMain") { onChange("fontSize", "16px"); onChange("fontWeight", "400"); }
+                    else if (v === "textSmall") { onChange("fontSize", "14px"); onChange("fontWeight", "400"); }
+                  }}
+                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
+                    (styles.fontSize && styles.fontSize.includes(v === "textLarge" ? "20" : v === "textMain" ? "16" : v === "textSmall" ? "14" : v === "h1" ? "96" : v === "h2" ? "64" : v === "h3" ? "44" : v === "h4" ? "32" : v === "h5" ? "24" : v === "h6" ? "18" : "16"))
+                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          )}
+          {cardVariants.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {cardVariants.map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => {
+                    if (v === "default") {
+                      onChange("borderRadius", "12px");
+                      onChange("padding", "28px");
+                    } else if (v === "feature") {
+                      onChange("borderRadius", "24px");
+                      onChange("padding", "40px");
+                    }
+                  }}
+                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
+                    (styles.borderRadius && styles.borderRadius.includes(v === "default" ? "12" : "24"))
+                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Custom overrides */}
+      <div className="grid grid-cols-2 gap-3">
       {fields.map((f) => (
         <div key={f.key} className={f.type === "color" ? "col-span-2" : ""}>
           <label className="text-[10px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
@@ -295,6 +371,7 @@ function StyleEditor({ styles, onChange }) {
         </div>
       ))}
     </div>
+    </>
   );
 }
 
