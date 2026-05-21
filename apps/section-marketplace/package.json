@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node db/migrate.mjs && next build",
     "start": "next start",
-    "library:manifest": "node library/scripts/build-manifest.mjs"
+    "library:manifest": "node library/scripts/build-manifest.mjs",
+    "db:migrate": "node db/migrate.mjs"
   },
   "dependencies": {
     "@mr/canonical-stack": "*",
     "@mr/section-library-ui": "*",
+    "@neondatabase/serverless": "^0.10.0",
     "@next/third-parties": "latest",
     "next": "latest",
     "react": "latest",

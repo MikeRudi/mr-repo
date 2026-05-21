@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "id": "excellence-awards",
+      "slug": "excellence-awards",
+      "name": "Priority Pass · Excellence Awards 2026",
+      "category": "campaign",
+      "version": "1.0.0",
+      "summary": "Full-page Webflow-exported campaign for the Priority Pass Excellence Awards 2026, ported to React/JSX.",
+      "renderRoute": "/templates/excellence-awards",
+      "tech": {
+        "framework": "next",
+        "react": true,
+        "css": [
+          "/webflow/css/normalize.css",
+          "/webflow/css/components.css",
+          "/webflow/css/excellence-awards.css",
+          "/styles.css"
+        ],
+        "motion": ["gsap", "scrolltrigger", "lenis", "flip"]
+      }
+    },
+    {
+      "id": "blank",
+      "slug": "blank",
+      "name": "Blank Site",
+      "category": "starter",
+      "version": "0.1.0",
+      "summary": "Empty starter. Hero + intro + CTA + footer. Drop in your own sections from the library.",
+      "renderRoute": null,
+      "tech": {
+        "framework": "next",
+        "react": true,
+        "css": [],
+        "motion": []
+      }
+    }
+  ]
+}

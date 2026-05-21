@@ -1,26 +1,146 @@
 @import "tailwindcss";
 
-/* MakeReign Section Marketplace — design tokens
-   Override these per-project via @theme inline or component-local CSS. */
-@theme {
-  --color-mr-surface: #0b0b0c;
-  --color-mr-fg: #f5f5f4;
-  --color-mr-fg-muted: rgba(245, 245, 244, 0.6);
-  --color-mr-border: rgba(245, 245, 244, 0.12);
-  --color-mr-accent: #c8a96a;
+/* MakeReign Marketplace — design tokens
+   Mirror of @mr/tools-ui token set. Public API is `--chrome-*`.
 
-  --font-display: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+   Source: section-marketplace.vercel.app (boss's deployed CSS).
+   Default theme matches the warm cream + ink-on-paper look;
+   data-theme="light" / "dark" override via theme switcher (Phase B). */
+
+@theme {
+  /* Tailwind utility aliases. Tailwind v4 generates utilities like
+     bg-surface / text-fg / border-border-strong from --color-*. */
+  --color-ground: #fdfcfc;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f3f1;
+  --color-surface-inverse: #000000;
+
+  --color-fg: #000000;
+  --color-fg-muted: #777169;
+  --color-fg-subtle: #a59f97;
+  --color-fg-disabled: #b1b0b0;
+  --color-fg-inverse: #fdfcfc;
+
+  --color-border: #e5e5e5;
+  --color-border-strong: #000000;
+
+  --color-track-stable: #2c8a5a;
+  --color-track-experimental: #b07a1f;
+  --color-track-legacy: #a59f97;
+
+  --color-lifecycle-local: #a59f97;
+  --color-lifecycle-draft: #a59f97;
+  --color-lifecycle-submitted: #777169;
+  --color-lifecycle-inreview: #b07a1f;
+  --color-lifecycle-approved: #65b48a;
+  --color-lifecycle-promoted: #2c8a5a;
+  --color-lifecycle-deprecated: #b1b0b0;
+  --color-lifecycle-archived: #b1b0b0;
+
+  --font-display:
+    "Lay Grotesk Trial", "Lay Grotesk", "Inter Variable", "Inter",
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-body:
+    "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
+  --radius-1: 3px;
+  --radius-2: 6px;
+  --radius-3: 10px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+}
+
+/* Public API: --chrome-* names. Match @mr/tools-ui exactly so any
+   imported section / component referencing them just works. */
+:root {
+  --chrome-ground: var(--color-ground);
+  --chrome-surface: var(--color-surface);
+  --chrome-surface-muted: var(--color-surface-muted);
+  --chrome-surface-inverse: var(--color-surface-inverse);
+
+  --chrome-fg: var(--color-fg);
+  --chrome-fg-muted: var(--color-fg-muted);
+  --chrome-fg-subtle: var(--color-fg-subtle);
+  --chrome-fg-disabled: var(--color-fg-disabled);
+  --chrome-fg-inverse: var(--color-fg-inverse);
+
+  --chrome-border: var(--color-border);
+  --chrome-border-strong: var(--color-border-strong);
+
+  --chrome-track-stable: var(--color-track-stable);
+  --chrome-track-experimental: var(--color-track-experimental);
+  --chrome-track-legacy: var(--color-track-legacy);
+
+  --chrome-lifecycle-local: var(--color-lifecycle-local);
+  --chrome-lifecycle-draft: var(--color-lifecycle-draft);
+  --chrome-lifecycle-submitted: var(--color-lifecycle-submitted);
+  --chrome-lifecycle-inreview: var(--color-lifecycle-inreview);
+  --chrome-lifecycle-approved: var(--color-lifecycle-approved);
+  --chrome-lifecycle-promoted: var(--color-lifecycle-promoted);
+  --chrome-lifecycle-deprecated: var(--color-lifecycle-deprecated);
+  --chrome-lifecycle-archived: var(--color-lifecycle-archived);
+
+  --chrome-font-display: var(--font-display);
+  --chrome-font-body: var(--font-body);
+  --chrome-font-mono: var(--font-mono);
+
+  --chrome-space-1: 4px;
+  --chrome-space-2: 8px;
+  --chrome-space-3: 12px;
+  --chrome-space-4: 16px;
+  --chrome-space-5: 20px;
+  --chrome-space-6: 24px;
+  --chrome-space-8: 32px;
+  --chrome-space-10: 40px;
+  --chrome-space-12: 48px;
+  --chrome-space-16: 64px;
+  --chrome-space-20: 80px;
+  --chrome-space-24: 96px;
+
+  --chrome-radius-1: var(--radius-1);
+  --chrome-radius-2: var(--radius-2);
+  --chrome-radius-3: var(--radius-3);
+  --chrome-radius-card: var(--radius-card);
+  --chrome-radius-pill: var(--radius-pill);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 html,
 body {
-  font-family: var(--font-display);
-  background: var(--color-mr-surface);
-  color: var(--color-mr-fg);
+  margin: 0;
+  padding: 0;
+  background: var(--chrome-surface-muted);
+  color: var(--chrome-fg);
+  font-family: var(--chrome-font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.1px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
 }
 
 code {
-  font-family: var(--font-mono);
+  font-family: var(--chrome-font-mono);
   font-size: 0.9em;
 }

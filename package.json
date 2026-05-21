@@ -7,11 +7,11 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:marketplace": "npm run dev --workspace apps/section-marketplace",
-    "dev:builder": "npm run dev --workspace apps/mr-web-builder",
-    "build:marketplace": "npm run build --workspace apps/section-marketplace",
-    "build:builder": "npm run build --workspace apps/mr-web-builder",
     "build": "npm run build --workspaces --if-present",
-    "library:manifest": "node apps/section-marketplace/library/scripts/build-manifest.mjs"
+    "library:manifest": "npm --workspace apps/section-marketplace run library:manifest",
+    "db:migrate": "npm --workspace apps/section-marketplace run db:migrate"
+  },
+  "devDependencies": {
+    "vercel": "^54.2.0"
   }
 }
