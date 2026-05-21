@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { getSchema } from "../../../../library/section-props.js";
 
-export default function InspectorPanel({ sectionId, name, props, onChange, onClose }) {
+export default function InspectorPanel({ sectionId, name, props, onChange, onClose, buttonVariants = [] }) {
   const schema = getSchema(sectionId);
   const scrollRef = useRef(null);
 
@@ -41,6 +41,7 @@ export default function InspectorPanel({ sectionId, name, props, onChange, onClo
                 field={field}
                 value={props?.[field.key]}
                 onChange={(v) => setKey(field.key, v)}
+                buttonVariants={buttonVariants}
               />
             ))}
           </div>
@@ -54,7 +55,7 @@ export default function InspectorPanel({ sectionId, name, props, onChange, onClo
   );
 }
 
-function FieldBlock({ field, value, onChange }) {
+function FieldBlock({ field, value, onChange, buttonVariants }) {
   const def = getDefault(field.type);
   const current = value ?? def;
 
@@ -79,7 +80,7 @@ function FieldBlock({ field, value, onChange }) {
           <NumberInput value={current} onChange={onChange} min={field.min} step={field.step} />
         )}
         {field.type === "cta" && (
-          <CtaInput value={current} onChange={onChange} />
+          <CtaInput value={current} onChange={onChange} variants={buttonVariants} />
         )}
         {field.type === "link" && (
           <LinkInput value={current} onChange={onChange} />
@@ -132,17 +133,33 @@ function NumberInput({ value, onChange, min, step }) {
   );
 }
 
-function CtaInput({ value, onChange }) {
-  const v = value ?? { label: "", href: "" };
+function CtaInput({ value, onChange, variants }) {
+  const v = value ?? { label: "", href: "", variant: "primary" };
+  const hasVariants = variants && variants.length > 0;
   return (
     <div className="flex flex-col gap-1.5">
-      <input
-        type="text"
-        placeholder="Label"
-        value={v.label ?? ""}
-        onChange={(e) => onChange({ ...v, label: e.target.value })}
-        className="h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
-      />
+      <div className="flex gap-1.5">
+        <input
+          type="text"
+          placeholder="Label"
+          value={v.label ?? ""}
+          onChange={(e) => onChange({ ...v, label: e.target.value })}
+          className="flex-1 h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+        />
+        {hasVariants ? (
+          <select
+            value={v.variant ?? "primary"}
+            onChange={(e) => onChange({ ...v, variant: e.target.value })}
+            className="h-8 px-2 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+          >
+            {variants.map((id) => (
+              <option key={id} value={id}>
+                {id === "primary" ? "Primary" : id.charAt(0).toUpperCase() + id.slice(1)}
+              </option>
+            ))}
+          </select>
+        ) : null}
+      </div>
       <input
         type="text"
         placeholder="Href"
@@ -310,6 +327,7 @@ function getDefault(type) {
     case "number":
       return 0;
     case "cta":
+      return { label: "", href: "", variant: "primary" };
     case "link":
       return { label: "", href: "" };
     case "array-text":

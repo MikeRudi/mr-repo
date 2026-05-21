@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { buttonClass } from "../../../lib/styleguide-defaults.js";
 
 const DEFAULT_LINKS = [
   { label: "Work", href: "#work" },
@@ -12,7 +13,7 @@ const DEFAULT_LINKS = [
 export default function NavigationFloatingBar({
   brand = "MakeReign",
   links = DEFAULT_LINKS,
-  cta = { label: "Start a project", href: "#" },
+  cta = { label: "Start a project", href: "#", variant: "primary" },
 } = {}) {
   const [elevated, setElevated] = useState(false);
 
@@ -61,7 +62,7 @@ export default function NavigationFloatingBar({
           </ul>
           <a
             href={cta.href}
-            className="inline-flex items-center h-9 px-4 rounded-(--chrome-radius-pill) bg-(--chrome-fg) text-(--chrome-fg-inverse) text-[12px]"
+            className={buttonClass(cta.variant)}
           >
             {cta.label}
           </a>

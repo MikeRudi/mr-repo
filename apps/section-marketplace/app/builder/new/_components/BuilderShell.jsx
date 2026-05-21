@@ -312,6 +312,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             props={selectedInstance?.props}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
             onClose={() => setSelectedSectionId(null)}
+            buttonVariants={tokens.buttons?.map((b) => b.id) ?? []}
           />
         </aside>
       ) : null}

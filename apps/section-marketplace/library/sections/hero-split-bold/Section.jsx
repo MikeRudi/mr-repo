@@ -1,9 +1,11 @@
+import { buttonClass } from "../../../lib/styleguide-defaults.js";
+
 export default function HeroSplitBold({
   eyebrow = "Priority Pass · 2026",
   headline = "The work that defined the year.",
   lede = "Forty-two campaigns from twenty-eight studios. One award show that takes craft seriously, and the people who make it.",
-  primaryCta = { label: "View finalists", href: "#" },
-  secondaryCta = { label: "Read the brief", href: "#" },
+  primaryCta = { label: "View finalists", href: "#", variant: "primary" },
+  secondaryCta = { label: "Read the brief", href: "#", variant: "secondary" },
 } = {}) {
   return (
     <section className="bg-(--chrome-ground) text-(--chrome-fg)">
@@ -25,13 +27,13 @@ export default function HeroSplitBold({
           <div className="mt-7 flex flex-wrap gap-2.5">
             <a
               href={primaryCta.href}
-              className="inline-flex items-center h-11 px-5 rounded-(--chrome-radius-pill) bg-(--chrome-fg) text-(--chrome-fg-inverse) text-[13px]"
+              className={buttonClass(primaryCta.variant)}
             >
               {primaryCta.label}
             </a>
             <a
               href={secondaryCta.href}
-              className="inline-flex items-center h-11 px-5 rounded-(--chrome-radius-pill) border border-(--chrome-border-strong) text-(--chrome-fg) text-[13px] hover:bg-(--chrome-fg) hover:text-(--chrome-fg-inverse) transition-colors"
+              className={buttonClass(secondaryCta.variant)}
             >
               {secondaryCta.label}
             </a>

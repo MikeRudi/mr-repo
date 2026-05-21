@@ -225,3 +225,11 @@ function round(n) {
   // Trim long decimals
   return Math.round(n * 1e4) / 1e4;
 }
+
+/**
+ * Generate a styleguide button class name from a variant id.
+ * Primary maps to `.sg-button`; everything else gets the suffix.
+ */
+export function buttonClass(variant = "primary") {
+  return variant === "primary" ? "sg-button" : `sg-button-${variant}`;
+}
