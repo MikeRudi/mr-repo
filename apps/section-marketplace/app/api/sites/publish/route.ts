@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+
+// In-memory storage (won't persist across serverless function invocations)
+// In production, use Vercel Postgres, Vercel KV, or another database
+const sites = new Map<string, any>();
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,17 +12,8 @@ export async function POST(req: NextRequest) {
     // Generate a unique site ID
     const siteId = Math.random().toString(36).slice(2, 10);
 
-    // Store the site data to a JSON file
-    const siteDataPath = path.join(process.cwd(), 'public', 'sites', `${siteId}.json`);
-    
-    // Ensure directory exists
-    const siteDir = path.join(process.cwd(), 'public', 'sites');
-    if (!fs.existsSync(siteDir)) {
-      fs.mkdirSync(siteDir, { recursive: true });
-    }
-    
-    // Write site data to file
-    fs.writeFileSync(siteDataPath, JSON.stringify({ pages, tokens, styleGuideId }, null, 2));
+    // Store in memory (note: this won't persist in Vercel serverless environment)
+    sites.set(siteId, { pages, tokens, styleGuideId, createdAt: new Date().toISOString() });
 
     // Generate the URL
     const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
@@ -30,6 +23,7 @@ export async function POST(req: NextRequest) {
       success: true,
       siteId,
       url,
+      note: 'In production, use a database for persistence',
     });
   } catch (error) {
     console.error('Publish error:', error);
@@ -38,4 +32,9 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// Export the sites map so the view route can access it
+export function getSiteData(siteId: string) {
+  return sites.get(siteId);
 }

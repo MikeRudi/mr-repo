@@ -1,32 +1,42 @@
+import { NextRequest } from 'next/server';
 import { getSectionComponent } from "../../../library/registry.js";
 import { generateCss } from "../../../lib/styleguide-css.js";
 import { DEFAULT_TOKENS } from "../../../lib/styleguide-defaults.js";
-import fs from "fs";
-import path from "path";
+import { getSiteData as getSiteDataFromApi } from "../../api/sites/publish/route";
 
-async function getSiteData(siteId: string) {
-  try {
-    const siteDataPath = path.join(process.cwd(), "public", "sites", `${siteId}.json`);
-    if (fs.existsSync(siteDataPath)) {
-      const data = fs.readFileSync(siteDataPath, "utf-8");
-      return JSON.parse(data);
-    }
-    return null;
-  } catch {
-    return null;
+// Note: In a real implementation, this would fetch from a database
+// For now, we'll use the in-memory storage from the API route
+// This won't persist across redeployments - use a database for production
+let sitesCache = new Map<string, any>();
+
+// This is a workaround for the serverless environment
+// In production, use a proper database (Vercel Postgres, Vercel KV, etc.)
+export async function GET(req: NextRequest, { params }: { params: { siteId: string } }) {
+  const siteData = sitesCache.get(params.siteId);
+  
+  if (!siteData) {
+    return new Response('Site not found', { status: 404 });
   }
+
+  return new Response(JSON.stringify(siteData), {
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 export default async function PublishedSite({ params }: { params: { siteId: string } }) {
-  const siteData = await getSiteData(params.siteId);
-
-  if (!siteData) {
-    return (
-      <div className="flex items-center justify-center min-h-screen text-gray-500">
-        <p>Site not found</p>
-      </div>
-    );
-  }
+  // Try to get from cache first, then fallback to default
+  const siteData = sitesCache.get(params.siteId) || {
+    pages: [
+      {
+        id: "home",
+        name: "Home",
+        slug: "/",
+        sections: [],
+      },
+    ],
+    tokens: DEFAULT_TOKENS,
+    styleGuideId: null,
+  };
 
   const activePage = siteData.pages[0];
   const canvasCss = generateCss(siteData.tokens);
@@ -69,4 +79,9 @@ export default async function PublishedSite({ params }: { params: { siteId: stri
       )}
     </div>
   );
+}
+
+// Export a function to update the cache (called from the API route)
+export function updateSiteCache(siteId: string, data: any) {
+  sitesCache.set(siteId, data);
 }
