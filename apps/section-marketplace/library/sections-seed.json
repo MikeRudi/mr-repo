@@ -1,0 +1,496 @@
+{
+  "schemaVersion": 1,
+  "sections": [
+    {
+      "id": "hero-split-bold",
+      "name": "Hero — Split Bold",
+      "category": "hero",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Two-column hero with oversized display headline on the left, supporting copy + CTA on the right. Optional eyebrow line. Designed as the default opener for product, services, and case-study pages.",
+      "dependencies": ["@mr/canonical-stack", "@mr/canonical-stack/Section"],
+      "motionDensity": ["low"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["hero", "split", "headline", "cta"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "attribution": {
+        "originalCreator": "mike",
+        "originatingProject": "react-mr",
+        "submittedAt": "2026-05-21",
+        "approvedAt": "2026-05-21"
+      },
+      "curation": {
+        "intent": "Bold typographic opener that anchors a page with a single statement.",
+        "structuralPattern": "two-column · headline left · supporting right",
+        "structuralSlots": ["eyebrow", "h1", "lede", "primary-cta", "secondary-cta"],
+        "pageTypes": ["landing", "services", "about", "case-study"],
+        "tonalAffordances": ["editorial", "premium", "confident"],
+        "visualDensity": "airy",
+        "imageryDependence": "none",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": [],
+          "pairsBelow": ["intro", "stats", "features", "carousel"],
+          "antiPairs": ["hero-split-gallery"]
+        }
+      }
+    },
+    {
+      "id": "hero-split-gallery",
+      "name": "Hero — Split Gallery",
+      "category": "hero",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Submitted",
+      "description": "Hero with the headline left and a 2x2 image gallery right. Useful for portfolio, agency, or product pages where multiple visuals carry equal weight.",
+      "dependencies": ["@mr/canonical-stack", "@mr/canonical-stack/Section"],
+      "motionDensity": ["medium"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["hero", "split", "gallery", "imagery"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "attribution": {
+        "originalCreator": "mike",
+        "originatingProject": "react-mr",
+        "submittedAt": "2026-05-21"
+      },
+      "curation": {
+        "intent": "Show range and craft up front via a tile of supporting visuals.",
+        "structuralPattern": "two-column · text left · 2x2 grid right",
+        "structuralSlots": ["eyebrow", "h1", "lede", "image-1", "image-2", "image-3", "image-4"],
+        "pageTypes": ["landing", "portfolio", "agency", "about"],
+        "tonalAffordances": ["editorial", "considered"],
+        "visualDensity": "balanced",
+        "imageryDependence": "high",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": [],
+          "pairsBelow": ["intro", "features-marquee", "case-study-list"],
+          "antiPairs": ["hero-split-bold"]
+        }
+      }
+    },
+    {
+      "id": "intro-eyebrow-statement",
+      "name": "Intro — Eyebrow + Statement",
+      "category": "intro",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Single-column intro with a small eyebrow tag and a 1–3 line statement. Used as the second section after a hero to set narrative direction.",
+      "dependencies": ["@mr/canonical-stack/Section"],
+      "motionDensity": ["low"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["intro", "eyebrow", "statement", "editorial"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Quiet beat after a hero; sets thesis.",
+        "structuralPattern": "single-col · centred or left-aligned",
+        "structuralSlots": ["eyebrow", "statement"],
+        "pageTypes": ["landing", "services", "about"],
+        "tonalAffordances": ["editorial", "restrained"],
+        "visualDensity": "airy",
+        "imageryDependence": "none",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": ["hero-split-bold", "hero-split-gallery"],
+          "pairsBelow": ["features-marquee", "stats-quad", "carousel-quote"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "carousel-quote",
+      "name": "Carousel — Quote",
+      "category": "carousel",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Horizontal-scroll quote carousel with author attribution. Auto-advances; pauses on hover. Designed for testimonials, customer voice, or editorial pull-quotes.",
+      "dependencies": ["@mr/canonical-stack/Section"],
+      "motionDensity": ["medium"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["carousel", "quote", "testimonial", "rotation"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Rotate proof points without dominating the page.",
+        "structuralPattern": "horizontal carousel · single quote per slide",
+        "structuralSlots": ["quote", "author", "role", "logo"],
+        "pageTypes": ["landing", "case-study", "services", "about"],
+        "tonalAffordances": ["restrained", "trusted"],
+        "visualDensity": "airy",
+        "imageryDependence": "low",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": ["intro-eyebrow-statement", "features-marquee"],
+          "pairsBelow": ["cta-band", "footer-minimal"],
+          "antiPairs": ["testimonials-grid"]
+        }
+      }
+    },
+    {
+      "id": "testimonials-grid",
+      "name": "Testimonials — Grid",
+      "category": "testimonials",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Three-column grid of testimonial cards. Each card carries quote, author, role, optional avatar. Use as a denser alternative to the quote carousel.",
+      "dependencies": ["@mr/canonical-stack/Section"],
+      "motionDensity": ["low"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["testimonials", "grid", "social-proof"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Show breadth of customer voice at a glance.",
+        "structuralPattern": "three-column grid · uniform cards",
+        "structuralSlots": ["h2", "card.quote", "card.author", "card.role", "card.avatar"],
+        "pageTypes": ["landing", "services", "case-study"],
+        "tonalAffordances": ["trusted", "structured"],
+        "visualDensity": "balanced",
+        "imageryDependence": "low",
+        "copyDensity": "balanced",
+        "composition": {
+          "pairsAbove": ["intro-eyebrow-statement"],
+          "pairsBelow": ["cta-band", "footer-minimal"],
+          "antiPairs": ["carousel-quote"]
+        }
+      }
+    },
+    {
+      "id": "features-marquee",
+      "name": "Features — Marquee",
+      "category": "features",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Continuous-scroll marquee of feature pills or short labels. Pure typographic motion. Use as a transition strip between sections rather than the primary feature list.",
+      "dependencies": ["@mr/canonical-stack/Section", "@mr/canonical-stack/motion"],
+      "motionDensity": ["high"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["features", "marquee", "motion", "strip"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Add motion-led rhythm between calmer sections.",
+        "structuralPattern": "full-bleed strip · continuous scroll",
+        "structuralSlots": ["item.label"],
+        "pageTypes": ["landing", "agency", "portfolio"],
+        "tonalAffordances": ["energetic", "confident"],
+        "visualDensity": "dense",
+        "imageryDependence": "none",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": ["hero-split-bold", "intro-eyebrow-statement"],
+          "pairsBelow": ["features-flip-carousel", "stats-quad"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "features-flip-carousel",
+      "name": "Features — Flip Carousel",
+      "category": "features",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "GSAP Flip-driven carousel where the active card grows and adjacent cards fold back. Use for product or capability rotations where each tile deserves a beat.",
+      "dependencies": ["@mr/canonical-stack/Section", "@mr/canonical-stack/motion"],
+      "motionDensity": ["high"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["features", "carousel", "flip", "gsap"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Showcase a small set of capabilities with directed attention.",
+        "structuralPattern": "centred carousel · 1 active + 2 peripheral",
+        "structuralSlots": ["card.eyebrow", "card.title", "card.body", "card.media"],
+        "pageTypes": ["landing", "services", "product"],
+        "tonalAffordances": ["confident", "premium"],
+        "visualDensity": "balanced",
+        "imageryDependence": "medium",
+        "copyDensity": "balanced",
+        "composition": {
+          "pairsAbove": ["features-marquee", "intro-eyebrow-statement"],
+          "pairsBelow": ["pricing-three-tier", "cta-band"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "stats-quad",
+      "name": "Stats — Quad",
+      "category": "features",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Four large numerals in a single row, each with a short label. Animated count-up on scroll into view. Used as a credibility beat after a hero or intro.",
+      "dependencies": ["@mr/canonical-stack/Section", "@mr/canonical-stack/motion"],
+      "motionDensity": ["medium"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["stats", "numerals", "counters", "credibility"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Establish credibility quickly with concrete numbers.",
+        "structuralPattern": "four-column · numeral-led",
+        "structuralSlots": ["h2", "stat-1", "stat-2", "stat-3", "stat-4"],
+        "pageTypes": ["landing", "about", "services"],
+        "tonalAffordances": ["confident", "factual"],
+        "visualDensity": "airy",
+        "imageryDependence": "none",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": ["intro-eyebrow-statement", "hero-split-bold"],
+          "pairsBelow": ["testimonials-grid", "carousel-quote", "cta-band"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "gallery-parallax-columns",
+      "name": "Gallery — Parallax Columns",
+      "category": "gallery",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Three vertical image columns scrolling at offset speeds. Cinematic, imagery-led break between content sections.",
+      "dependencies": ["@mr/canonical-stack/Section", "@mr/canonical-stack/motion"],
+      "motionDensity": ["high"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["gallery", "parallax", "imagery", "cinematic"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Visual breath between dense sections; portfolio cadence.",
+        "structuralPattern": "three vertical columns · parallax",
+        "structuralSlots": ["col-1.images", "col-2.images", "col-3.images"],
+        "pageTypes": ["portfolio", "agency", "case-study"],
+        "tonalAffordances": ["cinematic", "premium"],
+        "visualDensity": "dense",
+        "imageryDependence": "high",
+        "copyDensity": "none",
+        "composition": {
+          "pairsAbove": ["hero-split-gallery"],
+          "pairsBelow": ["case-study-list", "cta-band"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "form-contact-split",
+      "name": "Form — Contact Split",
+      "category": "forms",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Submitted",
+      "description": "Two-column contact section: copy + reasons-to-reach-out on the left, form fields on the right. Validates inline and posts to a configured webhook.",
+      "dependencies": ["@mr/canonical-stack/Section"],
+      "motionDensity": ["low"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["form", "contact", "split", "lead"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Convert without disrupting the page rhythm.",
+        "structuralPattern": "two-column · copy left · form right",
+        "structuralSlots": ["eyebrow", "h2", "lede", "field.name", "field.email", "field.message", "submit"],
+        "pageTypes": ["landing", "contact", "services"],
+        "tonalAffordances": ["restrained", "trusted"],
+        "visualDensity": "balanced",
+        "imageryDependence": "none",
+        "copyDensity": "balanced",
+        "composition": {
+          "pairsAbove": ["features-flip-carousel", "testimonials-grid"],
+          "pairsBelow": ["footer-minimal"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "cta-band",
+      "name": "CTA Band",
+      "category": "cta",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Full-width band with a centred headline and a primary CTA. Use as the closing beat before the footer.",
+      "dependencies": ["@mr/canonical-stack/Section"],
+      "motionDensity": ["low"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["cta", "band", "closer"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Single decisive ask before the user leaves.",
+        "structuralPattern": "full-bleed · centred · headline + CTA",
+        "structuralSlots": ["headline", "cta-primary", "cta-secondary"],
+        "pageTypes": ["landing", "services", "case-study"],
+        "tonalAffordances": ["confident", "restrained"],
+        "visualDensity": "airy",
+        "imageryDependence": "none",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": ["testimonials-grid", "stats-quad", "features-flip-carousel"],
+          "pairsBelow": ["footer-minimal"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "footer-minimal",
+      "name": "Footer — Minimal",
+      "category": "footer",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Two-row footer: brand and short statement on top, link grid + legal at the bottom. Designed to close pages without competing with their CTA.",
+      "dependencies": ["@mr/canonical-stack/Section"],
+      "motionDensity": ["none"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["footer", "minimal", "legal", "links"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Close the page; provide essential links and legal.",
+        "structuralPattern": "two-row · brand top · grid bottom",
+        "structuralSlots": ["brand", "statement", "link-group-1", "link-group-2", "link-group-3", "legal"],
+        "pageTypes": ["landing", "services", "about", "case-study", "contact"],
+        "tonalAffordances": ["restrained"],
+        "visualDensity": "balanced",
+        "imageryDependence": "none",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": ["cta-band", "form-contact-split"],
+          "pairsBelow": [],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "navigation-floating-bar",
+      "name": "Navigation — Floating Bar",
+      "category": "navigation",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Sticky top navigation that lifts off the page on scroll, transitioning from transparent to surface-elevated. Includes brand mark, primary links, and a single CTA.",
+      "dependencies": ["@mr/canonical-stack/Section", "@mr/canonical-stack/motion"],
+      "motionDensity": ["medium"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["nav", "sticky", "floating", "bar"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Persistent, low-distraction wayfinding.",
+        "structuralPattern": "sticky bar · brand · links · CTA",
+        "structuralSlots": ["brand", "links", "cta"],
+        "pageTypes": ["all"],
+        "tonalAffordances": ["restrained", "premium"],
+        "visualDensity": "airy",
+        "imageryDependence": "none",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": [],
+          "pairsBelow": ["hero-split-bold", "hero-split-gallery"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "pricing-three-tier",
+      "name": "Pricing — Three Tier",
+      "category": "features",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Submitted",
+      "description": "Three pricing tiers in a single row, with the middle plan visually elevated as the recommended option.",
+      "dependencies": ["@mr/canonical-stack/Section"],
+      "motionDensity": ["low"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["pricing", "tiers", "plans"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Make the choice between plans obvious and fast.",
+        "structuralPattern": "three columns · middle elevated",
+        "structuralSlots": ["h2", "tier.name", "tier.price", "tier.features", "tier.cta"],
+        "pageTypes": ["pricing", "landing"],
+        "tonalAffordances": ["clear", "confident"],
+        "visualDensity": "balanced",
+        "imageryDependence": "none",
+        "copyDensity": "balanced",
+        "composition": {
+          "pairsAbove": ["features-flip-carousel", "stats-quad"],
+          "pairsBelow": ["testimonials-grid", "cta-band"],
+          "antiPairs": []
+        }
+      }
+    },
+    {
+      "id": "case-study-list",
+      "name": "Case Study — List",
+      "category": "gallery",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Submitted",
+      "description": "Vertical list of case-study rows. Each row carries client name, year, sector, and a single hero image that fills on hover.",
+      "dependencies": ["@mr/canonical-stack/Section", "@mr/canonical-stack/motion"],
+      "motionDensity": ["medium"],
+      "responsive": { "profile": "desktop / mobile-stacked" },
+      "previews": { "static": "preview.png" },
+      "tags": ["case-study", "list", "portfolio"],
+      "created": "2026-05-21",
+      "updated": "2026-05-21",
+      "submittedBy": "mike",
+      "curation": {
+        "intent": "Index of work; rewards scanning then deepening.",
+        "structuralPattern": "vertical list · row reveal-on-hover",
+        "structuralSlots": ["row.client", "row.year", "row.sector", "row.image"],
+        "pageTypes": ["portfolio", "agency", "about"],
+        "tonalAffordances": ["editorial", "premium"],
+        "visualDensity": "dense",
+        "imageryDependence": "high",
+        "copyDensity": "tight",
+        "composition": {
+          "pairsAbove": ["gallery-parallax-columns", "intro-eyebrow-statement"],
+          "pairsBelow": ["cta-band", "footer-minimal"],
+          "antiPairs": []
+        }
+      }
+    }
+  ]
+}
