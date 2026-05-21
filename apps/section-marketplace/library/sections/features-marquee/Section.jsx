@@ -29,6 +29,8 @@ export default function FeaturesMarquee({
         {loop.map((item, i) => (
           <span
             key={i}
+            data-sg-prop="items"
+            data-sg-index={i % items.length}
             className="flex items-center gap-10 font-[family-name:var(--chrome-font-display)] text-[clamp(28px,4vw,48px)] leading-none whitespace-nowrap"
           >
             <span>{item}</span>

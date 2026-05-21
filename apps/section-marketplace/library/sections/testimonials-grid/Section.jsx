@@ -28,10 +28,16 @@ export default function TestimonialsGrid({
     <section className="bg-(--chrome-ground) text-(--chrome-fg)">
       <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-24 lg:py-28">
         <div className="max-w-[640px]">
-          <p className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-subtle)">
+          <p
+            data-sg-prop="eyebrow"
+            className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-subtle)"
+          >
             {eyebrow}
           </p>
-          <h2 className="mt-3 font-[family-name:var(--chrome-font-display)] text-[clamp(32px,4vw,56px)] leading-[1.05] tracking-[-0.01em] text-(--chrome-fg)">
+          <h2
+            data-sg-prop="heading"
+            className="mt-3 font-[family-name:var(--chrome-font-display)] text-[clamp(32px,4vw,56px)] leading-[1.05] tracking-[-0.01em] text-(--chrome-fg)"
+          >
             {heading}
           </h2>
         </div>
@@ -41,16 +47,31 @@ export default function TestimonialsGrid({
               key={i}
               className="flex flex-col gap-6 p-7 bg-(--chrome-surface) border border-(--chrome-border) rounded-(--chrome-radius-card) hover:border-(--chrome-border-strong) transition-colors"
             >
-              <p className="text-[18px] leading-[1.4] text-(--chrome-fg) font-[family-name:var(--chrome-font-display)]">
+              <p
+                data-sg-prop="items"
+                data-sg-index={i}
+                data-sg-sub="quote"
+                className="text-[18px] leading-[1.4] text-(--chrome-fg) font-[family-name:var(--chrome-font-display)]"
+              >
                 <span aria-hidden className="text-(--chrome-fg-subtle)">“</span>
                 {item.quote}
                 <span aria-hidden className="text-(--chrome-fg-subtle)">”</span>
               </p>
               <div className="mt-auto pt-2 border-t border-(--chrome-border)">
-                <p className="text-[13px] font-medium text-(--chrome-fg)">
+                <p
+                  data-sg-prop="items"
+                  data-sg-index={i}
+                  data-sg-sub="author"
+                  className="text-[13px] font-medium text-(--chrome-fg)"
+                >
                   {item.author}
                 </p>
-                <p className="text-[12px] text-(--chrome-fg-muted) mt-0.5">
+                <p
+                  data-sg-prop="items"
+                  data-sg-index={i}
+                  data-sg-sub="role"
+                  className="text-[12px] text-(--chrome-fg-muted) mt-0.5"
+                >
                   {item.role}
                 </p>
               </div>

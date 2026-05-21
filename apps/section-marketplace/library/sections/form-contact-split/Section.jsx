@@ -34,10 +34,16 @@ export default function FormContactSplit({
     <section className="bg-(--chrome-ground) text-(--chrome-fg)">
       <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-24 lg:py-28 grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-12">
         <div>
-          <p className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-subtle)">
+          <p
+            data-sg-prop="eyebrow"
+            className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-subtle)"
+          >
             {eyebrow}
           </p>
-          <h2 className="mt-3 font-[family-name:var(--chrome-font-display)] text-[clamp(36px,4.5vw,64px)] leading-[1.05] tracking-[-0.01em] text-(--chrome-fg)">
+          <h2
+            data-sg-prop="heading"
+            className="mt-3 font-[family-name:var(--chrome-font-display)] text-[clamp(36px,4.5vw,64px)] leading-[1.05] tracking-[-0.01em] text-(--chrome-fg)"
+          >
             {heading}
           </h2>
           <p className="mt-6 text-[14px] text-(--chrome-fg-muted) max-w-[440px] leading-relaxed">
@@ -45,9 +51,11 @@ export default function FormContactSplit({
             message, the better the first response.
           </p>
           <ul className="mt-8 space-y-2">
-            {reasons.map((r) => (
+            {reasons.map((r, ri) => (
               <li
                 key={r}
+                data-sg-prop="reasons"
+                data-sg-index={ri}
                 className="flex items-start gap-3 text-[13px] text-(--chrome-fg-muted)"
               >
                 <span

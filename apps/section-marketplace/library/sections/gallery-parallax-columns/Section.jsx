@@ -89,10 +89,16 @@ export default function GalleryParallaxColumns({
       className="bg-(--chrome-surface-inverse) text-(--chrome-fg-inverse) overflow-hidden"
     >
       <div className="mx-auto max-w-[1200px] px-6 lg:px-10 pt-24 lg:pt-28 pb-16 lg:pb-24">
-        <p className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-inverse)/60">
+        <p
+          data-sg-prop="eyebrow"
+          className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-inverse)/60"
+        >
           {eyebrow}
         </p>
-        <h2 className="mt-3 font-[family-name:var(--chrome-font-display)] text-[clamp(32px,4vw,56px)] leading-[1.05] tracking-[-0.01em] max-w-[720px]">
+        <h2
+          data-sg-prop="heading"
+          className="mt-3 font-[family-name:var(--chrome-font-display)] text-[clamp(32px,4vw,56px)] leading-[1.05] tracking-[-0.01em] max-w-[720px]"
+        >
           {heading}
         </h2>
       </div>

@@ -36,22 +36,37 @@ export default function FooterMinimal({
       <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-14 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10 md:gap-8">
           <div>
-            <p className="font-[family-name:var(--chrome-font-display)] text-[24px] tracking-[-0.01em] text-(--chrome-fg)">
+            <p
+              data-sg-prop="brand"
+              className="font-[family-name:var(--chrome-font-display)] text-[24px] tracking-[-0.01em] text-(--chrome-fg)"
+            >
               {brand}
             </p>
-            <p className="mt-3 text-[13px] text-(--chrome-fg-muted) max-w-[320px] leading-relaxed">
+            <p
+              data-sg-prop="statement"
+              className="mt-3 text-[13px] text-(--chrome-fg-muted) max-w-[320px] leading-relaxed"
+            >
               {statement}
             </p>
           </div>
-          {groups.map((g) => (
+          {groups.map((g, gi) => (
             <nav key={g.label} aria-label={g.label}>
-              <p className="text-[11px] uppercase tracking-[0.12em] text-(--chrome-fg-subtle)">
+              <p
+                data-sg-prop="groups"
+                data-sg-index={gi}
+                data-sg-sub="label"
+                className="text-[11px] uppercase tracking-[0.12em] text-(--chrome-fg-subtle)"
+              >
                 {g.label}
               </p>
               <ul className="mt-3 space-y-2">
-                {g.links.map((l) => (
+                {g.links.map((l, li) => (
                   <li key={l.label}>
                     <a
+                      data-sg-prop="groups"
+                      data-sg-index={gi}
+                      data-sg-sub="links"
+                      data-sg-link-index={li}
                       href={l.href}
                       className="text-[13px] text-(--chrome-fg) hover:text-(--chrome-fg-muted) transition-colors"
                     >
@@ -64,7 +79,7 @@ export default function FooterMinimal({
           ))}
         </div>
         <div className="mt-12 pt-6 border-t border-(--chrome-border) flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-[12px] text-(--chrome-fg-subtle)">{legal}</p>
+          <p data-sg-prop="legal" className="text-[12px] text-(--chrome-fg-subtle)">{legal}</p>
           <p className="text-[12px] text-(--chrome-fg-subtle) font-[family-name:var(--chrome-font-mono)]">
             v0.1.0
           </p>

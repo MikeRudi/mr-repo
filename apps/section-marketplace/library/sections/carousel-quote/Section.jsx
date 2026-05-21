@@ -53,7 +53,10 @@ export default function CarouselQuote({
       onMouseLeave={() => setPaused(false)}
     >
       <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-24 lg:py-32">
-        <p className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-subtle)">
+        <p
+          data-sg-prop="eyebrow"
+          className="text-[12px] uppercase tracking-[0.2em] text-(--chrome-fg-subtle)"
+        >
           {eyebrow}
         </p>
         <div className="relative mt-6 min-h-[260px] sm:min-h-[220px]">
@@ -67,17 +70,29 @@ export default function CarouselQuote({
                   active ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
               >
-                <blockquote className="font-[family-name:var(--chrome-font-display)] text-[clamp(28px,4vw,52px)] leading-[1.1] tracking-[-0.01em] text-(--chrome-fg) max-w-[920px]">
+                <blockquote
+                  data-sg-prop="items"
+                  data-sg-index={i}
+                  data-sg-sub="quote"
+                  className="font-[family-name:var(--chrome-font-display)] text-[clamp(28px,4vw,52px)] leading-[1.1] tracking-[-0.01em] text-(--chrome-fg) max-w-[920px]"
+                >
                   <span aria-hidden className="text-(--chrome-fg-subtle)">“</span>
                   {item.quote}
                   <span aria-hidden className="text-(--chrome-fg-subtle)">”</span>
                 </blockquote>
                 <figcaption className="mt-6 text-[13px] text-(--chrome-fg-muted)">
-                  <span className="text-(--chrome-fg) font-medium">
+                  <span
+                    data-sg-prop="items"
+                    data-sg-index={i}
+                    data-sg-sub="author"
+                    className="text-(--chrome-fg) font-medium"
+                  >
                     {item.author}
                   </span>
                   <span aria-hidden> · </span>
-                  {item.role}
+                  <span data-sg-prop="items" data-sg-index={i} data-sg-sub="role">
+                    {item.role}
+                  </span>
                 </figcaption>
               </figure>
             );

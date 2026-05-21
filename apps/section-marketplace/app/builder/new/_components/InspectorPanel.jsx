@@ -3,25 +3,66 @@
 import { useEffect, useRef } from "react";
 import { getSchema } from "../../../../library/section-props.js";
 
-export default function InspectorPanel({ sectionId, name, props, onChange, onClose, buttonVariants = [] }) {
+export default function InspectorPanel({
+  sectionId,
+  name,
+  props,
+  elementKey,
+  onChange,
+  onClose,
+  onBack,
+  buttonVariants = [],
+  onMoveUp,
+  onMoveDown,
+  onRemove,
+}) {
   const schema = getSchema(sectionId);
   const scrollRef = useRef(null);
 
-  // Scroll to top when section changes
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
-  }, [sectionId]);
+  }, [sectionId, elementKey]);
 
   function setKey(key, value) {
     onChange({ ...props, [key]: value });
   }
 
+  function setArrayItem(key, index, subKey, value) {
+    const arr = Array.isArray(props[key]) ? [...props[key]] : [];
+    if (!arr[index]) return;
+    arr[index] = { ...arr[index], [subKey]: value };
+    onChange({ ...props, [key]: arr });
+  }
+
+  function setTextArrayItem(key, index, value) {
+    const arr = Array.isArray(props[key]) ? [...props[key]] : [];
+    arr[index] = value;
+    onChange({ ...props, [key]: arr });
+  }
+
+  const selectedField = elementKey
+    ? schema?.fields?.find((f) => f.key === elementKey.key)
+    : null;
+
   return (
     <div className="flex flex-col h-full border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)] overflow-hidden">
       <header className="flex items-center justify-between gap-3 px-4 h-10 border-b border-[var(--chrome-border)] shrink-0">
-        <span className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)] truncate">
-          {name || sectionId}
-        </span>
+        <div className="flex items-center gap-2 min-w-0">
+          {elementKey ? (
+            <button
+              type="button"
+              onClick={onBack}
+              className="text-[11px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)]"
+            >
+              ←
+            </button>
+          ) : null}
+          <span className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)] truncate">
+            {elementKey
+              ? formatElementLabel(elementKey)
+              : name || sectionId}
+          </span>
+        </div>
         <button
           type="button"
           onClick={onClose}
@@ -33,308 +74,163 @@ export default function InspectorPanel({ sectionId, name, props, onChange, onClo
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
-        {schema ? (
-          <div className="flex flex-col gap-5">
-            {schema.fields.map((field) => (
-              <FieldBlock
-                key={field.key}
-                field={field}
-                value={props?.[field.key]}
-                onChange={(v) => setKey(field.key, v)}
-                buttonVariants={buttonVariants}
-              />
-            ))}
-          </div>
+        {elementKey ? (
+          <ElementEditor
+            elementKey={elementKey}
+            value={props}
+            onChange={setKey}
+            onArrayChange={setArrayItem}
+            onTextArrayChange={setTextArrayItem}
+            variants={buttonVariants}
+          />
         ) : (
-          <p className="text-[12px] text-[var(--chrome-fg-muted)]">
-            This section type does not have editable fields yet.
-          </p>
+          <SectionControls
+            name={name || sectionId}
+            onMoveUp={onMoveUp}
+            onMoveDown={onMoveDown}
+            onRemove={onRemove}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function FieldBlock({ field, value, onChange, buttonVariants }) {
-  const def = getDefault(field.type);
-  const current = value ?? def;
+function formatElementLabel(el) {
+  if (el.sub) return `${el.key} · ${el.sub}`;
+  if (el.index != null) return `${el.key}[${el.index}]`;
+  return el.key;
+}
 
+function ElementEditor({ elementKey, value, onChange, onArrayChange, onTextArrayChange, variants }) {
+  const { key, index, sub, linkIndex } = elementKey;
+
+  // Determine what kind of editor to show based on the key
+  const isCta = key.toLowerCase().includes("cta");
+  const isButton = key.toLowerCase().includes("button") || isCta;
+
+  // Array item with sub-field (testimonials, carousel, footer groups)
+  if (index != null && sub) {
+    const arr = Array.isArray(value[key]) ? value[key] : [];
+    const item = arr[Number(index)] ?? {};
+
+    if (sub === "links" && linkIndex != null) {
+      const links = Array.isArray(item.links) ? item.links : [];
+      const link = links[Number(linkIndex)] ?? { label: "", href: "" };
+      return (
+        <div className="flex flex-col gap-4">
+          <TextField label="Link Label" value={link.label} onChange={(v) => {
+            const nextLinks = [...links];
+            nextLinks[Number(linkIndex)] = { ...link, label: v };
+            onArrayChange(key, Number(index), "links", nextLinks);
+          }} />
+          <TextField label="Link Href" value={link.href} onChange={(v) => {
+            const nextLinks = [...links];
+            nextLinks[Number(linkIndex)] = { ...link, href: v };
+            onArrayChange(key, Number(index), "links", nextLinks);
+          }} />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col gap-4">
+        <TextField label={sub.charAt(0).toUpperCase() + sub.slice(1)} value={item[sub] ?? ""} onChange={(v) => onArrayChange(key, Number(index), sub, v)} />
+      </div>
+    );
+  }
+
+  // Plain array text item (features-marquee, reasons)
+  if (index != null && !sub) {
+    const arr = Array.isArray(value[key]) ? value[key] : [];
+    const item = arr[Number(index)] ?? "";
+    return (
+      <div className="flex flex-col gap-4">
+        <TextField label={`${key}[${index}]`} value={item} onChange={(v) => onTextArrayChange(key, Number(index), v)} />
+      </div>
+    );
+  }
+
+  // Simple prop — text, heading, or CTA/button
+  const v = value[key] ?? "";
+
+  if (isButton && typeof v === "object") {
+    return (
+      <div className="flex flex-col gap-4">
+        <TextField label="Label" value={v.label ?? ""} onChange={(val) => onChange({ ...value, [key]: { ...v, label: val } })} />
+        {variants.length > 0 ? (
+          <div>
+            <label className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">Variant</label>
+            <select
+              value={v.variant ?? "primary"}
+              onChange={(e) => onChange({ ...value, [key]: { ...v, variant: e.target.value } })}
+              className="mt-1.5 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            >
+              {variants.map((id) => (
+                <option key={id} value={id}>
+                  {id === "primary" ? "Primary" : id.charAt(0).toUpperCase() + id.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
+        <TextField label="Href" value={v.href ?? ""} onChange={(val) => onChange({ ...value, [key]: { ...v, href: val } })} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <TextField label={key} value={v} onChange={(val) => onChange({ ...value, [key]: val })} />
+    </div>
+  );
+}
+
+function TextField({ label, value, onChange }) {
   return (
     <div>
       <label className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">
-        {field.label}
+        {label}
       </label>
-      {field.hint ? (
-        <p className="text-[10px] text-[var(--chrome-fg-subtle)] mt-0.5 mb-2">
-          {field.hint}
-        </p>
-      ) : null}
-      <div className="mt-1.5">
-        {field.type === "text" && (
-          <TextInput value={current} onChange={onChange} />
-        )}
-        {field.type === "textarea" && (
-          <TextareaInput value={current} onChange={onChange} />
-        )}
-        {field.type === "number" && (
-          <NumberInput value={current} onChange={onChange} min={field.min} step={field.step} />
-        )}
-        {field.type === "cta" && (
-          <CtaInput value={current} onChange={onChange} variants={buttonVariants} />
-        )}
-        {field.type === "link" && (
-          <LinkInput value={current} onChange={onChange} />
-        )}
-        {field.type === "array-text" && (
-          <ArrayTextInput value={current} onChange={onChange} />
-        )}
-        {field.type === "array-object" && (
-          <ArrayObjectInput value={current} onChange={onChange} schema={field.objectFields} />
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* --- Individual field renderers --- */
-
-function TextInput({ value, onChange }) {
-  return (
-    <input
-      type="text"
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
-    />
-  );
-}
-
-function TextareaInput({ value, onChange }) {
-  return (
-    <textarea
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      rows={3}
-      className="w-full px-2.5 py-2 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] resize-y"
-    />
-  );
-}
-
-function NumberInput({ value, onChange, min, step }) {
-  return (
-    <input
-      type="number"
-      value={value ?? 0}
-      min={min}
-      step={step ?? 1}
-      onChange={(e) => onChange(Number(e.target.value))}
-      className="w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
-    />
-  );
-}
-
-function CtaInput({ value, onChange, variants }) {
-  const v = value ?? { label: "", href: "", variant: "primary" };
-  const hasVariants = variants && variants.length > 0;
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex gap-1.5">
-        <input
-          type="text"
-          placeholder="Label"
-          value={v.label ?? ""}
-          onChange={(e) => onChange({ ...v, label: e.target.value })}
-          className="flex-1 h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
-        />
-        {hasVariants ? (
-          <select
-            value={v.variant ?? "primary"}
-            onChange={(e) => onChange({ ...v, variant: e.target.value })}
-            className="h-8 px-2 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
-          >
-            {variants.map((id) => (
-              <option key={id} value={id}>
-                {id === "primary" ? "Primary" : id.charAt(0).toUpperCase() + id.slice(1)}
-              </option>
-            ))}
-          </select>
-        ) : null}
-      </div>
       <input
         type="text"
-        placeholder="Href"
-        value={v.href ?? ""}
-        onChange={(e) => onChange({ ...v, href: e.target.value })}
-        className="h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1.5 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
       />
     </div>
   );
 }
 
-function LinkInput({ value, onChange }) {
-  const v = value ?? { label: "", href: "" };
-  return (
-    <div className="flex flex-col gap-1.5">
-      <input
-        type="text"
-        placeholder="Label"
-        value={v.label ?? ""}
-        onChange={(e) => onChange({ ...v, label: e.target.value })}
-        className="h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
-      />
-      <input
-        type="text"
-        placeholder="Href"
-        value={v.href ?? ""}
-        onChange={(e) => onChange({ ...v, href: e.target.value })}
-        className="h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
-      />
-    </div>
-  );
-}
-
-function ArrayTextInput({ value, onChange }) {
-  const items = Array.isArray(value) ? value : [];
-  const update = (idx, val) => {
-    const next = [...items];
-    next[idx] = val;
-    onChange(next);
-  };
-  const add = () => onChange([...items, ""]);
-  const remove = (idx) => {
-    const next = items.filter((_, i) => i !== idx);
-    onChange(next);
-  };
-
-  return (
-    <div className="flex flex-col gap-1.5">
-      {items.map((item, idx) => (
-        <div key={idx} className="flex gap-1.5">
-          <input
-            type="text"
-            value={item ?? ""}
-            onChange={(e) => update(idx, e.target.value)}
-            className="flex-1 h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
-          />
-          <button
-            type="button"
-            onClick={() => remove(idx)}
-            className="h-8 px-2 rounded-[6px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg-subtle)] hover:text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
-          >
-            Remove
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={add}
-        className="h-8 rounded-[6px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
-      >
-        + Add row
-      </button>
-    </div>
-  );
-}
-
-function ArrayObjectInput({ value, onChange, schema }) {
-  const items = Array.isArray(value) ? value : [];
-  const add = () => {
-    const blank = {};
-    for (const f of schema) blank[f.key] = f.type === "number" ? 0 : "";
-    onChange([...items, blank]);
-  };
-  const remove = (idx) => {
-    const next = items.filter((_, i) => i !== idx);
-    onChange(next);
-  };
-  const updateItem = (idx, key, val) => {
-    const next = [...items];
-    next[idx] = { ...next[idx], [key]: val };
-    onChange(next);
-  };
-
+function SectionControls({ name, onMoveUp, onMoveDown, onRemove }) {
   return (
     <div className="flex flex-col gap-3">
-      {items.map((item, idx) => (
-        <div
-          key={idx}
-          className="rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-2.5 flex flex-col gap-2"
+      <p className="text-[12px] text-[var(--chrome-fg-muted)]">
+        Click any element inside this section to edit its text and style.
+      </p>
+      <div className="mt-2 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={onMoveUp}
+          className="h-9 rounded-[6px] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
         >
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
-              #{idx + 1}
-            </span>
-            <button
-              type="button"
-              onClick={() => remove(idx)}
-              className="text-[10px] text-[var(--chrome-fg-subtle)] hover:text-[var(--chrome-fg)]"
-            >
-              Remove
-            </button>
-          </div>
-          {schema.map((f) => (
-            <div key={f.key}>
-              <label className="text-[10px] uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
-                {f.label}
-              </label>
-              {f.type === "textarea" ? (
-                <textarea
-                  value={item[f.key] ?? ""}
-                  onChange={(e) => updateItem(idx, f.key, e.target.value)}
-                  rows={2}
-                  className="w-full mt-1 px-2 py-1.5 rounded-[6px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] resize-y"
-                />
-              ) : f.type === "array-object" ? (
-                <ArrayObjectInput
-                  value={item[f.key]}
-                  onChange={(v) => updateItem(idx, f.key, v)}
-                  schema={f.objectFields}
-                />
-              ) : (
-                <input
-                  type={f.type === "number" ? "number" : "text"}
-                  value={item[f.key] ?? (f.type === "number" ? 0 : "")}
-                  onChange={(e) =>
-                    updateItem(
-                      idx,
-                      f.key,
-                      f.type === "number" ? Number(e.target.value) : e.target.value
-                    )
-                  }
-                  className="w-full mt-1 h-7 px-2 rounded-[6px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={add}
-        className="h-8 rounded-[6px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
-      >
-        + Add row
-      </button>
+          Move up
+        </button>
+        <button
+          type="button"
+          onClick={onMoveDown}
+          className="h-9 rounded-[6px] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
+        >
+          Move down
+        </button>
+        <button
+          type="button"
+          onClick={onRemove}
+          className="h-9 rounded-[6px] border border-[var(--chrome-track-experimental)]/40 text-[12px] text-[var(--chrome-track-experimental)] hover:bg-[var(--chrome-track-experimental)]/10"
+        >
+          Remove section
+        </button>
+      </div>
     </div>
   );
-}
-
-function getDefault(type) {
-  switch (type) {
-    case "text":
-    case "textarea":
-      return "";
-    case "number":
-      return 0;
-    case "cta":
-      return { label: "", href: "", variant: "primary" };
-    case "link":
-      return { label: "", href: "" };
-    case "array-text":
-      return [];
-    case "array-object":
-      return [];
-    default:
-      return null;
-  }
 }

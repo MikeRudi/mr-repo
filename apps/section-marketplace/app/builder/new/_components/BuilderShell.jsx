@@ -33,6 +33,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [tokens, setTokens] = useState(DEFAULT_TOKENS);
   const [loadingGuides, setLoadingGuides] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
+  const [selectedElementKey, setSelectedElementKey] = useState(null);
 
   // Initial activePageId once pages exist
   useEffect(() => {
@@ -69,14 +70,17 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Escape closes inspector
+  // Escape clears element, then section selection
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") setSelectedSectionId(null);
+      if (e.key === "Escape") {
+        if (selectedElementKey) setSelectedElementKey(null);
+        else setSelectedSectionId(null);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [selectedElementKey]);
 
   async function loadGuide(id) {
     try {
@@ -127,6 +131,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       )
     );
     setSelectedSectionId(newId);
+    setSelectedElementKey(null);
   };
   const removeSection = (instanceId) => {
     setPages((p) =>
@@ -136,7 +141,10 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
           : { ...pg, sections: pg.sections.filter((s) => s.id !== instanceId) }
       )
     );
-    if (selectedSectionId === instanceId) setSelectedSectionId(null);
+    if (selectedSectionId === instanceId) {
+      setSelectedSectionId(null);
+      setSelectedElementKey(null);
+    }
   };
   const moveSection = (instanceId, dir) => {
     setPages((p) =>
@@ -180,6 +188,8 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
 
   const showInspector = Boolean(selectedSectionId);
   const gridCols = showInspector ? "grid-cols-[280px_1fr_280px]" : "grid-cols-[280px_1fr]";
+
+  const isNav = (sectionId) => sectionId === "navigation-floating-bar";
 
   return (
     <div className={`grid h-dvh grid-rows-[48px_1fr] ${gridCols} bg-[var(--chrome-ground)]`}>
@@ -296,9 +306,18 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             page={activePage}
             sectionsMeta={initialSections}
             selectedId={selectedSectionId}
-            onSelect={setSelectedSectionId}
+            selectedElementKey={selectedElementKey}
+            onSelectSection={(id) => {
+              setSelectedSectionId(id);
+              setSelectedElementKey(null);
+            }}
+            onSelectElement={(sectionId, elementKey) => {
+              setSelectedSectionId(sectionId);
+              setSelectedElementKey(elementKey);
+            }}
             onMove={moveSection}
             onRemove={removeSection}
+            isNav={isNav}
           />
         </div>
       </main>
@@ -310,9 +329,17 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             sectionId={selectedInstance?.sectionId}
             name={selectedMeta?.name}
             props={selectedInstance?.props}
+            elementKey={selectedElementKey}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
-            onClose={() => setSelectedSectionId(null)}
+            onClose={() => {
+              setSelectedElementKey(null);
+              setSelectedSectionId(null);
+            }}
+            onBack={() => setSelectedElementKey(null)}
             buttonVariants={tokens.buttons?.map((b) => b.id) ?? []}
+            onMoveUp={() => moveSection(selectedSectionId, -1)}
+            onMoveDown={() => moveSection(selectedSectionId, +1)}
+            onRemove={() => removeSection(selectedSectionId)}
           />
         </aside>
       ) : null}
@@ -320,8 +347,22 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   );
 }
 
-function Canvas({ page, sectionsMeta, selectedId, onSelect, onMove, onRemove }) {
+function Canvas({
+  page,
+  sectionsMeta,
+  selectedId,
+  selectedElementKey,
+  onSelectSection,
+  onSelectElement,
+  onMove,
+  onRemove,
+  isNav,
+}) {
   if (!page) return null;
+
+  const navSections = page.sections.filter((s) => isNav(s.sectionId));
+  const contentSections = page.sections.filter((s) => !isNav(s.sectionId));
+
   if (page.sections.length === 0) {
     return (
       <div className="grid place-items-center h-full min-h-[60vh] text-[var(--chrome-fg-disabled)]">
@@ -334,15 +375,35 @@ function Canvas({ page, sectionsMeta, selectedId, onSelect, onMove, onRemove }) 
       </div>
     );
   }
+
   return (
     <div className="flex flex-col">
-      {page.sections.map((inst) => (
+      {/* Nav sections rendered at top without wrapper */}
+      {navSections.map((inst) => {
+        const Component = getSectionComponent(inst.sectionId);
+        return (
+          <NavInstance
+            key={inst.id}
+            instance={inst}
+            meta={sectionsMeta.find((s) => s.id === inst.sectionId)}
+            selected={inst.id === selectedId && !selectedElementKey}
+            onSelect={() => onSelectSection(inst.id)}
+            onSelectElement={(key) => onSelectElement(inst.id, key)}
+          >
+            {Component ? <Component {...inst.props} /> : null}
+          </NavInstance>
+        );
+      })}
+
+      {/* Content sections */}
+      {contentSections.map((inst) => (
         <SectionInstance
           key={inst.id}
           instance={inst}
           meta={sectionsMeta.find((s) => s.id === inst.sectionId)}
-          selected={inst.id === selectedId}
-          onSelect={() => onSelect(inst.id)}
+          selected={inst.id === selectedId && !selectedElementKey}
+          onSelect={() => onSelectSection(inst.id)}
+          onSelectElement={(key) => onSelectElement(inst.id, key)}
           onMoveUp={() => onMove(inst.id, -1)}
           onMoveDown={() => onMove(inst.id, +1)}
           onRemove={() => onRemove(inst.id)}
@@ -352,7 +413,59 @@ function Canvas({ page, sectionsMeta, selectedId, onSelect, onMove, onRemove }) 
   );
 }
 
-function SectionInstance({ instance, meta, selected, onSelect, onMoveUp, onMoveDown, onRemove }) {
+function findElementKey(target) {
+  let el = target;
+  while (el && el !== document.body) {
+    const prop = el.dataset?.sgProp;
+    if (prop) {
+      return {
+        key: prop,
+        index: el.dataset?.sgIndex,
+        sub: el.dataset?.sgSub,
+        linkIndex: el.dataset?.sgLinkIndex,
+      };
+    }
+    el = el.parentElement;
+  }
+  return null;
+}
+
+function NavInstance({ instance, meta, selected, onSelect, onSelectElement, children }) {
+  return (
+    <div
+      className={`relative cursor-pointer ${
+        selected
+          ? "ring-2 ring-inset ring-[var(--chrome-track-stable)]"
+          : "hover:ring-1 hover:ring-inset hover:ring-[var(--chrome-border-strong)]"
+      }`}
+      onClick={(e) => {
+        if (e.target.closest("button")) return;
+        const el = findElementKey(e.target);
+        if (el) onSelectElement(el);
+        else onSelect();
+      }}
+    >
+      {children}
+      {/* Label */}
+      <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+        <span className="px-2 h-7 inline-flex items-center rounded-[6px] bg-[var(--chrome-fg)]/85 text-[var(--chrome-fg-inverse)] text-[10px] font-bold uppercase tracking-[0.04em]">
+          {meta?.name ?? instance.sectionId}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function SectionInstance({
+  instance,
+  meta,
+  selected,
+  onSelect,
+  onSelectElement,
+  onMoveUp,
+  onMoveDown,
+  onRemove,
+}) {
   const Component = getSectionComponent(instance.sectionId);
   return (
     <div
@@ -362,12 +475,12 @@ function SectionInstance({ instance, meta, selected, onSelect, onMoveUp, onMoveD
           : "hover:ring-1 hover:ring-inset hover:ring-[var(--chrome-border-strong)]"
       }`}
       onClick={(e) => {
-        // Don't select if clicking a toolbar button
         if (e.target.closest("button")) return;
-        onSelect();
+        const el = findElementKey(e.target);
+        if (el) onSelectElement(el);
+        else onSelect();
       }}
     >
-      {/* Live render or placeholder */}
       {Component ? (
         <Component {...instance.props} />
       ) : (
