@@ -131,20 +131,48 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
   const isButton = key.toLowerCase().includes("button") || isCta;
   const v = value[key] ?? "";
 
-  const styleSection = (
+  const styleguideSection = (
     <div className="flex flex-col gap-3 mt-2 pt-4 border-t border-[var(--chrome-border)]">
       <p className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">
-        Style overrides
+        Styleguide presets
       </p>
-      <StyleEditor
-        styles={currentStyles}
-        onChange={(prop, val) => onStyleChange(sKey, prop, val)}
-        buttonVariants={buttonVariants}
+      <StyleguidePresets
         typographyVariants={typographyVariants}
         cardVariants={cardVariants}
-        isButton={isButton}
-        currentVariant={isButton && typeof v === "object" ? v.variant : null}
-        onVariantChange={(variant) => onChange({ ...value, [key]: { ...v, variant } })}
+        onApplyPreset={(preset) => {
+          if (preset.type === "typography") {
+            const t = preset.value;
+            if (t === "h1") onStyleChange(sKey, "fontSize", "96px");
+            else if (t === "h2") onStyleChange(sKey, "fontSize", "64px");
+            else if (t === "h3") onStyleChange(sKey, "fontSize", "44px");
+            else if (t === "h4") onStyleChange(sKey, "fontSize", "32px");
+            else if (t === "h5") onStyleChange(sKey, "fontSize", "24px");
+            else if (t === "h6") onStyleChange(sKey, "fontSize", "18px");
+            else if (t === "textLarge") onStyleChange(sKey, "fontSize", "20px");
+            else if (t === "textMain") onStyleChange(sKey, "fontSize", "16px");
+            else if (t === "textSmall") onStyleChange(sKey, "fontSize", "14px");
+          } else if (preset.type === "card") {
+            if (preset.value === "default") {
+              onStyleChange(sKey, "borderRadius", "12px");
+              onStyleChange(sKey, "padding", "28px");
+            } else if (preset.value === "feature") {
+              onStyleChange(sKey, "borderRadius", "24px");
+              onStyleChange(sKey, "padding", "40px");
+            }
+          }
+        }}
+      />
+    </div>
+  );
+
+  const overrideSection = (
+    <div className="flex flex-col gap-3 mt-2 pt-4 border-t border-[var(--chrome-border)]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">
+        Custom overrides
+      </p>
+      <StyleOverrides
+        styles={currentStyles}
+        onChange={(prop, val) => onStyleChange(sKey, prop, val)}
       />
     </div>
   );
@@ -169,7 +197,8 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
             nextLinks[Number(linkIndex)] = { ...link, href: v };
             onArrayChange(key, Number(index), "links", nextLinks);
           }} />
-          {styleSection}
+          {styleguideSection}
+          {overrideSection}
         </div>
       );
     }
@@ -177,7 +206,8 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
     return (
       <div className="flex flex-col gap-4">
         <TextField label={sub.charAt(0).toUpperCase() + sub.slice(1)} value={item[sub] ?? ""} onChange={(v) => onArrayChange(key, Number(index), sub, v)} />
-        {styleSection}
+        {styleguideSection}
+        {overrideSection}
       </div>
     );
   }
@@ -189,7 +219,8 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
     return (
       <div className="flex flex-col gap-4">
         <TextField label={`${key}[${index}]`} value={item} onChange={(v) => onTextArrayChange(key, Number(index), v)} />
-        {styleSection}
+        {styleguideSection}
+        {overrideSection}
       </div>
     );
   }
@@ -200,24 +231,29 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
     return (
       <div className="flex flex-col gap-4">
         <TextField label="Label" value={v.label ?? ""} onChange={(val) => onChange({ ...value, [key]: { ...v, label: val } })} />
-        {variants.length > 0 ? (
+        {buttonVariants.length > 0 ? (
           <div>
-            <label className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">Variant</label>
-            <select
-              value={v.variant ?? "primary"}
-              onChange={(e) => onChange({ ...value, [key]: { ...v, variant: e.target.value } })}
-              className="mt-1.5 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
-            >
-              {variants.map((id) => (
-                <option key={id} value={id}>
+            <label className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">Button style</label>
+            <div className="mt-1.5 flex flex-wrap gap-2">
+              {buttonVariants.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => onChange({ ...value, [key]: { ...v, variant: id } })}
+                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
+                    v.variant === id
+                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
+                  }`}
+                >
                   {id === "primary" ? "Primary" : id.charAt(0).toUpperCase() + id.slice(1)}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
         ) : null}
         <TextField label="Href" value={v.href ?? ""} onChange={(val) => onChange({ ...value, [key]: { ...v, href: val } })} />
-        {styleSection}
+        {overrideSection}
       </div>
     );
   }
@@ -225,7 +261,8 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
   return (
     <div className="flex flex-col gap-4">
       <TextField label={key} value={v} onChange={(val) => onChange({ ...value, [key]: val })} />
-      {styleSection}
+      {styleguideSection}
+      {overrideSection}
     </div>
   );
 }
@@ -239,7 +276,42 @@ function styleKey(el) {
   return parts.join(":");
 }
 
-function StyleEditor({ styles, onChange, buttonVariants, typographyVariants, cardVariants, isButton, currentVariant, onVariantChange }) {
+function StyleguidePresets({ typographyVariants, cardVariants, onApplyPreset }) {
+  return (
+    <>
+      {typographyVariants.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {typographyVariants.map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onApplyPreset({ type: "typography", value: v })}
+              className="px-2.5 py-1 rounded-[4px] text-[11px] border border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      )}
+      {cardVariants.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {cardVariants.map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onApplyPreset({ type: "card", value: v })}
+              className="px-2.5 py-1 rounded-[4px] text-[11px] border border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+function StyleOverrides({ styles, onChange }) {
   const fields = [
     { key: "color", label: "Text color", type: "color" },
     { key: "backgroundColor", label: "Background", type: "color" },
@@ -250,94 +322,7 @@ function StyleEditor({ styles, onChange, buttonVariants, typographyVariants, car
   ];
 
   return (
-    <>
-      {/* Styleguide presets */}
-      {(typographyVariants.length > 0 || cardVariants.length > 0 || buttonVariants.length > 0) && (
-        <div className="flex flex-col gap-2 mb-3">
-          <label className="text-[10px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
-            Styleguide presets
-          </label>
-          {isButton && buttonVariants.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {buttonVariants.map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => onVariantChange(v)}
-                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
-                    currentVariant === v
-                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
-                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
-                  }`}
-                >
-                  {v === "primary" ? "Primary" : v.charAt(0).toUpperCase() + v.slice(1)}
-                </button>
-              ))}
-            </div>
-          )}
-          {typographyVariants.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {typographyVariants.map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => {
-                    onChange("fontSize", "");
-                    onChange("fontWeight", "");
-                    onChange("fontFamily", "");
-                    // Apply typography preset
-                    if (v === "h1") { onChange("fontSize", "96px"); onChange("fontWeight", "500"); }
-                    else if (v === "h2") { onChange("fontSize", "64px"); onChange("fontWeight", "500"); }
-                    else if (v === "h3") { onChange("fontSize", "44px"); onChange("fontWeight", "500"); }
-                    else if (v === "h4") { onChange("fontSize", "32px"); onChange("fontWeight", "500"); }
-                    else if (v === "h5") { onChange("fontSize", "24px"); onChange("fontWeight", "500"); }
-                    else if (v === "h6") { onChange("fontSize", "18px"); onChange("fontWeight", "600"); }
-                    else if (v === "textLarge") { onChange("fontSize", "20px"); onChange("fontWeight", "400"); }
-                    else if (v === "textMain") { onChange("fontSize", "16px"); onChange("fontWeight", "400"); }
-                    else if (v === "textSmall") { onChange("fontSize", "14px"); onChange("fontWeight", "400"); }
-                  }}
-                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
-                    (styles.fontSize && styles.fontSize.includes(v === "textLarge" ? "20" : v === "textMain" ? "16" : v === "textSmall" ? "14" : v === "h1" ? "96" : v === "h2" ? "64" : v === "h3" ? "44" : v === "h4" ? "32" : v === "h5" ? "24" : v === "h6" ? "18" : "16"))
-                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
-                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
-                  }`}
-                >
-                  {v}
-                </button>
-              ))}
-            </div>
-          )}
-          {cardVariants.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {cardVariants.map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => {
-                    if (v === "default") {
-                      onChange("borderRadius", "12px");
-                      onChange("padding", "28px");
-                    } else if (v === "feature") {
-                      onChange("borderRadius", "24px");
-                      onChange("padding", "40px");
-                    }
-                  }}
-                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
-                    (styles.borderRadius && styles.borderRadius.includes(v === "default" ? "12" : "24"))
-                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
-                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
-                  }`}
-                >
-                  {v}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Custom overrides */}
-      <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3">
       {fields.map((f) => (
         <div key={f.key} className={f.type === "color" ? "col-span-2" : ""}>
           <label className="text-[10px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
@@ -392,7 +377,6 @@ function StyleEditor({ styles, onChange, buttonVariants, typographyVariants, car
         </div>
       ))}
     </div>
-    </>
   );
 }
 
