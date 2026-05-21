@@ -8,6 +8,7 @@ import { DEFAULT_TOKENS, normalizeTokens } from "../../../../lib/styleguide-defa
 import SectionsPanel from "./SectionsPanel.jsx";
 import PagesPanel from "./PagesPanel.jsx";
 import StylePanel from "./StylePanel.jsx";
+import InspectorPanel from "./InspectorPanel.jsx";
 
 const TOOLS = [
   { id: "sections", label: "Sections" },
@@ -31,6 +32,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [activeGuideId, setActiveGuideId] = useState(null);
   const [tokens, setTokens] = useState(DEFAULT_TOKENS);
   const [loadingGuides, setLoadingGuides] = useState(false);
+  const [selectedSectionId, setSelectedSectionId] = useState(null);
 
   // Initial activePageId once pages exist
   useEffect(() => {
@@ -65,6 +67,15 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       alive = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Escape closes inspector
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") setSelectedSectionId(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   async function loadGuide(id) {
@@ -104,16 +115,18 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
 
   // -- Section operations on the active page
   const addSection = (sectionId) => {
+    const newId = uid();
     setPages((p) =>
       p.map((pg) =>
         pg.id !== activePageId
           ? pg
           : {
               ...pg,
-              sections: [...pg.sections, { id: uid(), sectionId }],
+              sections: [...pg.sections, { id: newId, sectionId, props: {} }],
             }
       )
     );
+    setSelectedSectionId(newId);
   };
   const removeSection = (instanceId) => {
     setPages((p) =>
@@ -123,6 +136,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
           : { ...pg, sections: pg.sections.filter((s) => s.id !== instanceId) }
       )
     );
+    if (selectedSectionId === instanceId) setSelectedSectionId(null);
   };
   const moveSection = (instanceId, dir) => {
     setPages((p) =>
@@ -139,15 +153,38 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
     );
   };
 
+  const updateSectionProps = (instanceId, nextProps) => {
+    setPages((p) =>
+      p.map((pg) =>
+        pg.id !== activePageId
+          ? pg
+          : {
+              ...pg,
+              sections: pg.sections.map((s) =>
+                s.id === instanceId ? { ...s, props: nextProps } : s
+              ),
+            }
+      )
+    );
+  };
+
   const canvasCss = useMemo(
     () => generateCss(tokens, ".sg-canvas-builder", { scoped: true }),
     [tokens]
   );
 
+  const selectedInstance = activePage?.sections?.find((s) => s.id === selectedSectionId);
+  const selectedMeta = selectedInstance
+    ? initialSections.find((s) => s.id === selectedInstance.sectionId)
+    : null;
+
+  const showInspector = Boolean(selectedSectionId);
+  const gridCols = showInspector ? "grid-cols-[280px_1fr_280px]" : "grid-cols-[280px_1fr]";
+
   return (
-    <div className="grid h-dvh grid-rows-[48px_1fr] grid-cols-[280px_1fr] bg-[var(--chrome-ground)]">
-      {/* Top toolbar — spans both columns */}
-      <header className="col-span-2 flex items-center gap-3 px-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
+    <div className={`grid h-dvh grid-rows-[48px_1fr] ${gridCols} bg-[var(--chrome-ground)]`}>
+      {/* Top toolbar */}
+      <header className="col-span-full flex items-center gap-3 px-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
         <Link
           href="/"
           className="text-[12px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]"
@@ -247,22 +284,42 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       </aside>
 
       {/* Canvas */}
-      <main className="row-start-2 col-start-2 overflow-y-auto">
+      <main
+        className="row-start-2 col-start-2 overflow-y-auto"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setSelectedSectionId(null);
+        }}
+      >
         <div className="sg-canvas-builder min-h-full" style={{ fontSize: "16px" }}>
           <style dangerouslySetInnerHTML={{ __html: canvasCss }} />
           <Canvas
             page={activePage}
             sectionsMeta={initialSections}
+            selectedId={selectedSectionId}
+            onSelect={setSelectedSectionId}
             onMove={moveSection}
             onRemove={removeSection}
           />
         </div>
       </main>
+
+      {/* Inspector */}
+      {showInspector ? (
+        <aside className="row-start-2 col-start-3 overflow-hidden">
+          <InspectorPanel
+            sectionId={selectedInstance?.sectionId}
+            name={selectedMeta?.name}
+            props={selectedInstance?.props}
+            onChange={(next) => updateSectionProps(selectedSectionId, next)}
+            onClose={() => setSelectedSectionId(null)}
+          />
+        </aside>
+      ) : null}
     </div>
   );
 }
 
-function Canvas({ page, sectionsMeta, onMove, onRemove }) {
+function Canvas({ page, sectionsMeta, selectedId, onSelect, onMove, onRemove }) {
   if (!page) return null;
   if (page.sections.length === 0) {
     return (
@@ -283,6 +340,8 @@ function Canvas({ page, sectionsMeta, onMove, onRemove }) {
           key={inst.id}
           instance={inst}
           meta={sectionsMeta.find((s) => s.id === inst.sectionId)}
+          selected={inst.id === selectedId}
+          onSelect={() => onSelect(inst.id)}
           onMoveUp={() => onMove(inst.id, -1)}
           onMoveDown={() => onMove(inst.id, +1)}
           onRemove={() => onRemove(inst.id)}
@@ -292,13 +351,24 @@ function Canvas({ page, sectionsMeta, onMove, onRemove }) {
   );
 }
 
-function SectionInstance({ instance, meta, onMoveUp, onMoveDown, onRemove }) {
+function SectionInstance({ instance, meta, selected, onSelect, onMoveUp, onMoveDown, onRemove }) {
   const Component = getSectionComponent(instance.sectionId);
   return (
-    <div className="group relative border-b border-[var(--chrome-border)]">
+    <div
+      className={`group relative border-b border-[var(--chrome-border)] cursor-pointer ${
+        selected
+          ? "ring-2 ring-inset ring-[var(--chrome-track-stable)]"
+          : "hover:ring-1 hover:ring-inset hover:ring-[var(--chrome-border-strong)]"
+      }`}
+      onClick={(e) => {
+        // Don't select if clicking a toolbar button
+        if (e.target.closest("button")) return;
+        onSelect();
+      }}
+    >
       {/* Live render or placeholder */}
       {Component ? (
-        <Component />
+        <Component {...instance.props} />
       ) : (
         <div className="px-6 py-16 text-center text-[var(--chrome-fg-disabled)]">
           <p className="text-[12px] uppercase tracking-[0.04em] font-bold">
