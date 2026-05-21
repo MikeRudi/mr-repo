@@ -94,7 +94,7 @@ export default function InspectorPanel({
             elementStyles={props?.__elementStyles ?? {}}
             onChange={setKey}
             onArrayChange={setArrayItem}
-            onTextArrayChange={setTextArrayChange}
+            onTextArrayChange={setTextArrayItem}
             onStyleChange={setElementStyle}
             variants={buttonVariants}
           />
