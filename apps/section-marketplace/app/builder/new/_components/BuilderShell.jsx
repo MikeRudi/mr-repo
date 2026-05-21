@@ -34,6 +34,32 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [loadingGuides, setLoadingGuides] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
   const [selectedElementKey, setSelectedElementKey] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedUrl, setSavedUrl] = useState(null);
+
+  async function handleSave() {
+    setIsSaving(true);
+    try {
+      const siteData = {
+        pages,
+        tokens,
+        styleGuideId: activeGuideId,
+      };
+      const res = await fetch('/api/sites/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(siteData),
+      });
+      if (!res.ok) throw new Error('Failed to save');
+      const data = await res.json();
+      setSavedUrl(data.url);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save site');
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   // Initial activePageId once pages exist
   useEffect(() => {
@@ -227,12 +253,24 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
         </button>
         <button
           type="button"
-          disabled
-          className="h-8 px-3 rounded-full bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[12px] opacity-50 cursor-not-allowed"
-          title="Persistence comes in the next phase"
+          onClick={handleSave}
+          disabled={isSaving}
+          className="h-8 px-3 rounded-full bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[12px] hover:opacity-90 disabled:opacity-50"
         >
-          Save
+          {isSaving ? "Saving..." : "Save"}
         </button>
+        {savedUrl && (
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText(savedUrl);
+              alert("Link copied!");
+            }}
+            className="h-8 px-3 rounded-[6px] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)]"
+          >
+            Copy Link
+          </button>
+        )}
         <Link
           href="/"
           className="h-8 grid place-items-center px-3 rounded-[6px] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)]"
