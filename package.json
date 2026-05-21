@@ -1,17 +1,17 @@
 {
-  "name": "mr-frontend",
+  "name": "mr-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "@next/third-parties": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
-  },
-  "devDependencies": {}
+    "dev:marketplace": "npm run dev --workspace apps/section-marketplace",
+    "dev:builder": "npm run dev --workspace apps/mr-web-builder",
+    "build:marketplace": "npm run build --workspace apps/section-marketplace",
+    "build:builder": "npm run build --workspace apps/mr-web-builder",
+    "build": "npm run build --workspaces --if-present",
+    "library:manifest": "node apps/section-marketplace/library/scripts/build-manifest.mjs"
+  }
 }

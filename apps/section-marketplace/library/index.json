@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-05-21T10:51:29.782Z",
+  "counts": {
+    "sections": 0,
+    "templates": 1
+  },
+  "sections": [],
+  "templates": [
+    {
+      "id": "excellence-awards",
+      "name": "Priority Pass · Excellence Awards 2026",
+      "category": "campaign",
+      "version": "1.0.0",
+      "summary": "Full-page Webflow-exported campaign for the Priority Pass Excellence Awards 2026, ported to React/JSX.",
+      "entry": "index.jsx",
+      "renderRoute": "/templates/excellence-awards",
+      "tech": {
+        "framework": "next",
+        "react": true,
+        "css": [
+          "/webflow/css/normalize.css",
+          "/webflow/css/components.css",
+          "/webflow/css/excellence-awards.css",
+          "/styles.css"
+        ],
+        "motion": [
+          "gsap",
+          "scrolltrigger",
+          "lenis"
+        ]
+      },
+      "wf": {
+        "page": "69eb624095ebc215712a36c0",
+        "site": "69d4c3e8c1b59a7426c52fe8"
+      },
+      "kind": "template",
+      "path": "templates/excellence-awards"
+    }
+  ]
+}

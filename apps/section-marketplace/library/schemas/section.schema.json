@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MakeReign Section Manifest",
+  "type": "object",
+  "required": ["id", "name", "category", "version", "entry"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable kebab-case identifier, unique across the library."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name shown in the marketplace UI."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "hero",
+        "intro",
+        "carousel",
+        "testimonials",
+        "gallery",
+        "features",
+        "forms",
+        "cta",
+        "footer",
+        "navigation"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "description": "SemVer string. Bump on schema-affecting changes."
+    },
+    "summary": {
+      "type": "string"
+    },
+    "entry": {
+      "type": "string",
+      "description": "Relative path to the section's React entry, usually 'index.jsx'."
+    },
+    "motion": {
+      "type": "object",
+      "properties": {
+        "file": { "type": "string" },
+        "density": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high"]
+        }
+      }
+    },
+    "props": {
+      "type": "object",
+      "description": "JSON Schema describing the props the section accepts."
+    },
+    "preview": {
+      "type": "string",
+      "description": "Relative path to the section's static preview image."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
