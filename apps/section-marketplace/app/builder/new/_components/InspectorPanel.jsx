@@ -142,22 +142,22 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
         onApplyPreset={(preset) => {
           if (preset.type === "typography") {
             const t = preset.value;
-            if (t === "h1") onStyleChange(sKey, "fontSize", "96px");
-            else if (t === "h2") onStyleChange(sKey, "fontSize", "64px");
-            else if (t === "h3") onStyleChange(sKey, "fontSize", "44px");
-            else if (t === "h4") onStyleChange(sKey, "fontSize", "32px");
-            else if (t === "h5") onStyleChange(sKey, "fontSize", "24px");
-            else if (t === "h6") onStyleChange(sKey, "fontSize", "18px");
-            else if (t === "textLarge") onStyleChange(sKey, "fontSize", "20px");
-            else if (t === "textMain") onStyleChange(sKey, "fontSize", "16px");
-            else if (t === "textSmall") onStyleChange(sKey, "fontSize", "14px");
+            if (t === "h1") onStyleChange(sKey, "fontSize", "6rem");
+            else if (t === "h2") onStyleChange(sKey, "fontSize", "4rem");
+            else if (t === "h3") onStyleChange(sKey, "fontSize", "2.75rem");
+            else if (t === "h4") onStyleChange(sKey, "fontSize", "2rem");
+            else if (t === "h5") onStyleChange(sKey, "fontSize", "1.5rem");
+            else if (t === "h6") onStyleChange(sKey, "fontSize", "1.125rem");
+            else if (t === "textLarge") onStyleChange(sKey, "fontSize", "1.25rem");
+            else if (t === "textMain") onStyleChange(sKey, "fontSize", "1rem");
+            else if (t === "textSmall") onStyleChange(sKey, "fontSize", "0.875rem");
           } else if (preset.type === "card") {
             if (preset.value === "default") {
-              onStyleChange(sKey, "borderRadius", "12px");
-              onStyleChange(sKey, "padding", "28px");
+              onStyleChange(sKey, "borderRadius", "0.75em");
+              onStyleChange(sKey, "padding", "1.75em");
             } else if (preset.value === "feature") {
-              onStyleChange(sKey, "borderRadius", "24px");
-              onStyleChange(sKey, "padding", "40px");
+              onStyleChange(sKey, "borderRadius", "1.5em");
+              onStyleChange(sKey, "padding", "2.5em");
             }
           }
         }}
@@ -231,27 +231,25 @@ function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChan
     return (
       <div className="flex flex-col gap-4">
         <TextField label="Label" value={v.label ?? ""} onChange={(val) => onChange({ ...value, [key]: { ...v, label: val } })} />
-        {buttonVariants.length > 0 ? (
-          <div>
-            <label className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">Button style</label>
-            <div className="mt-1.5 flex flex-wrap gap-2">
-              {buttonVariants.map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => onChange({ ...value, [key]: { ...v, variant: id } })}
-                  className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
-                    v.variant === id
-                      ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
-                      : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
-                  }`}
-                >
-                  {id === "primary" ? "Primary" : id.charAt(0).toUpperCase() + id.slice(1)}
-                </button>
-              ))}
-            </div>
+        <div>
+          <label className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">Button style</label>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {buttonVariants.map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => onChange({ ...value, [key]: { ...v, variant: id } })}
+                className={`px-2.5 py-1 rounded-[4px] text-[11px] border ${
+                  v.variant === id
+                    ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                    : "border-[var(--chrome-border)] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)]"
+                }`}
+              >
+                {id === "primary" ? "Primary" : id.charAt(0).toUpperCase() + id.slice(1)}
+              </button>
+            ))}
           </div>
-        ) : null}
+        </div>
         <TextField label="Href" value={v.href ?? ""} onChange={(val) => onChange({ ...value, [key]: { ...v, href: val } })} />
         {overrideSection}
       </div>
@@ -315,11 +313,25 @@ function StyleOverrides({ styles, onChange }) {
   const fields = [
     { key: "color", label: "Text color", type: "color" },
     { key: "backgroundColor", label: "Background", type: "color" },
-    { key: "fontSize", label: "Font size", type: "text", placeholder: "e.g. 18px" },
+    { key: "fontSize", label: "Font size", type: "text", placeholder: "e.g. 18px", unit: "rem" },
     { key: "fontWeight", label: "Font weight", type: "select", options: ["", "100", "200", "300", "400", "500", "600", "700", "800", "900"] },
-    { key: "borderRadius", label: "Radius", type: "text", placeholder: "e.g. 8px" },
-    { key: "padding", label: "Padding", type: "text", placeholder: "e.g. 8px 16px" },
+    { key: "borderRadius", label: "Radius", type: "text", placeholder: "e.g. 8px", unit: "em" },
+    { key: "padding", label: "Padding", type: "text", placeholder: "e.g. 8px 16px", unit: "em" },
   ];
+
+  const convertValue = (key, value) => {
+    if (!value || key === "color" || key === "backgroundColor" || key === "fontWeight") return value;
+    if (key === "fontSize") {
+      // Typography gets fluid rem (desktop: px -> rem, tablet: static rem)
+      const num = parseFloat(value);
+      if (isNaN(num)) return value;
+      return `${num / 16}rem`; // Convert px to rem
+    }
+    // Radius and padding get em for desktop, rem for tablet
+    const num = parseFloat(value);
+    if (isNaN(num)) return value;
+    return `${num / 16}em`; // Convert px to em
+  };
 
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -370,7 +382,7 @@ function StyleOverrides({ styles, onChange }) {
               type="text"
               value={styles[f.key] ?? ""}
               placeholder={f.placeholder}
-              onChange={(e) => onChange(f.key, e.target.value)}
+              onChange={(e) => onChange(f.key, convertValue(f.key, e.target.value))}
               className="mt-1 w-full h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
             />
           )}
