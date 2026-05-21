@@ -5,6 +5,7 @@ import Chip from "../../_components/Chip.jsx";
 import LifecycleBadge from "../../_components/LifecycleBadge.jsx";
 import TrackBadge from "../../_components/TrackBadge.jsx";
 import { getAllSections, getSectionById } from "../../../lib/sections.js";
+import { hasImplementation } from "../../../library/registry.js";
 
 export async function generateStaticParams() {
   return getAllSections().map((s) => ({ id: s.id }));
@@ -62,10 +63,37 @@ export default async function SectionDetailPage({ params }) {
 
       <section className="mx-auto max-w-[1200px] px-6 pb-16 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
         <div>
-          <div className="aspect-[16/9] rounded-(--chrome-radius-card) bg-(--chrome-surface) border border-(--chrome-border) grid place-items-center text-(--chrome-fg-disabled)">
-            <span className="font-[family-name:var(--chrome-font-mono)] text-xs">
-              preview · {s.id}
-            </span>
+          <div className="rounded-(--chrome-radius-card) bg-(--chrome-surface) border border-(--chrome-border) overflow-hidden">
+            <div className="flex items-center justify-between px-4 h-9 border-b border-(--chrome-border) bg-(--chrome-ground)">
+              <p className="font-[family-name:var(--chrome-font-mono)] text-[11px] text-(--chrome-fg-subtle)">
+                preview · {s.id}
+              </p>
+              <a
+                href={`/sections/${s.id}/preview`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] text-(--chrome-fg-muted) hover:text-(--chrome-fg)"
+              >
+                Open in new tab ↗
+              </a>
+            </div>
+            {hasImplementation(s.id) ? (
+              <iframe
+                src={`/sections/${s.id}/preview`}
+                title={`${s.name} preview`}
+                loading="lazy"
+                className="w-full h-[680px] bg-(--chrome-ground)"
+              />
+            ) : (
+              <div className="aspect-[16/9] grid place-items-center text-center px-6 text-(--chrome-fg-muted)">
+                <div>
+                  <p className="text-[13px]">Implementation coming soon.</p>
+                  <p className="mt-1 text-[11px] text-(--chrome-fg-subtle)">
+                    Metadata, curation notes and API are in place.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
           {s.tags?.length ? (
             <div className="mt-6 flex flex-wrap gap-2">

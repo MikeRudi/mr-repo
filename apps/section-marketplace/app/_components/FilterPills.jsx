@@ -46,7 +46,7 @@ export default function FilterPills({ facets }) {
             onClick={() => setParam("category", c)}
             className={pillClass(current.category === c)}
           >
-            {c}
+            {toTitleCase(c)}
           </button>
         ))}
       </Row>
@@ -57,7 +57,7 @@ export default function FilterPills({ facets }) {
             onClick={() => setParam("track", t)}
             className={pillClass(current.track === t)}
           >
-            {t}
+            {toTitleCase(t)}
           </button>
         ))}
       </Row>
@@ -74,6 +74,14 @@ export default function FilterPills({ facets }) {
       </Row>
     </div>
   );
+}
+
+function toTitleCase(s) {
+  if (!s) return s;
+  return s
+    .split(/[\s_-]+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
 }
 
 function Row({ label, children }) {
