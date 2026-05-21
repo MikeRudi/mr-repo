@@ -34,6 +34,19 @@ export default function InspectorPanel({
     onChange({ ...props, [key]: arr });
   }
 
+  function setElementStyle(key, styleKey, styleValue) {
+    const current = props.__elementStyles ?? {};
+    const elStyles = { ...(current[key] ?? {}) };
+    if (styleValue === "" || styleValue == null) {
+      delete elStyles[styleKey];
+    } else {
+      elStyles[styleKey] = styleValue;
+    }
+    const next = { ...current, [key]: elStyles };
+    if (Object.keys(elStyles).length === 0) delete next[key];
+    onChange({ ...props, __elementStyles: next });
+  }
+
   function setTextArrayItem(key, index, value) {
     const arr = Array.isArray(props[key]) ? [...props[key]] : [];
     arr[index] = value;
@@ -78,9 +91,11 @@ export default function InspectorPanel({
           <ElementEditor
             elementKey={elementKey}
             value={props}
+            elementStyles={props?.__elementStyles ?? {}}
             onChange={setKey}
             onArrayChange={setArrayItem}
-            onTextArrayChange={setTextArrayItem}
+            onTextArrayChange={setTextArrayChange}
+            onStyleChange={setElementStyle}
             variants={buttonVariants}
           />
         ) : (
@@ -102,7 +117,21 @@ function formatElementLabel(el) {
   return el.key;
 }
 
-function ElementEditor({ elementKey, value, onChange, onArrayChange, onTextArrayChange, variants }) {
+function ElementEditor({ elementKey, value, elementStyles, onChange, onArrayChange, onTextArrayChange, onStyleChange, variants }) {
+  const sKey = styleKey(elementKey);
+  const currentStyles = elementStyles[sKey] ?? {};
+
+  const styleSection = (
+    <div className="flex flex-col gap-3 mt-2 pt-4 border-t border-[var(--chrome-border)]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]">
+        Style overrides
+      </p>
+      <StyleEditor
+        styles={currentStyles}
+        onChange={(prop, val) => onStyleChange(sKey, prop, val)}
+      />
+    </div>
+  );
   const { key, index, sub, linkIndex } = elementKey;
 
   // Determine what kind of editor to show based on the key
@@ -129,6 +158,7 @@ function ElementEditor({ elementKey, value, onChange, onArrayChange, onTextArray
             nextLinks[Number(linkIndex)] = { ...link, href: v };
             onArrayChange(key, Number(index), "links", nextLinks);
           }} />
+          {styleSection}
         </div>
       );
     }
@@ -136,6 +166,7 @@ function ElementEditor({ elementKey, value, onChange, onArrayChange, onTextArray
     return (
       <div className="flex flex-col gap-4">
         <TextField label={sub.charAt(0).toUpperCase() + sub.slice(1)} value={item[sub] ?? ""} onChange={(v) => onArrayChange(key, Number(index), sub, v)} />
+        {styleSection}
       </div>
     );
   }
@@ -147,6 +178,7 @@ function ElementEditor({ elementKey, value, onChange, onArrayChange, onTextArray
     return (
       <div className="flex flex-col gap-4">
         <TextField label={`${key}[${index}]`} value={item} onChange={(v) => onTextArrayChange(key, Number(index), v)} />
+        {styleSection}
       </div>
     );
   }
@@ -175,6 +207,7 @@ function ElementEditor({ elementKey, value, onChange, onArrayChange, onTextArray
           </div>
         ) : null}
         <TextField label="Href" value={v.href ?? ""} onChange={(val) => onChange({ ...value, [key]: { ...v, href: val } })} />
+        {styleSection}
       </div>
     );
   }
@@ -182,6 +215,85 @@ function ElementEditor({ elementKey, value, onChange, onArrayChange, onTextArray
   return (
     <div className="flex flex-col gap-4">
       <TextField label={key} value={v} onChange={(val) => onChange({ ...value, [key]: val })} />
+      {styleSection}
+    </div>
+  );
+}
+
+function styleKey(el) {
+  if (!el) return "";
+  const parts = [el.key];
+  if (el.index != null) parts.push(String(el.index));
+  if (el.sub) parts.push(el.sub);
+  if (el.linkIndex != null) parts.push("links", String(el.linkIndex));
+  return parts.join(":");
+}
+
+function StyleEditor({ styles, onChange }) {
+  const fields = [
+    { key: "color", label: "Text color", type: "color" },
+    { key: "backgroundColor", label: "Background", type: "color" },
+    { key: "fontSize", label: "Font size", type: "text", placeholder: "e.g. 18px" },
+    { key: "fontWeight", label: "Font weight", type: "select", options: ["", "100", "200", "300", "400", "500", "600", "700", "800", "900"] },
+    { key: "borderRadius", label: "Radius", type: "text", placeholder: "e.g. 8px" },
+    { key: "padding", label: "Padding", type: "text", placeholder: "e.g. 8px 16px" },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {fields.map((f) => (
+        <div key={f.key} className={f.type === "color" ? "col-span-2" : ""}>
+          <label className="text-[10px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg-subtle)]">
+            {f.label}
+          </label>
+          {f.type === "color" ? (
+            <div className="mt-1 flex items-center gap-2">
+              <input
+                type="color"
+                value={styles[f.key] || "#000000"}
+                onChange={(e) => onChange(f.key, e.target.value)}
+                className="w-8 h-8 p-0 border-0 rounded-[4px] cursor-pointer"
+              />
+              <input
+                type="text"
+                value={styles[f.key] ?? ""}
+                placeholder="#rrggbb"
+                onChange={(e) => onChange(f.key, e.target.value)}
+                className="flex-1 h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
+              />
+              {styles[f.key] ? (
+                <button
+                  type="button"
+                  onClick={() => onChange(f.key, "")}
+                  className="text-[10px] text-[var(--chrome-fg-subtle)] hover:text-[var(--chrome-fg)]"
+                >
+                  Clear
+                </button>
+              ) : null}
+            </div>
+          ) : f.type === "select" ? (
+            <select
+              value={styles[f.key] ?? ""}
+              onChange={(e) => onChange(f.key, e.target.value)}
+              className="mt-1 w-full h-8 px-2 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            >
+              {f.options.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt === "" ? "Default" : opt}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              value={styles[f.key] ?? ""}
+              placeholder={f.placeholder}
+              onChange={(e) => onChange(f.key, e.target.value)}
+              className="mt-1 w-full h-8 px-2.5 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

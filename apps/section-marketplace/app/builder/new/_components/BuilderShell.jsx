@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { getSectionComponent } from "../../../../library/registry.js";
 import { generateCss } from "../../../../lib/styleguide-css.js";
@@ -302,6 +302,17 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       >
         <div className="sg-canvas-builder min-h-full" style={{ fontSize: "16px" }}>
           <style dangerouslySetInnerHTML={{ __html: canvasCss }} />
+          <style>{`
+            .sg-canvas-builder [data-sg-prop] {
+              transition: box-shadow 0.15s ease;
+            }
+            .sg-canvas-builder [data-sg-prop]:hover {
+              box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.35);
+            }
+            .sg-canvas-builder [data-sg-prop][data-sg-selected="true"] {
+              box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.65);
+            }
+          `}</style>
           <Canvas
             page={activePage}
             sectionsMeta={initialSections}
@@ -387,6 +398,8 @@ function Canvas({
             instance={inst}
             meta={sectionsMeta.find((s) => s.id === inst.sectionId)}
             selected={inst.id === selectedId && !selectedElementKey}
+            selectedElementKey={selectedElementKey}
+            elementStyles={inst.props?.__elementStyles}
             onSelect={() => onSelectSection(inst.id)}
             onSelectElement={(key) => onSelectElement(inst.id, key)}
           >
@@ -402,6 +415,8 @@ function Canvas({
           instance={inst}
           meta={sectionsMeta.find((s) => s.id === inst.sectionId)}
           selected={inst.id === selectedId && !selectedElementKey}
+          selectedElementKey={selectedElementKey}
+          elementStyles={inst.props?.__elementStyles}
           onSelect={() => onSelectSection(inst.id)}
           onSelectElement={(key) => onSelectElement(inst.id, key)}
           onMoveUp={() => onMove(inst.id, -1)}
@@ -430,9 +445,67 @@ function findElementKey(target) {
   return null;
 }
 
-function NavInstance({ instance, meta, selected, onSelect, onSelectElement, children }) {
+function styleKey(el) {
+  if (!el) return "";
+  const parts = [el.key];
+  if (el.index != null) parts.push(String(el.index));
+  if (el.sub) parts.push(el.sub);
+  if (el.linkIndex != null) parts.push("links", String(el.linkIndex));
+  return parts.join(":");
+}
+
+function matchesElementKey(el, key) {
+  if (el.dataset.sgProp !== key.key) return false;
+  if (key.index != null && el.dataset.sgIndex !== String(key.index)) return false;
+  if (key.sub != null && el.dataset.sgSub !== key.sub) return false;
+  if (key.linkIndex != null && el.dataset.sgLinkIndex !== String(key.linkIndex)) return false;
+  return true;
+}
+
+function useApplyElementStyles(ref, elementStyles, selectedElementKey) {
+  useEffect(() => {
+    if (!ref.current) return;
+    // Clear previous inline styles on data-sg-prop elements
+    const all = ref.current.querySelectorAll("[data-sg-prop]");
+    all.forEach((el) => {
+      el.removeAttribute("style");
+      el.removeAttribute("data-sg-selected");
+    });
+    // Apply __elementStyles
+    if (elementStyles && typeof elementStyles === "object") {
+      for (const [key, styles] of Object.entries(elementStyles)) {
+        if (!styles || typeof styles !== "object") continue;
+        const parts = key.split(":");
+        const prop = parts[0];
+        const idx = parts[1] != null ? Number(parts[1]) : null;
+        const sub = parts[2] ?? null;
+        const linkIdx = parts[3] != null ? Number(parts[3]) : null;
+        const sel = `[data-sg-prop="${prop}"]` +
+          (idx != null ? `[data-sg-index="${idx}"]` : "") +
+          (sub ? `[data-sg-sub="${sub}"]` : "");
+        const target = ref.current.querySelector(sel);
+        if (target) {
+          Object.assign(target.style, styles);
+        }
+      }
+    }
+    // Mark selected element
+    if (selectedElementKey) {
+      const sel = `[data-sg-prop="${selectedElementKey.key}"]` +
+        (selectedElementKey.index != null ? `[data-sg-index="${selectedElementKey.index}"]` : "") +
+        (selectedElementKey.sub ? `[data-sg-sub="${selectedElementKey.sub}"]` : "");
+      const target = ref.current.querySelector(sel);
+      if (target) target.setAttribute("data-sg-selected", "true");
+    }
+  }, [ref, elementStyles, selectedElementKey]);
+}
+
+function NavInstance({ instance, meta, selected, selectedElementKey, elementStyles, onSelect, onSelectElement, children }) {
+  const wrapperRef = useRef(null);
+  useApplyElementStyles(wrapperRef, elementStyles, selectedElementKey);
   return (
     <div
+      ref={wrapperRef}
       className={`relative cursor-pointer ${
         selected
           ? "ring-2 ring-inset ring-[var(--chrome-track-stable)]"
@@ -460,6 +533,8 @@ function SectionInstance({
   instance,
   meta,
   selected,
+  selectedElementKey,
+  elementStyles,
   onSelect,
   onSelectElement,
   onMoveUp,
@@ -467,8 +542,11 @@ function SectionInstance({
   onRemove,
 }) {
   const Component = getSectionComponent(instance.sectionId);
+  const wrapperRef = useRef(null);
+  useApplyElementStyles(wrapperRef, elementStyles, selectedElementKey);
   return (
     <div
+      ref={wrapperRef}
       className={`group relative border-b border-[var(--chrome-border)] cursor-pointer ${
         selected
           ? "ring-2 ring-inset ring-[var(--chrome-track-stable)]"
