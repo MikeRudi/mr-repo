@@ -51,15 +51,14 @@ function pctToPaddingPx(pct) {
   if (p <= 50) return Math.round(32 + (p / 50) * (112 - 32));
   return Math.round(112 + ((p - 50) / 50) * (220 - 112));
 }
-// Image width: 0% = 32%, 50% = 50%, 100% = 68% of the desktop grid.
-function pctToImageWidth(pct) {
+// Split: 0% = left 32% / right 68%, 50% = even, 100% = left 68% / right 32%.
+function pctToLeftSplit(pct) {
   const p = clamp(pct, 0, 100);
   return `${Math.round(32 + (p / 100) * (68 - 32))}%`;
 }
-// Accordion width: 0% = 32%, 50% = 50%, 100% = 68% of the desktop grid.
-function pctToListWidth(pct) {
+function pctToRightSplit(pct) {
   const p = clamp(pct, 0, 100);
-  return `${Math.round(32 + (p / 100) * (68 - 32))}%`;
+  return `${Math.round(68 - (p / 100) * (68 - 32))}%`;
 }
 // Image height: 0% = 360px, 50% = 620px, 100% = 820px.
 function pctToImageHeightPx(pct) {
@@ -95,18 +94,18 @@ export default function AutoAccordion({
   headerToAccordionGapPct = 50,
   itemHeadGapPct = 50,
   itemBodyGapPct = 50,
-  itemBottomPaddingPct = 50,
-  listWidthPct = 50,
-  imageWidthPct = 50,
+  itemPaddingYPct,
+  itemBottomPaddingPct,
+  splitPct = 50,
   imageHeightPct = 50,
   reverseLayout = false,
-  sectionEyebrowColor,
-  sectionHeadingColor,
-  itemEyebrowColor,
-  itemHeadingColor,
-  itemSubheadingColor,
-  itemDescriptionColor,
-  progressColor,
+  sectionEyebrowColor = "dark",
+  sectionHeadingColor = "dark",
+  itemEyebrowColor = "dark",
+  itemHeadingColor = "dark",
+  itemSubheadingColor = "dark",
+  itemDescriptionColor = "dark",
+  progressColor = "dark",
   sectionEyebrowTypography = "textSmall",
   sectionHeadingTypography = "h2",
   itemEyebrowTypography = "textSmall",
@@ -149,15 +148,21 @@ export default function AutoAccordion({
       : typeof sectionPaddingTopPct === "number" && typeof sectionPaddingBottomPct === "number"
         ? Math.round((sectionPaddingTopPct + sectionPaddingBottomPct) / 2)
         : 50;
+  const itemYPct =
+    typeof itemPaddingYPct === "number"
+      ? itemPaddingYPct
+      : typeof itemBottomPaddingPct === "number"
+        ? itemBottomPaddingPct
+        : 50;
   const styleVars = {
     "--aa-section-py": `${pctToPaddingPx(paddingYPct)}px`,
     "--aa-header-text-gap": `${pctToRangePx(headerTextGapPct, 8, 16, 32)}px`,
     "--aa-header-gap": `${pctToRangePx(headerToAccordionGapPct, 32, 64, 112)}px`,
     "--aa-item-head-gap": `${pctToRangePx(itemHeadGapPct, 4, 6, 16)}px`,
     "--aa-item-body-gap": `${pctToRangePx(itemBodyGapPct, 8, 16, 32)}px`,
-    "--aa-item-bottom-padding": `${pctToRangePx(itemBottomPaddingPct, 16, 32, 56)}px`,
-    "--aa-list-width": pctToListWidth(listWidthPct),
-    "--aa-image-width": pctToImageWidth(imageWidthPct),
+    "--aa-item-y": `${pctToRangePx(itemYPct, 16, 24, 48)}px`,
+    "--aa-left-width": pctToLeftSplit(splitPct),
+    "--aa-right-width": pctToRightSplit(splitPct),
     "--aa-image-height": `${pctToImageHeightPx(imageHeightPct)}px`,
     "--aa-eyebrow-color": colorToken(sectionEyebrowColor, "var(--chrome-fg-subtle, #a59f97)"),
     "--aa-heading-color": colorToken(sectionHeadingColor, "var(--chrome-fg, #000)"),
@@ -165,9 +170,8 @@ export default function AutoAccordion({
     "--aa-title-color": colorToken(itemHeadingColor, "var(--chrome-fg, #000)"),
     "--aa-subheading-color": colorToken(itemSubheadingColor, "var(--chrome-fg, #000)"),
     "--aa-body-color": colorToken(itemDescriptionColor, "var(--chrome-fg-muted, #777169)"),
-    "--aa-progress-track-color": progressColor
-      ? `color-mix(in srgb, var(--sg-color-${progressColor}) 18%, transparent)`
-      : "var(--chrome-border, #e5e5e5)",
+    "--aa-progress-fill-color": colorToken(progressColor, "var(--chrome-fg, #000)"),
+    "--aa-progress-track-color": colorTokenMix(progressColor, 18, "var(--chrome-border, #e5e5e5)"),
   };
 
   // Rule 6: changing animationStyle restarts the section from item 0.
@@ -256,10 +260,15 @@ export default function AutoAccordion({
 
   const handleItemClick = (i) => {
     if (i === activeIndex) {
-      setIsAuto((v) => !v);
+      setIsAuto((v) => {
+        const next = !v;
+        persistTop("autoEnabled", next);
+        return next;
+      });
       return;
     }
     setIsAuto(false);
+    persistTop("autoEnabled", false);
     setActiveIndex(i);
   };
 
@@ -419,6 +428,12 @@ function getRevealToVars(style) {
 
 function colorToken(token, fallback) {
   return token ? `var(--sg-color-${token})` : fallback;
+}
+
+function colorTokenMix(token, opacity, fallback) {
+  return token
+    ? `color-mix(in srgb, var(--sg-color-${token}) ${opacity}%, transparent)`
+    : fallback;
 }
 
 function typographyElement(token, fallback) {

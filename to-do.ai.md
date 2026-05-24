@@ -221,10 +221,13 @@
 - Builder Style tab can rename, add, switch, and edit per-site style guides in-place.
 - Auto Accordion selected-section prop panel now opens focused panels via `controls[].panel`: Update CMS, Update Styles, and Update Animation, and includes an Auto play toggle in the base inspector.
 - Auto Accordion Styles panel groups controls into Typography, Layout, Color, and Spacing.
-- Auto Accordion Styles panel includes one section Y-padding slider, header/item gap sliders, accordion width, image width/height, reverse layout, style guide color token pickers, and the existing button-variant picker.
+- Auto Accordion Styles panel includes one section Y-padding slider, header/item gap sliders, one Split slider, image height, reverse layout, style guide color token pickers, and the existing button-variant picker.
 - Auto Accordion Typography controls use explicit `typography-token` defaults inside the Styles panel so there is no blank/default typography state.
 - Auto Accordion default CTA remains the original native section link when no style guide button is selected: plain text, left aligned, underline drawn on hover.
 - Style guide spacing now includes `sitePadding`, and Auto Accordion respects `--sg-space-sitePadding` with a 2em fallback.
+- Auto Accordion Auto play toggle is a real prop and updates when item clicks pause/restart auto-play.
+- Auto Accordion Layout now uses one `splitPct` control instead of separate list/image width controls.
+- Auto Accordion color token controls use explicit style guide color defaults; Progress color drives both `--aa-progress-fill-color` and a faded `--aa-progress-track-color`.
 
 **Deferred to follow-up items**
 - None for the original item-5 follow-up list.

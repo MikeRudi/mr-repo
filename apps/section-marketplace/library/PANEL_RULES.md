@@ -142,7 +142,9 @@ Supported `controls[].type` values:
 - `button-variant` — `{ key, type: 'button-variant', label }`; options are
   supplied by the active style guide's `buttons` array.
 - `color-token` — `{ key, type: 'color-token', label }`; options are supplied
-  by the active style guide's `colors` object.
+  by the active style guide's `colors` object. Prefer an explicit
+  `defaultValue` so color controls start on a style guide token instead of a
+  blank default.
 - `typography-token` — `{ key, type: 'typography-token', label }`; options are
   supplied by the active style guide's typography scale.
 - `toggle` — `{ key, type: 'toggle', label, defaultValue }` for boolean on/off

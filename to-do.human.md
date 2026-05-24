@@ -122,6 +122,10 @@ This is the plain‑English plan for the next phase of work. The order here is t
 - ✅ Style guide spacing now includes site padding, and Auto Accordion respects it with a 2em fallback
 - ✅ Auto Accordion spacing now uses one Y-padding slider plus controls for header and item gaps
 - ✅ Auto Accordion layout now supports accordion width, image sizing, and reversing image/content order
+- ✅ Auto Accordion Auto play toggle now updates when a user clicks an item and pauses auto-play
+- ✅ Auto Accordion Layout now uses one Split slider instead of separate accordion/image width sliders
+- ✅ Auto Accordion Progress color now sets both the fill and the faded track background
+- ✅ Auto Accordion color controls now start from explicit style guide colors instead of blank defaults
 
 **More to come**
 - We'll define the new "attach style guide to site" flow and the extra capabilities.

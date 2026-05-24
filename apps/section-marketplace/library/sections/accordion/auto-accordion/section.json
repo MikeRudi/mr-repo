@@ -120,19 +120,9 @@
       "defaultValue": "textSmall"
     },
     {
-      "key": "listWidthPct",
+      "key": "splitPct",
       "type": "slider",
-      "label": "Accordion width",
-      "panel": "styles",
-      "group": "layout",
-      "min": 0,
-      "max": 100,
-      "step": 5
-    },
-    {
-      "key": "imageWidthPct",
-      "type": "slider",
-      "label": "Image width",
+      "label": "Split",
       "panel": "styles",
       "group": "layout",
       "min": 0,
@@ -162,49 +152,56 @@
       "type": "color-token",
       "label": "Section eyebrow color",
       "panel": "styles",
-      "group": "color"
+      "group": "color",
+      "defaultValue": "dark"
     },
     {
       "key": "sectionHeadingColor",
       "type": "color-token",
       "label": "Section heading color",
       "panel": "styles",
-      "group": "color"
+      "group": "color",
+      "defaultValue": "dark"
     },
     {
       "key": "itemEyebrowColor",
       "type": "color-token",
       "label": "Item eyebrow color",
       "panel": "styles",
-      "group": "color"
+      "group": "color",
+      "defaultValue": "dark"
     },
     {
       "key": "itemHeadingColor",
       "type": "color-token",
       "label": "Item heading color",
       "panel": "styles",
-      "group": "color"
+      "group": "color",
+      "defaultValue": "dark"
     },
     {
       "key": "itemSubheadingColor",
       "type": "color-token",
       "label": "Item sub-heading color",
       "panel": "styles",
-      "group": "color"
+      "group": "color",
+      "defaultValue": "dark"
     },
     {
       "key": "itemDescriptionColor",
       "type": "color-token",
       "label": "Item description color",
       "panel": "styles",
-      "group": "color"
+      "group": "color",
+      "defaultValue": "dark"
     },
     {
       "key": "progressColor",
       "type": "color-token",
-      "label": "Progress background color",
+      "label": "Progress color",
       "panel": "styles",
-      "group": "color"
+      "group": "color",
+      "defaultValue": "dark"
     },
     {
       "key": "sectionPaddingYPct",
@@ -257,9 +254,9 @@
       "step": 5
     },
     {
-      "key": "itemBottomPaddingPct",
+      "key": "itemPaddingYPct",
       "type": "slider",
-      "label": "Item bottom padding",
+      "label": "Item Y padding",
       "panel": "styles",
       "group": "spacing",
       "min": 0,

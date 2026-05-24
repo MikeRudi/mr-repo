@@ -28,11 +28,12 @@
   --aa-header-gap: 64px;
   --aa-item-head-gap: 6px;
   --aa-item-body-gap: 16px;
-  --aa-item-bottom-padding: 32px;
+  --aa-item-y: 24px;
   --aa-row-py: 20px;
-  --aa-list-width: 50%;
-  --aa-image-width: 50%;
+  --aa-left-width: 50%;
+  --aa-right-width: 50%;
   --aa-image-height: 620px;
+  --aa-progress-fill-color: var(--chrome-fg, #000);
   --aa-progress-track-color: var(--chrome-border, #e5e5e5);
 
   min-height: 100vh;
@@ -60,6 +61,9 @@
 .header {
   max-width: 760px;
   margin-bottom: var(--aa-header-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--aa-header-text-gap);
 }
 
 .eyebrow {
@@ -70,7 +74,6 @@
   font-weight: var(--aa-eyebrow-weight);
 }
 .heading {
-  margin-top: var(--aa-header-text-gap);
   font-size: var(--aa-heading-size);
   font-weight: var(--aa-heading-weight);
   color: var(--aa-heading-color);
@@ -86,7 +89,7 @@
 }
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: minmax(0, var(--aa-list-width)) minmax(0, var(--aa-image-width));
+    grid-template-columns: minmax(0, var(--aa-left-width)) minmax(0, var(--aa-right-width));
     gap: 64px;
   }
   .grid.reverse .list {
@@ -115,7 +118,7 @@
 .head {
   width: 100%;
   text-align: left;
-  padding: var(--aa-row-py) 0;
+  padding: var(--aa-item-y) 0;
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -157,7 +160,7 @@
 }
 
 .bodyContent {
-  padding-bottom: var(--aa-item-bottom-padding);
+  padding: var(--aa-item-y) 0;
   display: flex;
   flex-direction: column;
   gap: var(--aa-item-body-gap);
@@ -165,7 +168,7 @@
 }
 @media (min-width: 1024px) {
   .bodyContent {
-    padding-bottom: var(--aa-item-bottom-padding);
+    padding: var(--aa-item-y) 0;
   }
 }
 
@@ -227,7 +230,7 @@
   bottom: 0;
   left: 0;
   width: 0%;
-  background: var(--chrome-fg, #000);
+  background: var(--aa-progress-fill-color, var(--chrome-fg, #000));
 }
 
 .imageHolder {

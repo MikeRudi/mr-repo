@@ -186,6 +186,7 @@ export function ControlField({ control, value, context = {}, onChange }) {
             max={max}
             step={control.step ?? 1}
             value={current}
+            onInput={(e) => onChange(Number(e.target.value))}
             onChange={(e) => onChange(Number(e.target.value))}
             onDoubleClick={() => onChange(mid)}
             className="w-full accent-black"
@@ -251,15 +252,16 @@ export function ControlField({ control, value, context = {}, onChange }) {
 
     case "color-token": {
       const colors = Array.isArray(context.colors) ? context.colors : [];
+      const colorValue = value ?? control.defaultValue ?? colors[0]?.value ?? "";
       return (
         <FieldShell label={control.label}>
           <select
-            value={value ?? ""}
+            value={colorValue}
             onChange={(e) => onChange(e.target.value || undefined)}
             className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
-            <option value="">Default color</option>
+            {control.defaultValue ? null : <option value="">Default color</option>}
             {colors.map((color) => (
               <option key={color.value} value={color.value}>
                 {color.label}
