@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 //   array-object   — list of objects, each with `objectFields` controls
 //   button-variant — pick a button style from the active style guide
 //                    (option list comes from `context.buttons`)
+//   toggle       — boolean on/off control
 
 // The inspector edits **content + style** only. Move-up / move-down / remove
 // live on the canvas hover toolbar — never here. See PANEL_RULES.md (rule 3).
@@ -150,6 +151,25 @@ export function ControlField({ control, value, context = {}, onChange }) {
         </FieldShell>
       );
 
+    case "toggle": {
+      const current =
+        typeof value === "boolean" ? value : Boolean(control.defaultValue);
+      return (
+        <FieldShell label={control.label}>
+          <button
+            type="button"
+            onClick={() => onChange(!current)}
+            className={`btn-chrome btn-chrome--block ${
+              current ? "" : "btn-chrome--ghost"
+            }`}
+            aria-pressed={current}
+          >
+            {current ? "On" : "Off"}
+          </button>
+        </FieldShell>
+      );
+    }
+
     case "slider": {
       // PANEL_RULES.md (rule 4): sliders are percent-based, centred at 50.
       const min = control.min ?? 0;
@@ -186,10 +206,14 @@ export function ControlField({ control, value, context = {}, onChange }) {
     case "select":
       const selectOptions = control.options ?? [];
       const hasDefaultOption = selectOptions.some((opt) => opt.value === "default");
+      const selectValue =
+        value ??
+        control.defaultValue ??
+        (hasDefaultOption ? "default" : selectOptions[0]?.value ?? "");
       return (
         <FieldShell label={control.label}>
           <select
-            value={value ?? (hasDefaultOption ? "default" : "")}
+            value={selectValue}
             onChange={(e) => onChange(e.target.value)}
             className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
             style={{ textTransform: "none", letterSpacing: "normal" }}
@@ -253,12 +277,12 @@ export function ControlField({ control, value, context = {}, onChange }) {
       return (
         <FieldShell label={control.label}>
           <select
-            value={value ?? ""}
+            value={value ?? control.defaultValue ?? typography[0]?.value ?? ""}
             onChange={(e) => onChange(e.target.value || undefined)}
             className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
-            <option value="">Default tag</option>
+            {control.defaultValue ? null : <option value="">Default tag</option>}
             {typography.map((scale) => (
               <option key={scale.value} value={scale.value}>
                 {scale.label}

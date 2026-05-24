@@ -78,15 +78,17 @@
               "button-variant",
               "color-token",
               "typography-token",
+              "toggle",
               "number",
               "text",
               "textarea"
             ]
           },
           "label": { "type": "string" },
+          "group": { "type": "string" },
           "panel": {
             "type": "string",
-            "enum": ["styles", "animation", "typography"]
+            "enum": ["styles", "animation"]
           },
           "min": { "type": "number" },
           "max": { "type": "number" },
@@ -118,6 +120,7 @@
                     "button-variant",
                     "color-token",
                     "typography-token",
+                    "toggle",
                     "number",
                     "text",
                     "textarea"

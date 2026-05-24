@@ -50,7 +50,7 @@
 - Each section owns its metadata + controls in a colocated `section.json`.
 - `lib/sections.js` reads from `library/index.json` (manifest), regenerated automatically on every build.
 - `package.json` `build` runs `library:manifest` before `db:migrate && next build`.
-- Inspector renders controls generically from `controls` array in `section.json`. Supported control types for v1: `text`, `textarea`, `number`, `slider` (min/max/step), `select` (options), `array-object` (rows of fields), `image`, `button-variant`, `color-token`, and `typography-token`. Controls can opt into focused panels with `panel: "styles" | "animation" | "typography"`.
+- Inspector renders controls generically from `controls` array in `section.json`. Supported control types for v1: `text`, `textarea`, `number`, `slider` (min/max/step), `select` (options), `array-object` (rows of fields), `image`, `button-variant`, `color-token`, `typography-token`, and `toggle`. Controls can opt into focused panels with `panel: "styles" | "animation"`, and Styles controls can subgroup with `group: "typography" | "layout" | "color" | "spacing"`.
 - Drop per-element style overrides and styleguide presets from the inspector for now — styling-via-inspector is reintroduced in item 4 if needed.
 
 **Controls for `auto-accordion`**
@@ -219,10 +219,12 @@
 - `PANEL_RULES.md`, `section.schema.json`, and Auto Accordion `section.json` document the `button-variant` control type.
 - Image controls support upload via Vercel Blob, with local data-URL preview fallback when Blob is not configured locally.
 - Builder Style tab can rename, add, switch, and edit per-site style guides in-place.
-- Auto Accordion selected-section prop panel now opens focused panels via `controls[].panel`: Update CMS, Update Styles, Update Animation, and Update Typography.
-- Auto Accordion Styles panel includes a default-only `styleVariant` dropdown, section top/bottom padding sliders, image width/height sliders, style guide color token pickers, and the existing button-variant picker.
-- Auto Accordion Typography panel uses `typography-token` controls so users can select style guide text tags/scales for section and item text holders.
+- Auto Accordion selected-section prop panel now opens focused panels via `controls[].panel`: Update CMS, Update Styles, and Update Animation, and includes an Auto play toggle in the base inspector.
+- Auto Accordion Styles panel groups controls into Typography, Layout, Color, and Spacing.
+- Auto Accordion Styles panel includes one section Y-padding slider, header/item gap sliders, accordion width, image width/height, reverse layout, style guide color token pickers, and the existing button-variant picker.
+- Auto Accordion Typography controls use explicit `typography-token` defaults inside the Styles panel so there is no blank/default typography state.
 - Auto Accordion default CTA remains the original native section link when no style guide button is selected: plain text, left aligned, underline drawn on hover.
+- Style guide spacing now includes `sitePadding`, and Auto Accordion respects `--sg-space-sitePadding` with a 2em fallback.
 
 **Deferred to follow-up items**
 - None for the original item-5 follow-up list.

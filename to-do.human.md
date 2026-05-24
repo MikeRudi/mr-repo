@@ -113,10 +113,15 @@ This is the plain‑English plan for the next phase of work. The order here is t
 - ✅ Panel rules / section contract updated for the button variant control
 - ✅ Image uploads use Vercel Blob, with local preview fallback during development
 - ✅ In-builder style guide editing from the Style tab
-- ✅ Auto Accordion prop panel now opens focused Update CMS, Update Styles, Update Animation, and Update Typography panels
-- ✅ Auto Accordion styles now include default-only style variant, section padding sliders, image size sliders, and style guide color pickers
-- ✅ Auto Accordion typography panel now lets users pick style guide typography tags for the section and item text holders
+- ✅ Auto Accordion prop panel opens focused Update CMS, Update Styles, and Update Animation panels
+- ✅ Auto Accordion Styles panel includes image size sliders and style guide color pickers
+- ✅ Auto Accordion typography controls live inside the Styles panel
 - ✅ Auto Accordion default link/button remains the native section link: plain text, left aligned, underline on hover
+- ✅ Auto Accordion prop panel now includes an Auto play toggle
+- ✅ Auto Accordion Styles now groups Typography, Layout, Color, and Spacing in one panel
+- ✅ Style guide spacing now includes site padding, and Auto Accordion respects it with a 2em fallback
+- ✅ Auto Accordion spacing now uses one Y-padding slider plus controls for header and item gaps
+- ✅ Auto Accordion layout now supports accordion width, image sizing, and reversing image/content order
 
 **More to come**
 - We'll define the new "attach style guide to site" flow and the extra capabilities.

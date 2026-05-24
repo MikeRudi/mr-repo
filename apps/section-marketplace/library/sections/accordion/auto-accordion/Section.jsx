@@ -56,11 +56,22 @@ function pctToImageWidth(pct) {
   const p = clamp(pct, 0, 100);
   return `${Math.round(32 + (p / 100) * (68 - 32))}%`;
 }
+// Accordion width: 0% = 32%, 50% = 50%, 100% = 68% of the desktop grid.
+function pctToListWidth(pct) {
+  const p = clamp(pct, 0, 100);
+  return `${Math.round(32 + (p / 100) * (68 - 32))}%`;
+}
 // Image height: 0% = 360px, 50% = 620px, 100% = 820px.
 function pctToImageHeightPx(pct) {
   const p = clamp(pct, 0, 100);
   if (p <= 50) return Math.round(360 + (p / 50) * (620 - 360));
   return Math.round(620 + ((p - 50) / 50) * (820 - 620));
+}
+// Compact spacing: 0% = min, 50% = baseline, 100% = roomy.
+function pctToRangePx(pct, min, mid, max) {
+  const p = clamp(pct, 0, 100);
+  if (p <= 50) return Math.round(min + (p / 50) * (mid - min));
+  return Math.round(mid + ((p - 50) / 50) * (max - mid));
 }
 function clamp(n, lo, hi) {
   if (typeof n !== "number" || Number.isNaN(n)) return (lo + hi) / 2;
@@ -74,13 +85,21 @@ export default function AutoAccordion({
   eyebrow = "Featured",
   heading = "Explore the highlights.",
   // Panel-controlled
-  styleVariant = "default",
   animationStyle = "slide",
+  autoEnabled = true,
   linkButtonVariant,
-  sectionPaddingTopPct = 50,
-  sectionPaddingBottomPct = 50,
+  sectionPaddingYPct,
+  sectionPaddingTopPct,
+  sectionPaddingBottomPct,
+  headerTextGapPct = 50,
+  headerToAccordionGapPct = 50,
+  itemHeadGapPct = 50,
+  itemBodyGapPct = 50,
+  itemBottomPaddingPct = 50,
+  listWidthPct = 50,
   imageWidthPct = 50,
   imageHeightPct = 50,
+  reverseLayout = false,
   sectionEyebrowColor,
   sectionHeadingColor,
   itemEyebrowColor,
@@ -88,16 +107,16 @@ export default function AutoAccordion({
   itemSubheadingColor,
   itemDescriptionColor,
   progressColor,
-  sectionEyebrowTypography,
-  sectionHeadingTypography,
-  itemEyebrowTypography,
-  itemHeadingTypography,
-  itemSubheadingTypography,
-  itemDescriptionTypography,
+  sectionEyebrowTypography = "textSmall",
+  sectionHeadingTypography = "h2",
+  itemEyebrowTypography = "textSmall",
+  itemHeadingTypography = "h5",
+  itemSubheadingTypography = "textMain",
+  itemDescriptionTypography = "textSmall",
   autoAdvancePct = 50,
   revealPct = 50,
   items = DEFAULT_ITEMS,
-  // Builder-only props (see PANEL_RULES.md rule 11)
+  // Builder-only props (see PANEL_RULES.md rule 10)
   _editing = false,
   _onPropChange,
 } = {}) {
@@ -124,9 +143,20 @@ export default function AutoAccordion({
 
   const autoAdvanceMs = pctToAutoAdvanceMs(autoAdvancePct);
   const revealMs = pctToRevealMs(revealPct);
+  const paddingYPct =
+    typeof sectionPaddingYPct === "number"
+      ? sectionPaddingYPct
+      : typeof sectionPaddingTopPct === "number" && typeof sectionPaddingBottomPct === "number"
+        ? Math.round((sectionPaddingTopPct + sectionPaddingBottomPct) / 2)
+        : 50;
   const styleVars = {
-    "--aa-section-pt": `${pctToPaddingPx(sectionPaddingTopPct)}px`,
-    "--aa-section-pb": `${pctToPaddingPx(sectionPaddingBottomPct)}px`,
+    "--aa-section-py": `${pctToPaddingPx(paddingYPct)}px`,
+    "--aa-header-text-gap": `${pctToRangePx(headerTextGapPct, 8, 16, 32)}px`,
+    "--aa-header-gap": `${pctToRangePx(headerToAccordionGapPct, 32, 64, 112)}px`,
+    "--aa-item-head-gap": `${pctToRangePx(itemHeadGapPct, 4, 6, 16)}px`,
+    "--aa-item-body-gap": `${pctToRangePx(itemBodyGapPct, 8, 16, 32)}px`,
+    "--aa-item-bottom-padding": `${pctToRangePx(itemBottomPaddingPct, 16, 32, 56)}px`,
+    "--aa-list-width": pctToListWidth(listWidthPct),
     "--aa-image-width": pctToImageWidth(imageWidthPct),
     "--aa-image-height": `${pctToImageHeightPx(imageHeightPct)}px`,
     "--aa-eyebrow-color": colorToken(sectionEyebrowColor, "var(--chrome-fg-subtle, #a59f97)"),
@@ -135,14 +165,20 @@ export default function AutoAccordion({
     "--aa-title-color": colorToken(itemHeadingColor, "var(--chrome-fg, #000)"),
     "--aa-subheading-color": colorToken(itemSubheadingColor, "var(--chrome-fg, #000)"),
     "--aa-body-color": colorToken(itemDescriptionColor, "var(--chrome-fg-muted, #777169)"),
-    "--aa-progress-color": colorToken(progressColor, "var(--chrome-fg, #000)"),
+    "--aa-progress-track-color": progressColor
+      ? `color-mix(in srgb, var(--sg-color-${progressColor}) 18%, transparent)`
+      : "var(--chrome-border, #e5e5e5)",
   };
 
-  // Rule 7: changing animationStyle restarts the section from item 0.
+  // Rule 6: changing animationStyle restarts the section from item 0.
   useEffect(() => {
     setActiveIndex(0);
-    setIsAuto(true);
-  }, [animationStyle]);
+    setIsAuto(autoEnabled);
+  }, [animationStyle, autoEnabled]);
+
+  useEffect(() => {
+    setIsAuto(autoEnabled);
+  }, [autoEnabled]);
 
   // Reveal animation for the active item's body content (opacity / transform only).
   // Height is handled by CSS grid-template-rows transition on the wrapper.
@@ -193,7 +229,7 @@ export default function AutoAccordion({
       if (el) gsap.set(el, { width: "0%" });
     });
 
-    if (!isAuto) return;
+    if (!autoEnabled || !isAuto) return;
 
     const current = progressRefs.current[activeIndex];
     if (current) {
@@ -216,7 +252,7 @@ export default function AutoAccordion({
       if (progressTweenRef.current) progressTweenRef.current.kill();
       if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
     };
-  }, [activeIndex, autoAdvanceMs, isAuto, safeItems.length]);
+  }, [activeIndex, autoAdvanceMs, autoEnabled, isAuto, safeItems.length]);
 
   const handleItemClick = (i) => {
     if (i === activeIndex) {
@@ -232,7 +268,7 @@ export default function AutoAccordion({
     if (_onPropChange) _onPropChange(key, value);
   };
 
-  const rootClass = `${styles.root} ${styles[styleVariant] ?? ""}`.trim();
+  const rootClass = styles.root;
 
   return (
     <section className={rootClass} style={styleVars}>
@@ -257,7 +293,7 @@ export default function AutoAccordion({
           />
         </header>
 
-        <div className={styles.grid}>
+        <div className={`${styles.grid} ${reverseLayout ? styles.reverse : ""}`.trim()}>
           <ol className={styles.list}>
             {safeItems.map((item, i) => {
               const isActive = i === activeIndex;

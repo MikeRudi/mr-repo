@@ -5,8 +5,14 @@ import { ControlField } from "./InspectorPanel.jsx";
 const PANEL_TITLES = {
   styles: "Styles",
   animation: "Animation",
-  typography: "Typography",
 };
+
+const STYLE_GROUPS = [
+  ["typography", "Typography"],
+  ["layout", "Layout"],
+  ["color", "Color"],
+  ["spacing", "Spacing"],
+];
 
 export default function SectionControlsPanel({
   name,
@@ -17,6 +23,8 @@ export default function SectionControlsPanel({
   onChange,
   onClose,
 }) {
+  const groupedControls = panel === "styles" ? groupStyleControls(controls) : null;
+
   const setField = (key, value) => {
     const next = { ...props };
     if (value === undefined) {
@@ -60,16 +68,48 @@ export default function SectionControlsPanel({
             No controls in this panel yet.
           </p>
         ) : null}
-        {controls.map((control) => (
-          <ControlField
-            key={control.key}
-            control={control}
-            value={props[control.key]}
-            context={context}
-            onChange={(value) => setField(control.key, value)}
-          />
-        ))}
+        {groupedControls
+          ? groupedControls.map((group) => (
+              <details
+                key={group.id}
+                open={group.open}
+                className="rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)]"
+              >
+                <summary className="cursor-pointer px-3 py-2 text-[11px] tracking-[0.06em] text-[var(--chrome-fg)]">
+                  {group.label}
+                </summary>
+                <div className="flex flex-col gap-5 border-t border-[var(--chrome-border)] p-3">
+                  {group.controls.map((control) => (
+                    <ControlField
+                      key={control.key}
+                      control={control}
+                      value={props[control.key]}
+                      context={context}
+                      onChange={(value) => setField(control.key, value)}
+                    />
+                  ))}
+                </div>
+              </details>
+            ))
+          : controls.map((control) => (
+              <ControlField
+                key={control.key}
+                control={control}
+                value={props[control.key]}
+                context={context}
+                onChange={(value) => setField(control.key, value)}
+              />
+            ))}
       </div>
     </div>
   );
+}
+
+function groupStyleControls(controls) {
+  return STYLE_GROUPS.map(([id, label], index) => ({
+    id,
+    label,
+    open: index === 0,
+    controls: controls.filter((control) => control.group === id),
+  })).filter((group) => group.controls.length > 0);
 }

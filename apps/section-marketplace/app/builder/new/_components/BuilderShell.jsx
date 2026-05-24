@@ -273,9 +273,6 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
     groupedControls.animation.length
       ? { id: "animation", label: "Animation" }
       : null,
-    groupedControls.typography.length
-      ? { id: "typography", label: "Typography" }
-      : null,
   ].filter(Boolean);
   const showCmsPanel = Boolean(
     activeSectionPanel === "cms" && selectedInstance && selectedMeta?.cms
@@ -517,7 +514,7 @@ function StyleGuideModal({ guide, tokens, onTokensChange, onRename, onClose }) {
 }
 
 function groupControls(controls) {
-  const groups = { styles: [], animation: [], typography: [], other: [] };
+  const groups = { styles: [], animation: [], other: [] };
   for (const control of controls) {
     const panel = control.panel;
     if (panel && groups[panel]) {

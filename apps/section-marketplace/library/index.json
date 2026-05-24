@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T22:43:16.103Z",
+  "generatedAt": "2026-05-24T23:04:40.485Z",
   "counts": {
     "sections": 1,
     "templates": 1
@@ -34,106 +34,17 @@
       "submittedBy": "mike",
       "controls": [
         {
-          "key": "styleVariant",
-          "type": "select",
-          "label": "Style variant",
-          "panel": "styles",
-          "options": [
-            {
-              "value": "default",
-              "label": "Default"
-            }
-          ]
-        },
-        {
-          "key": "sectionPaddingTopPct",
-          "type": "slider",
-          "label": "Section top padding",
-          "panel": "styles",
-          "min": 0,
-          "max": 100,
-          "step": 5
-        },
-        {
-          "key": "sectionPaddingBottomPct",
-          "type": "slider",
-          "label": "Section bottom padding",
-          "panel": "styles",
-          "min": 0,
-          "max": 100,
-          "step": 5
-        },
-        {
-          "key": "imageWidthPct",
-          "type": "slider",
-          "label": "Image width",
-          "panel": "styles",
-          "min": 0,
-          "max": 100,
-          "step": 5
-        },
-        {
-          "key": "imageHeightPct",
-          "type": "slider",
-          "label": "Image height",
-          "panel": "styles",
-          "min": 0,
-          "max": 100,
-          "step": 5
-        },
-        {
-          "key": "sectionEyebrowColor",
-          "type": "color-token",
-          "label": "Section eyebrow color",
-          "panel": "styles"
-        },
-        {
-          "key": "sectionHeadingColor",
-          "type": "color-token",
-          "label": "Section heading color",
-          "panel": "styles"
-        },
-        {
-          "key": "itemEyebrowColor",
-          "type": "color-token",
-          "label": "Item eyebrow color",
-          "panel": "styles"
-        },
-        {
-          "key": "itemHeadingColor",
-          "type": "color-token",
-          "label": "Item heading color",
-          "panel": "styles"
-        },
-        {
-          "key": "itemSubheadingColor",
-          "type": "color-token",
-          "label": "Item sub-heading color",
-          "panel": "styles"
-        },
-        {
-          "key": "itemDescriptionColor",
-          "type": "color-token",
-          "label": "Item description color",
-          "panel": "styles"
-        },
-        {
-          "key": "progressColor",
-          "type": "color-token",
-          "label": "Progress bar color",
-          "panel": "styles"
-        },
-        {
-          "key": "linkButtonVariant",
-          "type": "button-variant",
-          "label": "Link button variant",
-          "panel": "styles"
+          "key": "autoEnabled",
+          "type": "toggle",
+          "label": "Auto play",
+          "defaultValue": true
         },
         {
           "key": "animationStyle",
           "type": "select",
           "label": "Animation style",
           "panel": "animation",
+          "defaultValue": "slide",
           "options": [
             {
               "value": "slide",
@@ -171,37 +82,203 @@
           "key": "sectionEyebrowTypography",
           "type": "typography-token",
           "label": "Section eyebrow tag",
-          "panel": "typography"
+          "panel": "styles",
+          "group": "typography",
+          "defaultValue": "textSmall"
         },
         {
           "key": "sectionHeadingTypography",
           "type": "typography-token",
           "label": "Section heading tag",
-          "panel": "typography"
+          "panel": "styles",
+          "group": "typography",
+          "defaultValue": "h2"
         },
         {
           "key": "itemEyebrowTypography",
           "type": "typography-token",
           "label": "Item eyebrow tag",
-          "panel": "typography"
+          "panel": "styles",
+          "group": "typography",
+          "defaultValue": "textSmall"
         },
         {
           "key": "itemHeadingTypography",
           "type": "typography-token",
           "label": "Item heading tag",
-          "panel": "typography"
+          "panel": "styles",
+          "group": "typography",
+          "defaultValue": "h5"
         },
         {
           "key": "itemSubheadingTypography",
           "type": "typography-token",
           "label": "Item sub-heading tag",
-          "panel": "typography"
+          "panel": "styles",
+          "group": "typography",
+          "defaultValue": "textMain"
         },
         {
           "key": "itemDescriptionTypography",
           "type": "typography-token",
           "label": "Item description tag",
-          "panel": "typography"
+          "panel": "styles",
+          "group": "typography",
+          "defaultValue": "textSmall"
+        },
+        {
+          "key": "listWidthPct",
+          "type": "slider",
+          "label": "Accordion width",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "imageWidthPct",
+          "type": "slider",
+          "label": "Image width",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "imageHeightPct",
+          "type": "slider",
+          "label": "Image height",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "reverseLayout",
+          "type": "toggle",
+          "label": "Reverse layout",
+          "panel": "styles",
+          "group": "layout",
+          "defaultValue": false
+        },
+        {
+          "key": "sectionEyebrowColor",
+          "type": "color-token",
+          "label": "Section eyebrow color",
+          "panel": "styles",
+          "group": "color"
+        },
+        {
+          "key": "sectionHeadingColor",
+          "type": "color-token",
+          "label": "Section heading color",
+          "panel": "styles",
+          "group": "color"
+        },
+        {
+          "key": "itemEyebrowColor",
+          "type": "color-token",
+          "label": "Item eyebrow color",
+          "panel": "styles",
+          "group": "color"
+        },
+        {
+          "key": "itemHeadingColor",
+          "type": "color-token",
+          "label": "Item heading color",
+          "panel": "styles",
+          "group": "color"
+        },
+        {
+          "key": "itemSubheadingColor",
+          "type": "color-token",
+          "label": "Item sub-heading color",
+          "panel": "styles",
+          "group": "color"
+        },
+        {
+          "key": "itemDescriptionColor",
+          "type": "color-token",
+          "label": "Item description color",
+          "panel": "styles",
+          "group": "color"
+        },
+        {
+          "key": "progressColor",
+          "type": "color-token",
+          "label": "Progress background color",
+          "panel": "styles",
+          "group": "color"
+        },
+        {
+          "key": "sectionPaddingYPct",
+          "type": "slider",
+          "label": "Section Y padding",
+          "panel": "styles",
+          "group": "spacing",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "headerTextGapPct",
+          "type": "slider",
+          "label": "Eyebrow to heading gap",
+          "panel": "styles",
+          "group": "spacing",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "headerToAccordionGapPct",
+          "type": "slider",
+          "label": "Heading to accordion gap",
+          "panel": "styles",
+          "group": "spacing",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "itemHeadGapPct",
+          "type": "slider",
+          "label": "Item heading gap",
+          "panel": "styles",
+          "group": "spacing",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "itemBodyGapPct",
+          "type": "slider",
+          "label": "Item body gap",
+          "panel": "styles",
+          "group": "spacing",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "itemBottomPaddingPct",
+          "type": "slider",
+          "label": "Item bottom padding",
+          "panel": "styles",
+          "group": "spacing",
+          "min": 0,
+          "max": 100,
+          "step": 5
+        },
+        {
+          "key": "linkButtonVariant",
+          "type": "button-variant",
+          "label": "Link button variant",
+          "panel": "styles",
+          "group": "layout"
         }
       ],
       "cms": {

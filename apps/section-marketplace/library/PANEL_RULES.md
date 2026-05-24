@@ -33,10 +33,6 @@ The panel is for everything that can't be edited inline.
 ## 2. What does belong in the panel
 
 - **Structure**: how many items, ordering options, layout variants.
-- **Style variants**: a dropdown that swaps the section between presets that
-  pull from the active style guide. A section can temporarily ship only
-  `Default` while other variants are being designed, but keep the dropdown
-  contract in place.
 - **Style controls**: percent sliders for spacing / sizing and token pickers
   for colors pulled from the active style guide.
 - **Animation**: pick which animation style applies (e.g. `slide`, `fade`,
@@ -82,40 +78,22 @@ base prop panel shows action buttons such as:
 - `Update CMS`
 - `Update Styles`
 - `Update Animation`
-- `Update Typography`
 
 Grouped controls opt into a focused panel with `controls[].panel`. Supported
 panel ids are:
 
 - `styles`
 - `animation`
-- `typography`
 
-Unpanelled controls remain in the base inspector. CMS rows live in the top-level
-`cms` block, not in `controls`.
-
----
-
-## 6. Style dropdown pulls from the active style guide
-
-Every section ships a `styleVariant` select control. When variants are designed,
-ship up to three options that swap which heading levels / colour tokens /
-spacing tokens the section uses, so the user can preview how their style guide
-changes the section. If variants are not designed yet, ship only `Default` and
-keep the dropdown.
-
-A `styleVariant` value is just a string the section interprets. Use semantic
-names:
-
-- `editorial` — long-form, magazine-y, large display type
-- `default` — the designer's baseline
-- `compact` — dense, smaller type, tighter spacing
-
-(Pick names that fit the section, but keep it to three for the first pass.)
+Typography controls belong inside the `styles` panel with
+`"group": "typography"`. Styles controls can also use `"group": "layout"`,
+`"group": "color"`, or `"group": "spacing"` so the Styles panel can show
+focused dropdown groups. Unpanelled controls remain in the base inspector. CMS
+rows live in the top-level `cms` block, not in `controls`.
 
 ---
 
-## 7. Animation changes restart the animation
+## 6. Animation changes restart the animation
 
 If a section has an `animationStyle` control, changing it must **reset the
 section's animation state** — back to the first item, restart any auto
@@ -124,7 +102,7 @@ actually looks like.
 
 ---
 
-## 8. Arrays ("Add an item")
+## 7. Arrays ("Add an item")
 
 Sections that render repeatable content should use the section CMS contract
 instead of a normal inspector `array-object` control. The selected section's
@@ -136,7 +114,7 @@ arrays. The main inspector remains for section-level style, timing, and layout.
 
 ---
 
-## 9. Section.json shape
+## 8. Section.json shape
 
 ```json
 {
@@ -167,6 +145,8 @@ Supported `controls[].type` values:
   by the active style guide's `colors` object.
 - `typography-token` — `{ key, type: 'typography-token', label }`; options are
   supplied by the active style guide's typography scale.
+- `toggle` — `{ key, type: 'toggle', label, defaultValue }` for boolean on/off
+  settings.
 - `number` — escape hatch for unitless integers that aren't a slider
 - `text` / `textarea` — **forbidden** unless the value is genuinely a hidden
   identifier (href, alt text, etc.) that the user can't see in the rendered
@@ -193,12 +173,13 @@ For repeatable content, add a top-level `cms` block:
 
 ---
 
-Controls can include `"panel": "styles"`, `"panel": "animation"`, or
-`"panel": "typography"` to move them into a focused update panel.
+Controls can include `"panel": "styles"` or `"panel": "animation"` to move
+them into a focused update panel. Styles controls can include `"group":
+"typography"`, `"layout"`, `"color"`, or `"spacing"`.
 
 ---
 
-## 10. Default props in the React component
+## 9. Default props in the React component
 
 Every section component defaults every controllable prop. Never rely on the
 builder to pass a value. The section must render correctly with **zero
@@ -210,7 +191,7 @@ passes an empty `props` object — the defaults are what the user sees.
 
 ---
 
-## 11. Editable text contract
+## 10. Editable text contract
 
 The section component receives two optional props from the builder:
 

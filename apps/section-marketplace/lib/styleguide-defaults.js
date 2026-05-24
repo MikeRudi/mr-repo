@@ -79,6 +79,7 @@ export const DEFAULT_TOKENS = {
 
   // All numeric (px). Desktop renders as em in the published CSS, mobile as rem.
   spacing: {
+    sitePadding:     { desktop: 32,  mobile: 24 },
     sectionTopLarge: { desktop: 128, mobile: 64 },
     sectionTopSmall: { desktop: 48,  mobile: 32 },
     sectionYLarge:   { desktop: 128, mobile: 64 },
@@ -202,6 +203,7 @@ export const TYPOGRAPHY_SCALES = [
 ];
 
 export const SPACING_TOKENS = [
+  ["sitePadding",     "Site padding"],
   ["sectionTopLarge", "Section top — large"],
   ["sectionTopSmall", "Section top — small"],
   ["sectionYLarge",   "Section y — large"],

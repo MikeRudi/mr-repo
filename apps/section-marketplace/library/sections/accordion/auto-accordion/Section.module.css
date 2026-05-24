@@ -1,10 +1,8 @@
-/* ----- Style variants ---------------------------------------------------- */
-/* The section uses CSS custom properties so the three variants can simply
-   rebind them. This is how a section author bakes in 3 "looks" that all read
-   from the same style guide tokens. See PANEL_RULES.md (rule 6). */
+/* ----- Section styles ---------------------------------------------------- */
+/* CSS custom properties keep builder controls scoped to this section. */
 
 .root {
-  /* defaults — overridden by variant classes */
+  /* defaults */
   --aa-eyebrow-color: var(--chrome-fg-subtle, #a59f97);
   --aa-eyebrow-size: 11px;
   --aa-eyebrow-tracking: 0.22em;
@@ -25,17 +23,22 @@
   --aa-body-color: var(--chrome-fg-muted, #777169);
   --aa-body-size: 13px;
 
-  --aa-section-pt: 112px;
-  --aa-section-pb: 112px;
+  --aa-section-py: 112px;
+  --aa-header-text-gap: 16px;
+  --aa-header-gap: 64px;
+  --aa-item-head-gap: 6px;
+  --aa-item-body-gap: 16px;
+  --aa-item-bottom-padding: 32px;
   --aa-row-py: 20px;
+  --aa-list-width: 50%;
   --aa-image-width: 50%;
   --aa-image-height: 620px;
-  --aa-progress-color: var(--chrome-fg, #000);
+  --aa-progress-track-color: var(--chrome-border, #e5e5e5);
 
   min-height: 100vh;
   background: var(--chrome-ground, #fdfcfc);
   color: var(--chrome-fg, #000);
-  padding: var(--aa-section-pt) 0 var(--aa-section-pb);
+  padding: var(--aa-section-py) 0;
 }
 @media (min-width: 1024px) {
   .root {
@@ -43,42 +46,20 @@
   }
 }
 
-.root.editorial {
-  --aa-heading-size: clamp(40px, 6vw, 72px);
-  --aa-heading-weight: 400;
-  --aa-title-size: clamp(28px, 3.6vw, 44px);
-  --aa-title-weight: 400;
-  --aa-eyebrow-color: var(--chrome-fg, #000);
-  --aa-eyebrow-tracking: 0.32em;
-}
-.root.compact {
-  --aa-heading-size: clamp(20px, 2.4vw, 28px);
-  --aa-heading-weight: 600;
-  --aa-title-size: clamp(15px, 1.6vw, 18px);
-  --aa-title-weight: 600;
-  --aa-body-size: 12px;
-  --aa-row-py: 14px;
-}
-
 .inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--sg-space-sitePadding, 2em);
 }
 @media (min-width: 1024px) {
   .inner {
-    padding: 0 40px;
+    padding: 0 var(--sg-space-sitePadding, 2em);
   }
 }
 
 .header {
   max-width: 760px;
-  margin-bottom: 48px;
-}
-@media (min-width: 1024px) {
-  .header {
-    margin-bottom: 64px;
-  }
+  margin-bottom: var(--aa-header-gap);
 }
 
 .eyebrow {
@@ -89,7 +70,7 @@
   font-weight: var(--aa-eyebrow-weight);
 }
 .heading {
-  margin-top: 16px;
+  margin-top: var(--aa-header-text-gap);
   font-size: var(--aa-heading-size);
   font-weight: var(--aa-heading-weight);
   color: var(--aa-heading-color);
@@ -105,8 +86,14 @@
 }
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: minmax(0, 1fr) var(--aa-image-width);
+    grid-template-columns: minmax(0, var(--aa-list-width)) minmax(0, var(--aa-image-width));
     gap: 64px;
+  }
+  .grid.reverse .list {
+    order: 2;
+  }
+  .grid.reverse .imageHolder {
+    order: 1;
   }
 }
 
@@ -134,7 +121,7 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--aa-item-head-gap);
   color: inherit;
 }
 .head:focus-visible {
@@ -170,15 +157,15 @@
 }
 
 .bodyContent {
-  padding-bottom: 24px;
+  padding-bottom: var(--aa-item-bottom-padding);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--aa-item-body-gap);
   max-width: 560px;
 }
 @media (min-width: 1024px) {
   .bodyContent {
-    padding-bottom: 32px;
+    padding-bottom: var(--aa-item-bottom-padding);
   }
 }
 
@@ -232,7 +219,7 @@
 .progressTrack {
   position: relative;
   height: 1px;
-  background: var(--chrome-border, #e5e5e5);
+  background: var(--aa-progress-track-color, var(--chrome-border, #e5e5e5));
 }
 .progressFill {
   position: absolute;
@@ -240,7 +227,7 @@
   bottom: 0;
   left: 0;
   width: 0%;
-  background: var(--aa-progress-color, var(--chrome-fg, #000));
+  background: var(--chrome-fg, #000);
 }
 
 .imageHolder {
