@@ -44,5 +44,9 @@ export default async function SectionPreviewPage({ params }) {
     );
   }
 
-  return <Component />;
+  return (
+    <div className="sg-section-preview">
+      <Component />
+    </div>
+  );
 }

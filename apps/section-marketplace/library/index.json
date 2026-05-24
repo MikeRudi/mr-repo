@@ -1,10 +1,130 @@
 {
-  "generatedAt": "2026-05-21T10:51:29.782Z",
+  "generatedAt": "2026-05-24T13:18:44.520Z",
   "counts": {
-    "sections": 0,
+    "sections": 1,
     "templates": 1
   },
-  "sections": [],
+  "sections": [
+    {
+      "id": "auto-accordion",
+      "name": "Auto Accordion",
+      "category": "accordion",
+      "version": "0.1.0",
+      "track": "stable",
+      "lifecycle": "Approved",
+      "description": "Vertical auto-advancing accordion. Each item carries an eyebrow, title, location, description, image, and link. The active item expands; the rest collapse. A progress bar on the active item fills over the configured duration, then auto-advances. Click an item to jump to it (auto-advance pauses).",
+      "dependencies": [
+        "gsap"
+      ],
+      "motionDensity": [
+        "medium"
+      ],
+      "responsive": {
+        "profile": "desktop / mobile-stacked"
+      },
+      "tags": [
+        "accordion",
+        "auto",
+        "rotation",
+        "split",
+        "image"
+      ],
+      "created": "2026-05-24",
+      "updated": "2026-05-24",
+      "submittedBy": "mike",
+      "controls": [
+        {
+          "key": "eyebrow",
+          "type": "text",
+          "label": "Eyebrow"
+        },
+        {
+          "key": "heading",
+          "type": "textarea",
+          "label": "Section heading"
+        },
+        {
+          "key": "animationStyle",
+          "type": "select",
+          "label": "Animation style",
+          "options": [
+            {
+              "value": "slide",
+              "label": "Slide + fade"
+            },
+            {
+              "value": "fade",
+              "label": "Fade only"
+            },
+            {
+              "value": "scale",
+              "label": "Scale + fade"
+            }
+          ]
+        },
+        {
+          "key": "autoAdvanceMs",
+          "type": "slider",
+          "label": "Time per item (ms)",
+          "min": 2000,
+          "max": 12000,
+          "step": 250
+        },
+        {
+          "key": "revealMs",
+          "type": "slider",
+          "label": "Reveal duration (ms)",
+          "min": 200,
+          "max": 1500,
+          "step": 50
+        },
+        {
+          "key": "items",
+          "type": "array-object",
+          "label": "Items",
+          "objectFields": [
+            {
+              "key": "region",
+              "type": "text",
+              "label": "Region / eyebrow"
+            },
+            {
+              "key": "title",
+              "type": "text",
+              "label": "Title"
+            },
+            {
+              "key": "location",
+              "type": "textarea",
+              "label": "Location"
+            },
+            {
+              "key": "description",
+              "type": "textarea",
+              "label": "Description"
+            },
+            {
+              "key": "image",
+              "type": "image",
+              "label": "Image URL"
+            },
+            {
+              "key": "linkLabel",
+              "type": "text",
+              "label": "Link label"
+            },
+            {
+              "key": "linkHref",
+              "type": "text",
+              "label": "Link href"
+            }
+          ]
+        }
+      ],
+      "kind": "section",
+      "path": "sections/accordion/auto-accordion"
+    }
+  ],
   "templates": [
     {
       "id": "excellence-awards",

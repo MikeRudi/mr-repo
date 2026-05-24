@@ -33,30 +33,70 @@
 
 ## 1. Reset library to a single starter section
 
-**Status**: pending user kickoff (asset incoming).
+**Status**: IN PROGRESS.
 
-**Scope**
-- Remove all current section folders under `apps/section-marketplace/library/sections/<category>/<slug>/`.
-- Remove their entries from `library/sections-seed.json` and `library/registry.js`.
-- Add the user‑supplied section as the sole section.
-- Regenerate `library/index.json` via the manifest script.
-- Update `apps/section-marketplace/app/builder/new/_components/SectionsPanel.jsx` to reflect the new single‑section state and any new visual direction the user provides.
-- Audit `apps/section-marketplace/library/templates/` — templates referencing removed sections must be removed or updated; do not leave dangling refs.
-- Verify `/api/sections`, `/library`, `/library/[id]`, `/sections/[id]/preview`, and the builder still build and render.
+**Locked-in decisions**
+- Source: AwardsShowcase auto-accordion in `library/templates/excellence-awards/sections/AwardsShowcase.jsx` (markup ~L763–1184) + jQuery/GSAP logic in `public/script.js` `aaItemsAuto()` (L82–299). Port to React/JSX with GSAP only (no jQuery).
+- Slug: `auto-accordion`. Category folder (filesystem): `accordion`. Display label (UI): `ACCORDION`. All category labels render UPPERCASE.
+- Display name: `Auto Accordion`. Inter font, restrained size.
+- Section files live at `library/sections/accordion/auto-accordion/Section.jsx` and `section.json`.
+- Default props ship with the real PP Excellence content (4 regions, real images from `/webflow/images/`).
+- All app-chrome buttons render uppercase.
+- App font is Inter app-wide via `next/font/google`. Remove all references to other fonts in app chrome (`Lay Grotesk`, `Geist Mono`, etc.). Template-internal references stay (the template is preserved).
+- Excellence Awards template stays at `/templates/excellence-awards`. Homepage "From a library template" tile is disabled and logged as item 4.5.
 
-**Inputs required from user**
-- The section asset (files, expected slug/category, props/schema, any motion/animation behaviour).
-- Direction for `SectionsPanel.jsx` UI changes.
+**Props rework (replaces all prior prop wiring)**
+- Delete `library/section-props.js` and `library/sections-seed.json`.
+- Each section owns its metadata + controls in a colocated `section.json`.
+- `lib/sections.js` reads from `library/index.json` (manifest), regenerated automatically on every build.
+- `package.json` `build` runs `library:manifest` before `db:migrate && next build`.
+- Inspector renders controls generically from `controls` array in `section.json`. Supported control types for v1: `text`, `textarea`, `number`, `slider` (min/max/step), `select` (options), `array-object` (rows of fields), `image` (URL string for now).
+- Drop per-element style overrides and styleguide presets from the inspector for now — styling-via-inspector is reintroduced in item 4 if needed.
+
+**Controls for `auto-accordion`**
+- `autoAdvanceMs` — slider, ms each item stays active. Range 2000–12000, step 250, default 5000.
+- `revealMs` — slider, animation duration when an item activates. Range 200–1500, step 50, default 600.
+- `animationStyle` — select. Options: `slide`, `fade`, `scale`. Default `slide`.
+- `eyebrow` — text. Default: `Highly Commended Lounges 2026`.
+- `heading` — textarea. Default: `Recognising exceptional service and experiences for Priority Pass Members.`
+- `items` — array-object with fields: `region` (text), `title` (text), `location` (textarea), `description` (textarea), `image` (image URL), `linkLabel` (text), `linkHref` (text). Defaults: the 4 real regions from AwardsShowcase.
+
+**Scope of code changes**
+- Delete all current folders under `library/sections/<category>/<slug>/`.
+- Delete `library/sections-seed.json` and `library/section-props.js`.
+- Create `library/sections/accordion/auto-accordion/Section.jsx` and `section.json`.
+- Rewrite `library/registry.js` to register only the new section.
+- Rewrite `lib/sections.js` to read from `library/index.json` (manifest) instead of seed.
+- Update `package.json` build script to regenerate the manifest pre-build.
+- Wire Inter via `next/font/google` in `app/layout.jsx`. Update `app/globals.css` so `--font-display` and `--font-body` resolve to Inter, drop `Lay Grotesk` / `Geist Mono` references in app chrome.
+- Rewrite `app/builder/new/_components/InspectorPanel.jsx` as a generic controls renderer driven by `section.json`. Remove `data-sg-prop` selection-on-element flow and per-element style overrides (will revisit in item 4).
+- Rewrite `app/builder/new/_components/SectionsPanel.jsx`: section list grouped by category folders; folder labels rendered UPPERCASE; uppercase buttons throughout.
+- Disable the "From a library template" tile on `app/page.jsx`. Mark it as coming soon. Add item 4.5 to both to-do files.
+- Audit `BuilderShell.jsx` for any references to deleted section IDs (e.g. `isNav = sectionId === 'navigation-floating-bar'`) and remove/adapt.
+
+**Out of scope**
+- Library page redesign (item 3).
+- Builder architecture refresh (item 4).
+- Style guide rework (item 5).
+- Build Mode upload/download flow (item 2).
+- Connecting to the external `MattMakeReign/section-marketplace` library (later items; only the UI reference matters now and only for item 3).
 
 **Acceptance**
-- `library/index.json` regenerated and committed.
-- Build passes; Vercel deploy green.
-- Builder shows exactly one section in the picker; preview and add‑to‑canvas both work.
-- No stale imports in `registry.js` or seed data.
+- `library/sections/` contains exactly one section folder: `accordion/auto-accordion/`.
+- `library/index.json` is regenerated and reflects exactly one section.
+- `app/api/sections` returns the one section.
+- `/library` shows one card.
+- `/library/auto-accordion` shows the detail page with no errors.
+- `/sections/auto-accordion/preview` renders the section live with default props.
+- `/builder/new` shows the new SectionsPanel with the single section under an uppercase `ACCORDION` group; clicking adds it to the canvas; inspector renders the four controls (`autoAdvanceMs`, `revealMs`, `animationStyle`, `items`) and edits update the canvas live.
+- All in-app button text renders UPPERCASE.
+- App fonts: Inter only in chrome.
+- `/templates/excellence-awards` still renders correctly.
+- Homepage "From a library template" tile is visibly disabled / coming soon.
+- Local build passes; Vercel build passes; saved sites in the `sites` table that referenced old sections render gracefully (missing components fall through to nothing rather than crashing).
 
-**Open questions**
-- Are templates kept (and updated to use the new section), or removed for now?
-- Does the new section ship with example props/preview content?
+**Migration safety**
+- The `sites` DB table contains saved pages referencing old section IDs (e.g. `hero-split-bold`). Defensive read in `app/site/[siteId]/page.jsx` already handles unknown section IDs by returning `null` from `getSectionComponent`. Verify this still holds; do not modify schema.
 
 ---
 
@@ -135,6 +175,31 @@
 
 **Acceptance**
 - Defined per sub‑task at kickoff.
+
+---
+
+## 4.5. Fix "Start a site from a library template" flow
+
+**Status**: pending user kickoff. Raised during item 1.
+
+**Problem**
+- `app/page.jsx` "From a library template" links to `/builder/new?from=template`.
+- `app/builder/new/page.jsx` reads `?from=template` but only sets `initialTemplate` for display; it does **not** load template sections into the builder canvas.
+- Net effect: user clicks "From a template" and gets a blank builder.
+
+**Scope (to refine at kickoff)**
+- Decide semantics: does selecting a template (a) copy its sections+tokens into a new empty builder state, (b) deep-clone the template's saved site row, or (c) something else.
+- If (a) is chosen: templates need their own canonical pages/sections shape in `library/templates/<slug>/template.json`, parseable into the builder's `pages[].sections[]` shape.
+- Template selection UI: which template? Today the homepage tile is a generic link. Likely needs a chooser (`/builder/new?template=<slug>` or `/start/template`).
+- Loading state and error handling for unknown/missing template slug.
+
+**Out of scope**
+- Adding new templates beyond `excellence-awards`.
+- The `blank` pseudo-template (it's just an empty builder, no action needed).
+
+**Acceptance**
+- User can pick the Excellence Awards template from the homepage and land in a builder pre-loaded with that template's sections and tokens, ready to edit.
+- Saving creates a new site row independent of the template.
 
 ---
 

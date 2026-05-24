@@ -4,21 +4,27 @@ This is the plain‑English plan for the next phase of work. The order here is t
 
 ---
 
-## 1. Reset the section library to one starter section
+## 1. Reset the section library to one starter section *(IN PROGRESS)*
 
 **What this means in plain English**
 - Wipe out all the existing sections in the library.
-- Replace them with one single section that I'll supply (it's something I've already built).
-- Update the "Sections" panel inside the builder so it reflects this clean starting point and the new section.
+- Replace them with one section: the **Auto Accordion** from the Excellence Awards site, ported from CSS/JS to full React/JSX.
+- Update the "Sections" panel inside the builder so it reflects this clean starting point.
+- Fully rework how props work: no more hand-wired per-section schemas. Each section ships with its own `section.json` declaring its controls, and the inspector renders those generically.
+- App-wide font: Inter only (remove everything else from the app chrome).
+- All button text in the app is UPPERCASE.
 
 **Goal**
 - Stop pretending we have 15 sections when most are placeholders.
 - Start with one really good, real section as the foundation.
 - Make the builder's section list look intentional, not stubby.
+- Establish the new section-authoring contract that item 2 (Build Mode) will rely on.
 
-**More to come**
-- I'll send you the asset (code/files) for the first section.
-- We'll align on naming, category, and how the section panel UI should change.
+**Decisions locked in**
+- Slug: `auto-accordion`. Category: `accordion` (UI display: `ACCORDION`).
+- Animation options for v1: `slide`, `fade`, `scale`.
+- Ship with the real Priority Pass Excellence content as default props.
+- The Excellence Awards template stays viewable at `/templates/excellence-awards`, but the homepage "From a library template" tile is disabled and tracked as new item 4.5.
 
 ---
 
@@ -67,6 +73,21 @@ This is the plain‑English plan for the next phase of work. The order here is t
 
 **More to come**
 - We'll list the specific UI pain points and architecture changes once we get here.
+
+---
+
+## 4.5 Fix "Start a site from a library template" flow
+
+**What this means in plain English**
+- Today, clicking "From a library template" on the homepage just opens the blank builder. It does nothing useful.
+- The Excellence Awards template renders fine on its own page, but you can't actually *start* a site from it.
+- Decide how this should work (load the template's sections into the builder canvas? Snapshot the template into a new site row? Something else?) and implement it.
+
+**Goal**
+- Templates become real starting points, not decoration.
+
+**More to come**
+- Define what "start from template" actually means (copy of sections + tokens? a fork?).
 
 ---
 

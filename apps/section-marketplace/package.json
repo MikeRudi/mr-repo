@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node db/migrate.mjs && next build",
+    "build": "node library/scripts/build-manifest.mjs && node db/migrate.mjs && next build",
     "start": "next start",
     "library:manifest": "node library/scripts/build-manifest.mjs",
     "db:migrate": "node db/migrate.mjs"

@@ -1,6 +1,8 @@
-import seed from "../library/sections-seed.json";
+import manifest from "../library/index.json";
 
-const SECTIONS = Object.freeze(seed.sections.slice());
+// Source of truth: library/index.json (manifest), regenerated on every build
+// by library/scripts/build-manifest.mjs (invoked from npm run build).
+const SECTIONS = Object.freeze((manifest?.sections ?? []).slice());
 
 export function getAllSections() {
   return SECTIONS;

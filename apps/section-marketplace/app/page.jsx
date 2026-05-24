@@ -25,6 +25,7 @@ const START = [
     href: "/builder/new?from=template",
     title: "From a library template",
     body: "Begin with a curated layout, then edit tokens and swap sections to taste.",
+    comingSoon: true,
   },
   {
     href: "/start/screenshot",
