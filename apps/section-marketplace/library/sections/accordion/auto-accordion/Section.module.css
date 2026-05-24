@@ -1,3 +1,120 @@
+/* ----- Style variants ---------------------------------------------------- */
+/* The section uses CSS custom properties so the three variants can simply
+   rebind them. This is how a section author bakes in 3 "looks" that all read
+   from the same style guide tokens. See PANEL_RULES.md (rule 5). */
+
+.root {
+  /* defaults — overridden by variant classes */
+  --aa-eyebrow-color: var(--chrome-fg-subtle, #a59f97);
+  --aa-eyebrow-size: 11px;
+  --aa-eyebrow-tracking: 0.22em;
+  --aa-eyebrow-weight: 500;
+
+  --aa-heading-size: clamp(28px, 3.6vw, 44px);
+  --aa-heading-weight: 500;
+  --aa-heading-color: var(--chrome-fg, #000);
+
+  --aa-title-size: clamp(20px, 2.2vw, 26px);
+  --aa-title-weight: 500;
+  --aa-title-color: var(--chrome-fg, #000);
+
+  --aa-region-size: 10px;
+  --aa-region-tracking: 0.22em;
+  --aa-region-color: var(--chrome-fg-subtle, #a59f97);
+
+  --aa-body-color: var(--chrome-fg-muted, #777169);
+  --aa-body-size: 13px;
+
+  --aa-section-py: 80px;
+  --aa-row-py: 20px;
+
+  background: var(--chrome-ground, #fdfcfc);
+  color: var(--chrome-fg, #000);
+  padding: var(--aa-section-py) 0;
+}
+@media (min-width: 1024px) {
+  .root {
+    --aa-section-py: 112px;
+    --aa-row-py: 24px;
+  }
+}
+
+.root.editorial {
+  --aa-heading-size: clamp(40px, 6vw, 72px);
+  --aa-heading-weight: 400;
+  --aa-title-size: clamp(28px, 3.6vw, 44px);
+  --aa-title-weight: 400;
+  --aa-eyebrow-color: var(--chrome-fg, #000);
+  --aa-eyebrow-tracking: 0.32em;
+}
+.root.compact {
+  --aa-heading-size: clamp(20px, 2.4vw, 28px);
+  --aa-heading-weight: 600;
+  --aa-title-size: clamp(15px, 1.6vw, 18px);
+  --aa-title-weight: 600;
+  --aa-body-size: 12px;
+  --aa-row-py: 14px;
+  --aa-section-py: 56px;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+@media (min-width: 1024px) {
+  .inner {
+    padding: 0 40px;
+  }
+}
+
+.header {
+  max-width: 760px;
+  margin-bottom: 48px;
+}
+@media (min-width: 1024px) {
+  .header {
+    margin-bottom: 64px;
+  }
+}
+
+.eyebrow {
+  font-size: var(--aa-eyebrow-size);
+  text-transform: uppercase;
+  letter-spacing: var(--aa-eyebrow-tracking);
+  color: var(--aa-eyebrow-color);
+  font-weight: var(--aa-eyebrow-weight);
+}
+.heading {
+  margin-top: 16px;
+  font-size: var(--aa-heading-size);
+  font-weight: var(--aa-heading-weight);
+  color: var(--aa-heading-color);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .row {
   border-top: 1px solid var(--chrome-border, #e5e5e5);
 }
@@ -8,32 +125,28 @@
 .head {
   width: 100%;
   text-align: left;
-  padding: 20px 0;
+  padding: var(--aa-row-py) 0;
   background: transparent;
   border: 0;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   color: inherit;
-}
-@media (min-width: 1024px) {
-  .head {
-    padding: 24px 0;
-  }
 }
 
 .region {
-  font-size: 10px;
+  font-size: var(--aa-region-size);
   text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: var(--chrome-fg-subtle, #a59f97);
+  letter-spacing: var(--aa-region-tracking);
+  color: var(--aa-region-color);
 }
 .title {
-  font-size: clamp(20px, 2.2vw, 26px);
+  font-size: var(--aa-title-size);
+  font-weight: var(--aa-title-weight);
+  color: var(--aa-title-color);
   line-height: 1.15;
   letter-spacing: -0.005em;
-  font-weight: 500;
 }
 
 .body {
@@ -63,14 +176,14 @@
 }
 
 .location {
-  font-size: 13px;
+  font-size: var(--aa-body-size);
   line-height: 1.6;
   color: var(--chrome-fg, #000);
 }
 .description {
-  font-size: 13px;
+  font-size: var(--aa-body-size);
   line-height: 1.7;
-  color: var(--chrome-fg-muted, #777169);
+  color: var(--aa-body-color);
 }
 
 .link {

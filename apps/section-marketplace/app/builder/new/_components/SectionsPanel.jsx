@@ -55,10 +55,11 @@ export default function SectionsPanel({ sections, onAdd }) {
                 <button
                   type="button"
                   onClick={() => onAdd(s.id)}
-                  className="w-full h-12 px-3 rounded-[10px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] hover:border-[var(--chrome-border-strong)] flex items-center justify-between gap-2 text-[11px] tracking-[0.08em]"
+                  className="btn-chrome btn-chrome--ghost btn-chrome--block"
+                  style={{ justifyContent: "space-between" }}
                 >
                   <span className="truncate">{s.name}</span>
-                  <span aria-hidden className="text-[var(--chrome-fg-subtle)]">+</span>
+                  <span aria-hidden>+</span>
                 </button>
               </li>
             ))}

@@ -227,19 +227,10 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             </option>
           ))}
         </select>
-        <button
-          type="button"
-          onClick={addPage}
-          className="h-8 px-3 rounded-[6px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
-        >
+        <button type="button" onClick={addPage} className="btn-chrome btn-chrome--ghost btn-chrome--sm">
           + Page
         </button>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={isSaving}
-          className="h-8 px-4 rounded-full bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[11px] hover:opacity-90 disabled:opacity-50"
-        >
+        <button type="button" onClick={handleSave} disabled={isSaving} className="btn-chrome btn-chrome--sm">
           {isSaving ? "Saving..." : "Save"}
         </button>
         {savedUrl && (
@@ -249,20 +240,17 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
               navigator.clipboard.writeText(savedUrl);
               alert("Link copied!");
             }}
-            className="h-8 px-3 rounded-[6px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)]"
+            className="btn-chrome btn-chrome--ghost btn-chrome--sm"
           >
             Copy link
           </button>
         )}
-        <Link
-          href="/"
-          className="h-8 grid place-items-center px-3 rounded-[6px] text-[11px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] uppercase tracking-[0.04em]"
-        >
+        <Link href="/" className="btn-chrome btn-chrome--ghost btn-chrome--sm">
           Exit
         </Link>
       </header>
 
-      <aside className="row-start-2 col-start-1 border-r border-[var(--chrome-border)] bg-[var(--chrome-surface)] flex flex-col overflow-hidden">
+      <aside className="row-start-2 col-start-1 min-h-0 border-r border-[var(--chrome-border)] bg-[var(--chrome-surface)] flex flex-col overflow-hidden">
         <nav role="tablist" className="flex border-b border-[var(--chrome-border)]">
           {TOOLS.map((t) => {
             const sel = t.id === activeTool;
@@ -310,12 +298,12 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       </aside>
 
       <main
-        className="row-start-2 col-start-2 overflow-y-auto"
+        className="row-start-2 col-start-2 min-h-0 overflow-y-auto"
         onClick={(e) => {
           if (e.target === e.currentTarget) setSelectedSectionId(null);
         }}
       >
-        <div className="sg-canvas-builder min-h-full" style={{ fontSize: "16px" }}>
+        <div className="sg-canvas-builder" style={{ fontSize: "16px" }}>
           <style dangerouslySetInnerHTML={{ __html: canvasCss }} />
           <Canvas
             page={activePage}
@@ -324,12 +312,17 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             onSelectSection={setSelectedSectionId}
             onMove={moveSection}
             onRemove={removeSection}
+            onPropChange={(instanceId, key, value) => {
+              const inst = activePage?.sections?.find((s) => s.id === instanceId);
+              if (!inst) return;
+              updateSectionProps(instanceId, { ...(inst.props ?? {}), [key]: value });
+            }}
           />
         </div>
       </main>
 
       {showInspector ? (
-        <aside className="row-start-2 col-start-3 overflow-hidden">
+        <aside className="row-start-2 col-start-3 min-h-0 overflow-hidden">
           <InspectorPanel
             name={selectedMeta?.name ?? selectedInstance?.sectionId}
             controls={selectedMeta?.controls ?? []}
@@ -346,7 +339,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   );
 }
 
-function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRemove }) {
+function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRemove, onPropChange }) {
   if (!page) return null;
 
   if (page.sections.length === 0) {
@@ -374,6 +367,7 @@ function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRem
           onMoveUp={() => onMove(inst.id, -1)}
           onMoveDown={() => onMove(inst.id, +1)}
           onRemove={() => onRemove(inst.id)}
+          onPropChange={(key, value) => onPropChange(inst.id, key, value)}
         />
       ))}
     </div>
@@ -388,6 +382,7 @@ function SectionInstance({
   onMoveUp,
   onMoveDown,
   onRemove,
+  onPropChange,
 }) {
   const Component = getSectionComponent(instance.sectionId);
   return (
@@ -398,12 +393,16 @@ function SectionInstance({
           : "hover:ring-1 hover:ring-inset hover:ring-[var(--chrome-border-strong)]"
       }`}
       onClick={(e) => {
-        if (e.target.closest("button, a")) return;
+        if (e.target.closest("button, a, [contenteditable=true]")) return;
         onSelect();
       }}
     >
       {Component ? (
-        <Component {...instance.props} />
+        <Component
+          {...instance.props}
+          _editing
+          _onPropChange={onPropChange}
+        />
       ) : (
         <div className="px-6 py-16 text-center text-[var(--chrome-fg-disabled)]">
           <p className="text-[12px] tracking-[0.04em]">

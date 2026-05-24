@@ -8,7 +8,10 @@ export const metadata = {
 };
 
 export default function TemplatesPage() {
-  const templates = getAllTemplates();
+  // Only show real templates with a renderable preview route. The "blank"
+  // pseudo-template is just an empty builder, not a template — hide it here
+  // and surface it from the homepage instead.
+  const templates = getAllTemplates().filter((t) => Boolean(t.renderRoute));
   return (
     <AppShell active="/templates">
       <section className="mx-auto max-w-[1200px] px-6 pt-12 pb-6">
@@ -53,17 +56,21 @@ export default function TemplatesPage() {
                       {previewable ? (
                         <Link
                           href={t.renderRoute}
-                          className="inline-flex items-center h-9 px-4 rounded-(--chrome-radius-pill) bg-(--chrome-fg) text-(--chrome-fg-inverse) text-[12px]"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn-chrome"
                         >
                           Preview live
                         </Link>
                       ) : null}
-                      <Link
-                        href={`/builder/new?template=${t.slug}`}
-                        className="inline-flex items-center h-9 px-4 rounded-(--chrome-radius-pill) border border-(--chrome-border) text-(--chrome-fg) text-[12px] hover:border-(--chrome-border-strong)"
+                      {/* Use template is gated on item 4.5 — disabled for now. */}
+                      <span
+                        aria-disabled="true"
+                        title="Coming soon"
+                        className="btn-chrome btn-chrome--ghost"
                       >
                         Use template
-                      </Link>
+                      </span>
                     </div>
                   </div>
                 </div>

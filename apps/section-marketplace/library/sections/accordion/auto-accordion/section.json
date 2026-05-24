@@ -15,14 +15,14 @@
   "submittedBy": "mike",
   "controls": [
     {
-      "key": "eyebrow",
-      "type": "text",
-      "label": "Eyebrow"
-    },
-    {
-      "key": "heading",
-      "type": "textarea",
-      "label": "Section heading"
+      "key": "styleVariant",
+      "type": "select",
+      "label": "Style variant",
+      "options": [
+        { "value": "editorial", "label": "Editorial" },
+        { "value": "default", "label": "Default" },
+        { "value": "compact", "label": "Compact" }
+      ]
     },
     {
       "key": "animationStyle",
@@ -35,32 +35,27 @@
       ]
     },
     {
-      "key": "autoAdvanceMs",
+      "key": "autoAdvancePct",
       "type": "slider",
-      "label": "Time per item (ms)",
-      "min": 2000,
-      "max": 12000,
-      "step": 250
+      "label": "Time per item",
+      "min": 0,
+      "max": 100,
+      "step": 5
     },
     {
-      "key": "revealMs",
+      "key": "revealPct",
       "type": "slider",
-      "label": "Reveal duration (ms)",
-      "min": 200,
-      "max": 1500,
-      "step": 50
+      "label": "Reveal speed",
+      "min": 0,
+      "max": 100,
+      "step": 5
     },
     {
       "key": "items",
       "type": "array-object",
-      "label": "Items",
+      "label": "Items (add / remove)",
       "objectFields": [
-        { "key": "region", "type": "text", "label": "Region / eyebrow" },
-        { "key": "title", "type": "text", "label": "Title" },
-        { "key": "location", "type": "textarea", "label": "Location" },
-        { "key": "description", "type": "textarea", "label": "Description" },
         { "key": "image", "type": "image", "label": "Image URL" },
-        { "key": "linkLabel", "type": "text", "label": "Link label" },
         { "key": "linkHref", "type": "text", "label": "Link href" }
       ]
     }

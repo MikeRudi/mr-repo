@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import styles from "./Section.module.css";
+import EditableText from "../../_shared/EditableText.jsx";
+
+// ----- Default content -----------------------------------------------------
 
 export const DEFAULT_ITEMS = [
   {
@@ -49,13 +52,40 @@ export const DEFAULT_ITEMS = [
   },
 ];
 
+// ----- Percent → concrete mappers -----------------------------------------
+// Per PANEL_RULES.md (rule 4) the section owns these mappings.
+
+// Time per item: 0% = 2000ms (snappy), 50% = 5000ms (designer baseline), 100% = 12000ms (slow).
+function pctToAutoAdvanceMs(pct) {
+  const p = clamp(pct, 0, 100);
+  return Math.round(2000 + (p / 100) * (12000 - 2000));
+}
+// Reveal speed slider: higher % = faster reveal.
+// 0% = 1200ms (slow), 50% = 600ms (designer baseline), 100% = 200ms (snap).
+function pctToRevealMs(pct) {
+  const p = clamp(pct, 0, 100);
+  return Math.round(1200 - (p / 100) * (1200 - 200));
+}
+function clamp(n, lo, hi) {
+  if (typeof n !== "number" || Number.isNaN(n)) return (lo + hi) / 2;
+  return Math.min(hi, Math.max(lo, n));
+}
+
+// ----- Component -----------------------------------------------------------
+
 export default function AutoAccordion({
+  // Visible text content. Edited inline on the canvas (no panel field).
   eyebrow = "Highly Commended Lounges 2026",
   heading = "Recognising exceptional service and experiences for Priority Pass Members.",
+  // Panel-controlled
+  styleVariant = "default",
   animationStyle = "slide",
-  autoAdvanceMs = 5000,
-  revealMs = 600,
+  autoAdvancePct = 50,
+  revealPct = 50,
   items = DEFAULT_ITEMS,
+  // Builder-only props (see PANEL_RULES.md rule 10)
+  _editing = false,
+  _onPropChange,
 } = {}) {
   const safeItems = Array.isArray(items) && items.length > 0 ? items : DEFAULT_ITEMS;
   const [activeIndex, setActiveIndex] = useState(0);
@@ -77,6 +107,15 @@ export default function AutoAccordion({
   const setProgressRef = useCallback((el, i) => {
     if (el) progressRefs.current[i] = el;
   }, []);
+
+  const autoAdvanceMs = pctToAutoAdvanceMs(autoAdvancePct);
+  const revealMs = pctToRevealMs(revealPct);
+
+  // Rule 6: changing animationStyle restarts the section from item 0.
+  useEffect(() => {
+    setActiveIndex(0);
+    setIsAuto(true);
+  }, [animationStyle]);
 
   // Reveal animation for the active item's body content (opacity / transform only).
   // Height is handled by CSS grid-template-rows transition on the wrapper.
@@ -161,26 +200,46 @@ export default function AutoAccordion({
     setActiveIndex(i);
   };
 
-  return (
-    <section className="bg-[var(--chrome-ground,#fdfcfc)] text-[var(--chrome-fg,#000)]">
-      <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-20 lg:py-28">
-        {(eyebrow || heading) && (
-          <header className="mb-12 lg:mb-16 max-w-[760px]">
-            {eyebrow ? (
-              <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--chrome-fg-subtle,#a59f97)]">
-                {eyebrow}
-              </p>
-            ) : null}
-            {heading ? (
-              <h2 className="mt-4 text-[clamp(28px,3.6vw,44px)] leading-[1.15] tracking-[-0.01em] font-medium">
-                {heading}
-              </h2>
-            ) : null}
-          </header>
-        )}
+  // Persist a top-level prop change.
+  const persistTop = (key, value) => {
+    if (_onPropChange) _onPropChange(key, value);
+  };
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-          <ol className="flex flex-col">
+  // Persist an item field change.
+  const persistItem = (index, field, value) => {
+    if (!_onPropChange) return;
+    const next = safeItems.slice();
+    next[index] = { ...next[index], [field]: value };
+    _onPropChange("items", next);
+  };
+
+  const rootClass = `${styles.root} ${styles[styleVariant] ?? ""}`.trim();
+
+  return (
+    <section className={rootClass}>
+      <div className={styles.inner}>
+        <header className={styles.header}>
+          <EditableText
+            as="p"
+            value={eyebrow}
+            editing={_editing}
+            onChange={(v) => persistTop("eyebrow", v)}
+            className={styles.eyebrow}
+            placeholder="Eyebrow"
+          />
+          <EditableText
+            as="h2"
+            value={heading}
+            editing={_editing}
+            multiline
+            onChange={(v) => persistTop("heading", v)}
+            className={styles.heading}
+            placeholder="Section heading"
+          />
+        </header>
+
+        <div className={styles.grid}>
+          <ol className={styles.list}>
             {safeItems.map((item, i) => {
               const isActive = i === activeIndex;
               return (
@@ -194,10 +253,22 @@ export default function AutoAccordion({
                     className={styles.head}
                     aria-expanded={isActive}
                   >
-                    {item.region ? (
-                      <span className={styles.region}>{item.region}</span>
-                    ) : null}
-                    <span className={styles.title}>{item.title}</span>
+                    <EditableText
+                      as="span"
+                      value={item.region ?? ""}
+                      editing={_editing}
+                      onChange={(v) => persistItem(i, "region", v)}
+                      className={styles.region}
+                      placeholder="Region"
+                    />
+                    <EditableText
+                      as="span"
+                      value={item.title ?? ""}
+                      editing={_editing}
+                      onChange={(v) => persistItem(i, "title", v)}
+                      className={styles.title}
+                      placeholder="Title"
+                    />
                   </button>
 
                   <div className={styles.body}>
@@ -206,20 +277,41 @@ export default function AutoAccordion({
                         ref={(el) => setBodyContentRef(el, i)}
                         className={styles.bodyContent}
                       >
-                        {item.location ? (
-                          <p className={styles.location}>{item.location}</p>
-                        ) : null}
-                        {item.description ? (
-                          <p className={styles.description}>{item.description}</p>
-                        ) : null}
-                        {item.linkLabel && item.linkHref ? (
+                        <EditableText
+                          as="p"
+                          value={item.location ?? ""}
+                          editing={_editing}
+                          multiline
+                          onChange={(v) => persistItem(i, "location", v)}
+                          className={styles.location}
+                          placeholder="Location"
+                        />
+                        <EditableText
+                          as="p"
+                          value={item.description ?? ""}
+                          editing={_editing}
+                          multiline
+                          onChange={(v) => persistItem(i, "description", v)}
+                          className={styles.description}
+                          placeholder="Description"
+                        />
+                        {item.linkHref || _editing ? (
                           <a
-                            href={item.linkHref}
+                            href={item.linkHref || "#"}
                             target="_blank"
                             rel="noreferrer"
                             className={styles.link}
+                            onClick={(e) => {
+                              if (_editing) e.preventDefault();
+                            }}
                           >
-                            {item.linkLabel}
+                            <EditableText
+                              as="span"
+                              value={item.linkLabel ?? ""}
+                              editing={_editing}
+                              onChange={(v) => persistItem(i, "linkLabel", v)}
+                              placeholder="Link label"
+                            />
                             <span aria-hidden>→</span>
                           </a>
                         ) : null}

@@ -14,15 +14,14 @@ import { useEffect, useRef } from "react";
 //   image        — URL string (rendered as text input for now)
 //   array-object — list of objects, each with `objectFields` controls
 
+// The inspector edits **content + style** only. Move-up / move-down / remove
+// live on the canvas hover toolbar — never here. See PANEL_RULES.md (rule 3).
 export default function InspectorPanel({
   name,
   controls = [],
   props = {},
   onChange,
   onClose,
-  onMoveUp,
-  onMoveDown,
-  onRemove,
 }) {
   const scrollRef = useRef(null);
 
@@ -64,29 +63,6 @@ export default function InspectorPanel({
           />
         ))}
 
-        <div className="mt-4 pt-4 border-t border-[var(--chrome-border)] flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={onMoveUp}
-            className="h-9 rounded-[6px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
-          >
-            Move up
-          </button>
-          <button
-            type="button"
-            onClick={onMoveDown}
-            className="h-9 rounded-[6px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
-          >
-            Move down
-          </button>
-          <button
-            type="button"
-            onClick={onRemove}
-            className="h-9 rounded-[6px] border border-[var(--chrome-track-experimental)]/40 text-[11px] text-[var(--chrome-track-experimental)] hover:bg-[var(--chrome-track-experimental)]/10"
-          >
-            Remove section
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -120,20 +96,38 @@ function ControlField({ control, value, onChange }) {
         </FieldShell>
       );
 
-    case "slider":
+    case "slider": {
+      // PANEL_RULES.md (rule 4): sliders are percent-based, centred at 50.
+      const min = control.min ?? 0;
+      const max = control.max ?? 100;
+      const mid = Math.round((min + max) / 2);
+      const current = typeof value === "number" ? value : mid;
+      const isPercent = min === 0 && max === 100;
+      const displayValue = isPercent ? `${current}%` : current;
       return (
-        <FieldShell label={`${control.label}${value != null ? ` — ${value}` : ""}`}>
+        <FieldShell label={`${control.label} — ${displayValue}`}>
           <input
             type="range"
-            min={control.min}
-            max={control.max}
+            min={min}
+            max={max}
             step={control.step ?? 1}
-            value={value ?? control.min ?? 0}
+            value={current}
             onChange={(e) => onChange(Number(e.target.value))}
-            className="w-full"
+            onDoubleClick={() => onChange(mid)}
+            className="w-full accent-black"
+            title="Double-click to reset"
           />
+          <div
+            className="flex items-center justify-between text-[9px] text-[var(--chrome-fg-subtle)]"
+            style={{ textTransform: "none", letterSpacing: "0.06em" }}
+          >
+            <span>{isPercent ? "0%" : min}</span>
+            <span>{isPercent ? "50%" : mid}</span>
+            <span>{isPercent ? "100%" : max}</span>
+          </div>
         </FieldShell>
       );
+    }
 
     case "select":
       return (

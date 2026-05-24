@@ -136,21 +136,101 @@ button {
   background: transparent;
   cursor: pointer;
   color: inherit;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-/* Content rendered inside library sections (canvas + preview routes) is real
-   product copy, not app chrome. Opt out of the uppercase rule. */
-.sg-canvas-builder button,
-.sg-section-preview button,
-.no-chrome-uppercase button,
-.no-chrome-uppercase {
-  text-transform: none;
-  letter-spacing: normal;
+/* MakeReign chrome button system.
+   One look, app-wide: black background, white text. On hover: invert.
+   Apply via the `.btn-chrome` class. Disabled state dims the button and
+   keeps the inactive look. Use `.btn-chrome.btn-chrome--ghost` for the
+   inverse default (white bg, black text -> hover invert). */
+.btn-chrome,
+a.btn-chrome,
+button.btn-chrome {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+.btn-chrome:hover:not(:disabled):not([aria-disabled="true"]),
+a.btn-chrome:hover,
+button.btn-chrome:hover:not(:disabled) {
+  background: #fff;
+  color: #000;
+}
+.btn-chrome--ghost {
+  background: #fff;
+  color: #000;
+}
+.btn-chrome--ghost:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: #000;
+  color: #fff;
+}
+.btn-chrome--sm {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.btn-chrome--lg {
+  height: 44px;
+  padding: 0 22px;
+  font-size: 12px;
+}
+.btn-chrome--block {
+  width: 100%;
+}
+.btn-chrome:disabled,
+.btn-chrome[aria-disabled="true"],
+a.btn-chrome[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Content rendered inside library sections (canvas + preview routes + the
+   live template route) is real product copy, not app chrome. Sections decide
+   their own button styling. */
+.sg-canvas-builder .btn-chrome,
+.sg-section-preview .btn-chrome,
+.sg-template .btn-chrome {
+  /* sections opt out of chrome — if they want chrome look, they apply it themselves */
+  all: revert;
 }
 
 code {
   font-family: var(--chrome-font-mono);
   font-size: 0.9em;
+}
+
+/* Inline-editable text affordance. Only visible inside the builder canvas. */
+.sg-canvas-builder .editable-text {
+  outline: none;
+  cursor: text;
+  border-radius: 4px;
+  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.sg-canvas-builder .editable-text:hover {
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25);
+}
+.sg-canvas-builder .editable-text:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.6);
+  background-color: rgba(59, 130, 246, 0.04);
+}
+.sg-canvas-builder .editable-text:empty::before {
+  content: attr(data-placeholder);
+  color: var(--chrome-fg-disabled, #b1b0b0);
 }

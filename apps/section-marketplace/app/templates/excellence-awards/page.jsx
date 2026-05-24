@@ -3,9 +3,9 @@ import WebflowAttrs from "./WebflowAttrs";
 
 export default function ExcellenceAwardsPage() {
   return (
-    <>
+    <div className="sg-template">
       <WebflowAttrs />
       <ExcellenceAwardsTemplate />
-    </>
+    </div>
   );
 }
