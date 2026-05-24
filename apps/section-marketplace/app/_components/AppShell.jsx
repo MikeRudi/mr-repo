@@ -1,9 +1,11 @@
 import Link from "next/link";
 
+// Style guides are now per-site, so the standalone editor is hidden from
+// the global nav. The route still exists as a sandbox if you visit it
+// directly, but it's not surfaced in the UI.
 const NAV = [
   { href: "/library", label: "Library" },
   { href: "/templates", label: "Templates" },
-  { href: "/styleguide", label: "Style Guide" },
   { href: "/builder", label: "Builder" },
 ];
 

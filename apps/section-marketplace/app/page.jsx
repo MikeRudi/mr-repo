@@ -17,9 +17,9 @@ const BROWSE = [
 
 const START = [
   {
-    href: "/builder/new",
+    href: "/builder/start",
     title: "Blank site",
-    body: "Open the editor with an empty canvas. Drop in sections, set tokens as you go.",
+    body: "Name your site, set up a style guide, then drop into the builder.",
   },
   {
     href: "/builder/new?from=template",

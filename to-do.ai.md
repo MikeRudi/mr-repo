@@ -205,7 +205,21 @@
 
 ## 5. Style guide rework
 
-**Status**: pending user kickoff.
+**Status**: PARTIALLY COMPLETE (user kicked off, work done, follow-ups deferred).
+
+**Completed in this session**
+- Two-step onboarding wizard at `/builder/start` (site name → blank style guide).
+- Per-site style guides stored in `sites.data` (round-trip on Save).
+- Removed max-width control from style guide editor (fixed at 1920px).
+- Extracted `StyleGuideEditor` as reusable component.
+- BuilderShell hydrates from wizard sessionStorage on mount.
+- StylePanel shows per-site guides, lets user switch active.
+- InspectorPanel receives `context` with button variants (wired, not yet used).
+
+**Deferred to follow-up items**
+- Button picker in InspectorPanel (control type added to docs, case not yet implemented).
+- Image upload with Vercel Blob (requires Vercel Blob setup).
+- In-builder style guide editing (deferred to keep scope manageable).
 
 **Scope (to be refined)**
 - Change how a style guide attaches to a site: today the builder loads guides from `/api/styleguides` and stores `styleGuideId` on the saved site. Likely changes: per‑site style guide selection at site creation, ability to fork/clone a guide for a site, snapshotting the guide into the site at publish time so published sites are immutable against later guide edits.

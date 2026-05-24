@@ -10,6 +10,9 @@ import PagesPanel from "./PagesPanel.jsx";
 import StylePanel from "./StylePanel.jsx";
 import InspectorPanel from "./InspectorPanel.jsx";
 
+// Must match the key used by /builder/start/StartWizard.jsx
+const WIZARD_KEY = "mr.builder.wizardState.v1";
+
 const TOOLS = [
   { id: "sections", label: "Sections" },
   { id: "pages",    label: "Pages"    },
@@ -28,18 +31,104 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [activeTool, setActiveTool] = useState("sections");
   const [pages, setPages] = useState([makePage()]);
   const [activePageId, setActivePageId] = useState(() => "");
-  const [styleGuides, setStyleGuides] = useState([]);
+  const [siteName, setSiteName] = useState("Untitled site");
+  // Style guides are PER-SITE only. They live in this local state and are
+  // round-tripped to /api/sites/publish on Save. Global library deferred.
+  const [styleGuides, setStyleGuides] = useState(() => [
+    { id: uid(), name: "Default", tokens: DEFAULT_TOKENS, isActive: true },
+  ]);
   const [activeGuideId, setActiveGuideId] = useState(null);
-  const [tokens, setTokens] = useState(DEFAULT_TOKENS);
-  const [loadingGuides, setLoadingGuides] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [savedUrl, setSavedUrl] = useState(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Hydrate from the onboarding wizard's sessionStorage payload on mount.
+  // If absent (e.g. user came straight to /builder/new), keep defaults.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(WIZARD_KEY);
+      if (raw) {
+        const payload = JSON.parse(raw);
+        if (payload && typeof payload === "object") {
+          if (typeof payload.siteName === "string" && payload.siteName.trim()) {
+            setSiteName(payload.siteName.trim());
+          }
+          if (Array.isArray(payload.styleGuides) && payload.styleGuides.length) {
+            const normalised = payload.styleGuides.map((g) => ({
+              id: g.id ?? uid(),
+              name: g.name ?? "Untitled",
+              tokens: normalizeTokens(g.tokens ?? DEFAULT_TOKENS),
+              isActive: Boolean(g.isActive),
+            }));
+            setStyleGuides(normalised);
+            const active =
+              normalised.find((g) => g.id === payload.activeStyleGuideId) ??
+              normalised.find((g) => g.isActive) ??
+              normalised[0];
+            setActiveGuideId(active.id);
+          }
+          // Consume the payload so a refresh doesn't keep re-hydrating.
+          sessionStorage.removeItem(WIZARD_KEY);
+        }
+      }
+    } catch {
+      // sessionStorage parse failure — fall through with defaults
+    }
+    setHydrated(true);
+  }, []);
+
+  // Pick the first guide as active if nothing else set one yet.
+  useEffect(() => {
+    if (!activeGuideId && styleGuides.length > 0) {
+      setActiveGuideId(styleGuides[0].id);
+    }
+  }, [activeGuideId, styleGuides]);
+
+  useEffect(() => {
+    if (!activePageId && pages.length > 0) setActivePageId(pages[0].id);
+  }, [activePageId, pages]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") setSelectedSectionId(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Resolve the active guide + its tokens from local state.
+  const activeGuide =
+    styleGuides.find((g) => g.id === activeGuideId) ?? styleGuides[0] ?? null;
+  const tokens = activeGuide?.tokens ?? DEFAULT_TOKENS;
+
+  function setActiveGuide(id) {
+    setActiveGuideId(id);
+    setStyleGuides((prev) =>
+      prev.map((g) => ({ ...g, isActive: g.id === id }))
+    );
+  }
+
+  function updateActiveGuideTokens(nextTokens) {
+    setStyleGuides((prev) =>
+      prev.map((g) =>
+        g.id === activeGuideId ? { ...g, tokens: nextTokens } : g
+      )
+    );
+  }
 
   async function handleSave() {
     setIsSaving(true);
     try {
-      const siteData = { pages, tokens, styleGuideId: activeGuideId };
+      const siteData = {
+        name: siteName,
+        pages,
+        styleGuides,
+        activeStyleGuideId: activeGuideId,
+        // Keep `tokens` in the payload too for back-compat with the
+        // existing /site/[siteId] reader. It mirrors the active guide.
+        tokens,
+      };
       const res = await fetch("/api/sites/publish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,60 +142,6 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       alert("Failed to save site");
     } finally {
       setIsSaving(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!activePageId && pages.length > 0) setActivePageId(pages[0].id);
-  }, [activePageId, pages]);
-
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      setLoadingGuides(true);
-      try {
-        const res = await fetch("/api/styleguides");
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!alive) return;
-        const list = data?.styleGuides ?? [];
-        setStyleGuides(list);
-        if (list.length > 0) {
-          setActiveGuideId(list[0].id);
-          await loadGuide(list[0].id);
-        }
-      } catch {
-        // ignore
-      } finally {
-        if (alive) setLoadingGuides(false);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") setSelectedSectionId(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  async function loadGuide(id) {
-    try {
-      const res = await fetch(`/api/styleguides/${id}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      const g = data?.styleGuide;
-      if (g?.tokens) {
-        setTokens(normalizeTokens(g.tokens));
-        setActiveGuideId(g.id);
-      }
-    } catch {
-      // ignore
     }
   }
 
@@ -211,7 +246,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
         </Link>
         <span className="text-[var(--chrome-border)]">/</span>
         <span className="text-[12px] text-[var(--chrome-fg-muted)]" style={{ textTransform: "none", letterSpacing: "normal" }}>
-          Builder · {initialTemplate ? `from "${initialTemplate}"` : "blank"}
+          {siteName}{initialTemplate ? ` · from "${initialTemplate}"` : ""}
         </span>
         <div className="flex-1" />
         <select
@@ -290,8 +325,8 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             <StylePanel
               guides={styleGuides}
               activeGuideId={activeGuideId}
-              loading={loadingGuides}
-              onSelect={loadGuide}
+              loading={false}
+              onSelect={setActiveGuide}
             />
           ) : null}
         </div>
@@ -327,6 +362,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             name={selectedMeta?.name ?? selectedInstance?.sectionId}
             controls={selectedMeta?.controls ?? []}
             props={selectedInstance?.props ?? {}}
+            context={{ buttons: tokens.buttons ?? [] }}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
             onClose={() => setSelectedSectionId(null)}
             onMoveUp={() => moveSection(selectedSectionId, -1)}

@@ -12,7 +12,9 @@ import { useEffect, useRef } from "react";
 //   slider       — range input (min, max, step)
 //   select       — dropdown ({ value, label } options)
 //   image        — URL string (rendered as text input for now)
-//   array-object — list of objects, each with `objectFields` controls
+//   array-object   — list of objects, each with `objectFields` controls
+//   button-variant — pick a button style from the active style guide
+//                    (option list comes from `context.buttons`)
 
 // The inspector edits **content + style** only. Move-up / move-down / remove
 // live on the canvas hover toolbar — never here. See PANEL_RULES.md (rule 3).
@@ -20,6 +22,7 @@ export default function InspectorPanel({
   name,
   controls = [],
   props = {},
+  context = {},
   onChange,
   onClose,
 }) {
@@ -59,6 +62,7 @@ export default function InspectorPanel({
             key={control.key}
             control={control}
             value={props[control.key]}
+            context={context}
             onChange={(v) => setField(control.key, v)}
           />
         ))}
@@ -68,7 +72,7 @@ export default function InspectorPanel({
   );
 }
 
-function ControlField({ control, value, onChange }) {
+function ControlField({ control, value, context = {}, onChange }) {
   switch (control.type) {
     case "text":
     case "image":

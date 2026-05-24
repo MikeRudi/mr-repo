@@ -101,6 +101,18 @@ This is the plain‑English plan for the next phase of work. The order here is t
 **Goal**
 - Brand-once, apply-everywhere should feel real and obvious in the flow.
 
+**Status**: PARTIALLY COMPLETE
+- ✅ Two-step onboarding wizard at `/builder/start` (site name → blank style guide)
+- ✅ Per-site style guides stored in `sites.data` (round-trip on Save)
+- ✅ Removed max-width control from style guide editor (fixed at 1920px)
+- ✅ Extracted `StyleGuideEditor` as reusable component
+- ✅ BuilderShell hydrates from wizard sessionStorage on mount
+- ✅ StylePanel shows per-site guides, lets user switch active
+- ✅ InspectorPanel receives `context` with button variants (wired, not yet used)
+- ⏳ Button picker in InspectorPanel (control type added to docs, case not yet implemented)
+- ⏳ Image upload with Vercel Blob (deferred to follow-up item)
+- ⏳ In-builder style guide editing (deferred to follow-up item)
+
 **More to come**
 - We'll define the new "attach style guide to site" flow and the extra capabilities.
 

@@ -10,7 +10,6 @@ import { generateCss } from "../../lib/styleguide-css.js";
 
 import SectionBlock from "./_components/SectionBlock.jsx";
 import CssExport from "./_components/CssExport.jsx";
-import WizardryEditor from "./_components/editors/WizardryEditor.jsx";
 import ColorsEditor from "./_components/editors/ColorsEditor.jsx";
 import TypographyEditor from "./_components/editors/TypographyEditor.jsx";
 import SpacingEditor from "./_components/editors/SpacingEditor.jsx";
@@ -19,7 +18,6 @@ import CardEditor from "./_components/editors/CardEditor.jsx";
 import ButtonEditor from "./_components/editors/ButtonEditor.jsx";
 import LinksEditor from "./_components/editors/LinksEditor.jsx";
 import {
-  WizardryPreview,
   ColorsPreview,
   TypographyPreview,
   SpacingPreview,
@@ -29,15 +27,15 @@ import {
   LinksPreview,
 } from "./_components/Previews.jsx";
 
+// Container max-width is fixed at 1920 for everyone — no editor section.
 const SECTIONS = [
-  { id: "wizardry",   eyebrow: "01",  title: "Wizardry",       description: "Set the container max-width. The site uses a fluid rem on desktop anchored to this width, and a static rem from 991px down." },
-  { id: "colors",     eyebrow: "02",  title: "Colors",         description: "Light, dark, brand. Add custom colors as needed. Opacity, tint, and shade variants are computed at the point of use." },
-  { id: "typography", eyebrow: "03",  title: "Typography",     description: "Nine scales × desktop and mobile. Sizes are in px; the published CSS converts them to rem so they scale with the fluid rem." },
-  { id: "spacing",    eyebrow: "04",  title: "Spacing",        description: "Section padding tokens. Desktop values render as em (scale with the fluid rem); mobile values render as rem (static below 992px)." },
-  { id: "radii",      eyebrow: "05",  title: "Border radius",  description: "Three radii — small, medium, large. Each has a desktop and a mobile value." },
-  { id: "card",       eyebrow: "06",  title: "Card",           description: "Filter between card variants. Each is composed from the colors and radii above." },
-  { id: "button",     eyebrow: "07",  title: "Button",         description: "Three button variants. Hover the preview to see the hover state apply." },
-  { id: "links",      eyebrow: "08",  title: "Links",          description: "Named URLs that footer, contact, or legal sections will reference later." },
+  { id: "colors",     eyebrow: "01",  title: "Colors",         description: "Light, dark, brand. Add custom colors as needed. Opacity, tint, and shade variants are computed at the point of use." },
+  { id: "typography", eyebrow: "02",  title: "Typography",     description: "Nine scales × desktop and mobile. Sizes are in px; the published CSS converts them to rem so they scale with the fluid rem." },
+  { id: "spacing",    eyebrow: "03",  title: "Spacing",        description: "Section padding tokens. Desktop values render as em (scale with the fluid rem); mobile values render as rem (static below 992px)." },
+  { id: "radii",      eyebrow: "04",  title: "Border radius",  description: "Three radii — small, medium, large. Each has a desktop and a mobile value." },
+  { id: "card",       eyebrow: "05",  title: "Card",           description: "Filter between card variants. Each is composed from the colors and radii above." },
+  { id: "button",     eyebrow: "06",  title: "Button",         description: "Three button variants. Hover the preview to see the hover state apply." },
+  { id: "links",      eyebrow: "07",  title: "Links",          description: "Named URLs that footer, contact, or legal sections will reference later." },
 ];
 
 export default function StyleGuideForm() {
@@ -275,17 +273,6 @@ export default function StyleGuideForm() {
           <SectionBlock
             {...SECTIONS[0]}
             editor={
-              <WizardryEditor
-                value={tokens.wizardry}
-                onChange={(v) => update({ wizardry: v })}
-              />
-            }
-            preview={<WizardryPreview tokens={tokens} />}
-          />
-
-          <SectionBlock
-            {...SECTIONS[1]}
-            editor={
               <ColorsEditor
                 value={tokens.colors}
                 onChange={(v) => update({ colors: v })}
@@ -295,7 +282,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            {...SECTIONS[2]}
+            {...SECTIONS[1]}
             editor={
               <TypographyEditor
                 value={tokens.typography}
@@ -308,7 +295,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            {...SECTIONS[3]}
+            {...SECTIONS[2]}
             editor={
               <SpacingEditor
                 value={tokens.spacing}
@@ -319,7 +306,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            {...SECTIONS[4]}
+            {...SECTIONS[3]}
             editor={
               <RadiiEditor
                 value={tokens.radii}
@@ -330,7 +317,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            {...SECTIONS[5]}
+            {...SECTIONS[4]}
             editor={
               <CardEditor
                 value={tokens.cards}
@@ -344,7 +331,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            {...SECTIONS[6]}
+            {...SECTIONS[5]}
             editor={
               <ButtonEditor
                 value={tokens.buttons}
@@ -358,7 +345,7 @@ export default function StyleGuideForm() {
           />
 
           <SectionBlock
-            {...SECTIONS[7]}
+            {...SECTIONS[6]}
             editor={
               <LinksEditor
                 value={tokens.links}
