@@ -187,19 +187,39 @@
 }
 
 .link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  align-self: flex-start;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.22em;
   font-weight: 600;
   color: var(--chrome-fg, #000);
   text-decoration: none;
-  transition: opacity 0.15s ease;
+  padding-bottom: 4px;
 }
-.link:hover {
-  opacity: 0.7;
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.2s ease;
+}
+.link:hover::after {
+  transform: scaleX(1);
+}
+.link[class*="sg-button"] {
+  padding-bottom: initial;
+}
+.link[class*="sg-button"]::after {
+  display: none;
 }
 
 .progressTrack {

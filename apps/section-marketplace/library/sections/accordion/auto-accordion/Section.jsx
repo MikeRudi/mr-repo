@@ -59,7 +59,7 @@ export default function AutoAccordion({
   // Panel-controlled
   styleVariant = "default",
   animationStyle = "slide",
-  linkButtonVariant = "primary",
+  linkButtonVariant,
   autoAdvancePct = 50,
   revealPct = 50,
   items = DEFAULT_ITEMS,
@@ -250,7 +250,11 @@ export default function AutoAccordion({
                             href={item.linkHref || "#"}
                             target="_blank"
                             rel="noreferrer"
-                            className={`${styles.link} ${buttonClass(linkButtonVariant)}`}
+                            className={
+                              linkButtonVariant
+                                ? `${styles.link} ${buttonClass(linkButtonVariant)}`
+                                : styles.link
+                            }
                             onClick={(e) => {
                               if (_editing) e.preventDefault();
                             }}

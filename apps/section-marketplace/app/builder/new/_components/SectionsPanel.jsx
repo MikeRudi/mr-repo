@@ -8,13 +8,9 @@ import { hasImplementation } from "../../../../library/registry.js";
 // chrome treatment.
 export default function SectionsPanel({
   sections,
-  selectedMeta,
-  selectedInstance,
   onAdd,
-  onOpenCms,
 }) {
   const [q, setQ] = useState("");
-  const cmsAvailable = Boolean(selectedMeta?.cms && selectedInstance);
 
   const grouped = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -36,24 +32,6 @@ export default function SectionsPanel({
 
   return (
     <div className="flex flex-col gap-4 p-3">
-      {cmsAvailable ? (
-        <div className="rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-3">
-          <p
-            className="mb-2 text-[11px] text-[var(--chrome-fg-muted)]"
-            style={{ textTransform: "none", letterSpacing: "normal" }}
-          >
-            Manage repeated content for {selectedMeta.name}.
-          </p>
-          <button
-            type="button"
-            onClick={onOpenCms}
-            className="btn-chrome btn-chrome--block"
-          >
-            Section CMS
-          </button>
-        </div>
-      ) : null}
-
       <input
         type="text"
         value={q}

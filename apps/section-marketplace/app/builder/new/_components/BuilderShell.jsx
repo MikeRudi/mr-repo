@@ -339,10 +339,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
           {activeTool === "sections" ? (
             <SectionsPanel
               sections={initialSections}
-              selectedMeta={selectedMeta}
-              selectedInstance={selectedInstance}
               onAdd={addSection}
-              onOpenCms={() => setCmsOpen(true)}
             />
           ) : null}
           {activeTool === "pages" ? (
@@ -416,7 +413,9 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             controls={selectedMeta?.controls ?? []}
             props={selectedInstance?.props ?? {}}
             context={{ buttons: tokens.buttons ?? [] }}
+            hasCms={Boolean(selectedMeta?.cms)}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
+            onOpenCms={() => setCmsOpen(true)}
             onClose={() => setSelectedSectionId(null)}
             onMoveUp={() => moveSection(selectedSectionId, -1)}
             onMoveDown={() => moveSection(selectedSectionId, +1)}

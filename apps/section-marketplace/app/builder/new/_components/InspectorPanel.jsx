@@ -23,7 +23,9 @@ export default function InspectorPanel({
   controls = [],
   props = {},
   context = {},
+  hasCms = false,
   onChange,
+  onOpenCms,
   onClose,
 }) {
   const scrollRef = useRef(null);
@@ -59,6 +61,24 @@ export default function InspectorPanel({
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
+        {hasCms ? (
+          <div className="rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-3">
+            <p
+              className="mb-2 text-[11px] text-[var(--chrome-fg-muted)]"
+              style={{ textTransform: "none", letterSpacing: "normal" }}
+            >
+              Manage this section's repeated content.
+            </p>
+            <button
+              type="button"
+              onClick={onOpenCms}
+              className="btn-chrome btn-chrome--block"
+            >
+              Section CMS
+            </button>
+          </div>
+        ) : null}
+
         {controls.length === 0 ? (
           <p className="text-[12px] text-[var(--chrome-fg-muted)]">
             This section has no editable controls.
