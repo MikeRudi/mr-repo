@@ -122,6 +122,33 @@
           "defaultValue": {}
         }
       }
+    },
+    "cms": {
+      "type": "object",
+      "required": ["key", "label", "fields"],
+      "properties": {
+        "key": { "type": "string" },
+        "label": { "type": "string" },
+        "defaultValue": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "type", "label"],
+            "properties": {
+              "key": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": ["text", "textarea", "image", "number"]
+              },
+              "label": { "type": "string" }
+            }
+          }
+        }
+      }
     }
   }
 }

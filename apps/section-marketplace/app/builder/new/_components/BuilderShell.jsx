@@ -9,6 +9,7 @@ import SectionsPanel from "./SectionsPanel.jsx";
 import PagesPanel from "./PagesPanel.jsx";
 import StylePanel from "./StylePanel.jsx";
 import InspectorPanel from "./InspectorPanel.jsx";
+import SectionCmsPanel from "./SectionCmsPanel.jsx";
 import StyleGuideEditor from "../../../styleguide/_components/StyleGuideEditor.jsx";
 
 // Must match the key used by /builder/start/StartWizard.jsx
@@ -44,6 +45,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [savedUrl, setSavedUrl] = useState(null);
   const [hydrated, setHydrated] = useState(false);
   const [styleEditorOpen, setStyleEditorOpen] = useState(false);
+  const [cmsOpen, setCmsOpen] = useState(false);
 
   // Hydrate from the onboarding wizard's sessionStorage payload on mount.
   // If absent (e.g. user came straight to /builder/new), keep defaults.
@@ -93,7 +95,10 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") setSelectedSectionId(null);
+      if (e.key === "Escape") {
+        setCmsOpen(false);
+        setSelectedSectionId(null);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -253,7 +258,9 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
     : null;
 
   const showInspector = Boolean(selectedSectionId && selectedMeta);
-  const gridCols = showInspector
+  const showCmsPanel = Boolean(cmsOpen && selectedInstance && selectedMeta?.cms);
+  const showRightPanel = showCmsPanel || (showInspector && !showCmsPanel);
+  const gridCols = showRightPanel
     ? "grid-cols-[280px_1fr_320px]"
     : "grid-cols-[280px_1fr]";
 
@@ -330,7 +337,13 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
         </nav>
         <div className="flex-1 overflow-y-auto">
           {activeTool === "sections" ? (
-            <SectionsPanel sections={initialSections} onAdd={addSection} />
+            <SectionsPanel
+              sections={initialSections}
+              selectedMeta={selectedMeta}
+              selectedInstance={selectedInstance}
+              onAdd={addSection}
+              onOpenCms={() => setCmsOpen(true)}
+            />
           ) : null}
           {activeTool === "pages" ? (
             <PagesPanel
@@ -381,7 +394,22 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
         </div>
       </main>
 
-      {showInspector ? (
+      {showCmsPanel ? (
+        <aside className="row-start-2 col-start-3 min-h-0 overflow-hidden">
+          <SectionCmsPanel
+            name={selectedMeta?.name ?? selectedInstance?.sectionId}
+            cms={selectedMeta.cms}
+            value={selectedInstance?.props?.[selectedMeta.cms.key]}
+            onChange={(nextItems) =>
+              updateSectionProps(selectedSectionId, {
+                ...(selectedInstance?.props ?? {}),
+                [selectedMeta.cms.key]: nextItems,
+              })
+            }
+            onClose={() => setCmsOpen(false)}
+          />
+        </aside>
+      ) : showInspector ? (
         <aside className="row-start-2 col-start-3 min-h-0 overflow-hidden">
           <InspectorPanel
             name={selectedMeta?.name ?? selectedInstance?.sectionId}

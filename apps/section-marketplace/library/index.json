@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T14:45:25.288Z",
+  "generatedAt": "2026-05-24T14:57:36.515Z",
   "counts": {
     "sections": 1,
     "templates": 1
@@ -91,63 +91,69 @@
           "min": 0,
           "max": 100,
           "step": 5
-        },
-        {
-          "key": "items",
-          "type": "array-object",
-          "label": "Items (add / remove)",
-          "defaultValue": [
-            {
-              "region": "North America",
-              "title": "Escape Lounges",
-              "location": "Concourse A, Kansas City MO International, United States",
-              "description": "An elevated, modern lounge bringing a premium experience to a growing airport. It offers travellers all-day dining, a full-service bar, and flexible spaces designed to support both relaxation and productivity throughout the journey.",
-              "image": "/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp",
-              "linkLabel": "View lounge",
-              "linkHref": "https://www.prioritypass.com/en-GB/lounges/united-states-of-america/kansas-city-international/mci-escape-lounges"
-            },
-            {
-              "region": "Latin America & the Caribbean",
-              "title": "Advantage VIP Lounge",
-              "location": "Terminal 1 Domestic, Campinas Viracopos International, Brazil",
-              "description": "A welcoming, design-led lounge that elevates the regional airport experience with thoughtful service, calming spaces, and a generous spread of food and drink throughout the day.",
-              "image": "/webflow/images/000.-Hero_Sala-VIP_Advantage-6-1.webp",
-              "linkLabel": "View lounge",
-              "linkHref": "#"
-            },
-            {
-              "region": "EMEA",
-              "title": "No.1 Lounge Jersey",
-              "location": "Jersey Airport, Jersey",
-              "description": "A boutique-feel lounge that balances quiet relaxation with a sense of place. Local sourcing, attentive hosts, and a measured pace make it a standout in the regional EMEA network.",
-              "image": "/webflow/images/000.-Hero_Canon-0149-2-1.webp",
-              "linkLabel": "View lounge",
-              "linkHref": "#"
-            },
-            {
-              "region": "Asia Pacific",
-              "title": "Kyra Lounge",
-              "location": "Terminal 1, Hong Kong Chek Lap Kok International, Hong Kong",
-              "description": "A contemporary lounge in one of the world's busiest hubs. Considered design, layered lighting, and a generous F&B programme give travellers a calm anchor between flights.",
-              "image": "/webflow/images/000.-Hero_Kyra-Lounge-3-1.webp",
-              "linkLabel": "View lounge",
-              "linkHref": "#"
-            }
-          ],
-          "objectFields": [
-            {
-              "key": "image",
-              "type": "image",
-              "label": "Image URL"
-            },
-            {
-              "key": "linkHref",
-              "type": "text",
-              "label": "Link href"
-            }
-          ]
         }
       ],
+      "cms": {
+        "key": "items",
+        "label": "Items (add / remove)",
+        "defaultValue": [
+          {
+            "eyebrow": "Template item",
+            "heading": "First accordion item",
+            "subheading": "Short supporting line",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae justo sed lorem facilisis aliquet.",
+            "image": "",
+            "linkLabel": "Learn more",
+            "linkHref": "#"
+          },
+          {
+            "eyebrow": "Template item",
+            "heading": "Second accordion item",
+            "subheading": "Another supporting line",
+            "description": "Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui.",
+            "image": "",
+            "linkLabel": "Learn more",
+            "linkHref": "#"
+          }
+        ],
+        "fields": [
+          {
+            "key": "eyebrow",
+            "type": "text",
+            "label": "Eyebrow text"
+          },
+          {
+            "key": "heading",
+            "type": "text",
+            "label": "Heading text"
+          },
+          {
+            "key": "subheading",
+            "type": "textarea",
+            "label": "Sub-heading text"
+          },
+          {
+            "key": "description",
+            "type": "textarea",
+            "label": "Description text"
+          },
+          {
+            "key": "image",
+            "type": "image",
+            "label": "Image"
+          },
+          {
+            "key": "linkLabel",
+            "type": "text",
+            "label": "Link label"
+          },
+          {
+            "key": "linkHref",
+            "type": "text",
+            "label": "Link href"
+          }
+        ]
+      },
       "kind": "section",
       "path": "sections/accordion/auto-accordion"
     }

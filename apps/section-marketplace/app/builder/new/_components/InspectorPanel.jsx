@@ -298,7 +298,7 @@ function ArrayObjectField({ control, value, context = {}, onChange }) {
   );
 }
 
-function ImageInput({ value, onChange }) {
+export function ImageInput({ value, onChange }) {
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState("");
   const fileRef = useRef(null);

@@ -98,12 +98,13 @@ actually looks like.
 
 ## 7. Arrays ("Add an item")
 
-Sections that render lists keep an `array-object` control in the panel **only
-for adding and removing items**. The text content of each item is still
-edited inline on the canvas (rule 1).
+Sections that render repeatable content should use the section CMS contract
+instead of a normal inspector `array-object` control. The Sections panel shows
+a **Section CMS** button for the selected section, and that dedicated panel
+owns adding, removing, and editing CMS rows.
 
-The item row in the panel only shows fields that can't be edited inline:
-image URLs, link hrefs, hidden ids. Don't duplicate text fields here.
+Use `array-object` in `controls` only as an escape hatch for non-CMS structural
+arrays. The main inspector remains for section-level style, timing, and layout.
 
 ---
 
@@ -138,6 +139,25 @@ Supported `controls[].type` values:
 - `text` / `textarea` — **forbidden** unless the value is genuinely a hidden
   identifier (href, alt text, etc.) that the user can't see in the rendered
   section.
+
+For repeatable content, add a top-level `cms` block:
+
+```json
+{
+  "cms": {
+    "key": "items",
+    "label": "Items",
+    "defaultValue": [],
+    "fields": [
+      { "key": "eyebrow", "type": "text", "label": "Eyebrow text" },
+      { "key": "heading", "type": "text", "label": "Heading text" },
+      { "key": "subheading", "type": "textarea", "label": "Sub-heading text" },
+      { "key": "description", "type": "textarea", "label": "Description text" },
+      { "key": "image", "type": "image", "label": "Image" }
+    ]
+  }
+}
+```
 
 ---
 

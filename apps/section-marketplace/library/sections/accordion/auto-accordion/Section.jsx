@@ -10,45 +10,23 @@ import EditableText from "../../_shared/EditableText.jsx";
 
 export const DEFAULT_ITEMS = [
   {
-    region: "North America",
-    title: "Escape Lounges",
-    location: "Concourse A, Kansas City MO International, United States",
+    eyebrow: "Template item",
+    heading: "First accordion item",
+    subheading: "Short supporting line",
     description:
-      "An elevated, modern lounge bringing a premium experience to a growing airport. It offers travellers all-day dining, a full-service bar, and flexible spaces designed to support both relaxation and productivity throughout the journey.",
-    image:
-      "/webflow/images/000.-Hero_SELECT-Escape-Lounge-Bar--Nicole-Bissey-Photography-1.webp",
-    linkLabel: "View lounge",
-    linkHref:
-      "https://www.prioritypass.com/en-GB/lounges/united-states-of-america/kansas-city-international/mci-escape-lounges",
-  },
-  {
-    region: "Latin America & the Caribbean",
-    title: "Advantage VIP Lounge",
-    location: "Terminal 1 Domestic, Campinas Viracopos International, Brazil",
-    description:
-      "A welcoming, design-led lounge that elevates the regional airport experience with thoughtful service, calming spaces, and a generous spread of food and drink throughout the day.",
-    image: "/webflow/images/000.-Hero_Sala-VIP_Advantage-6-1.webp",
-    linkLabel: "View lounge",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae justo sed lorem facilisis aliquet.",
+    image: "",
+    linkLabel: "Learn more",
     linkHref: "#",
   },
   {
-    region: "EMEA",
-    title: "No.1 Lounge Jersey",
-    location: "Jersey Airport, Jersey",
+    eyebrow: "Template item",
+    heading: "Second accordion item",
+    subheading: "Another supporting line",
     description:
-      "A boutique-feel lounge that balances quiet relaxation with a sense of place. Local sourcing, attentive hosts, and a measured pace make it a standout in the regional EMEA network.",
-    image: "/webflow/images/000.-Hero_Canon-0149-2-1.webp",
-    linkLabel: "View lounge",
-    linkHref: "#",
-  },
-  {
-    region: "Asia Pacific",
-    title: "Kyra Lounge",
-    location: "Terminal 1, Hong Kong Chek Lap Kok International, Hong Kong",
-    description:
-      "A contemporary lounge in one of the world's busiest hubs. Considered design, layered lighting, and a generous F&B programme give travellers a calm anchor between flights.",
-    image: "/webflow/images/000.-Hero_Kyra-Lounge-3-1.webp",
-    linkLabel: "View lounge",
+      "Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui.",
+    image: "",
+    linkLabel: "Learn more",
     linkHref: "#",
   },
 ];
@@ -76,8 +54,8 @@ function clamp(n, lo, hi) {
 
 export default function AutoAccordion({
   // Visible text content. Edited inline on the canvas (no panel field).
-  eyebrow = "Highly Commended Lounges 2026",
-  heading = "Recognising exceptional service and experiences for Priority Pass Members.",
+  eyebrow = "Featured",
+  heading = "Explore the highlights.",
   // Panel-controlled
   styleVariant = "default",
   animationStyle = "slide",
@@ -207,14 +185,6 @@ export default function AutoAccordion({
     if (_onPropChange) _onPropChange(key, value);
   };
 
-  // Persist an item field change.
-  const persistItem = (index, field, value) => {
-    if (!_onPropChange) return;
-    const next = safeItems.slice();
-    next[index] = { ...next[index], [field]: value };
-    _onPropChange("items", next);
-  };
-
   const rootClass = `${styles.root} ${styles[styleVariant] ?? ""}`.trim();
 
   return (
@@ -255,22 +225,12 @@ export default function AutoAccordion({
                     className={styles.head}
                     aria-expanded={isActive}
                   >
-                    <EditableText
-                      as="span"
-                      value={item.region ?? ""}
-                      editing={_editing}
-                      onChange={(v) => persistItem(i, "region", v)}
-                      className={styles.region}
-                      placeholder="Region"
-                    />
-                    <EditableText
-                      as="span"
-                      value={item.title ?? ""}
-                      editing={_editing}
-                      onChange={(v) => persistItem(i, "title", v)}
-                      className={styles.title}
-                      placeholder="Title"
-                    />
+                    <span className={styles.region}>
+                      {item.eyebrow ?? item.region ?? ""}
+                    </span>
+                    <span className={styles.title}>
+                      {item.heading ?? item.title ?? ""}
+                    </span>
                   </button>
 
                   <div className={styles.body}>
@@ -279,24 +239,12 @@ export default function AutoAccordion({
                         ref={(el) => setBodyContentRef(el, i)}
                         className={styles.bodyContent}
                       >
-                        <EditableText
-                          as="p"
-                          value={item.location ?? ""}
-                          editing={_editing}
-                          multiline
-                          onChange={(v) => persistItem(i, "location", v)}
-                          className={styles.location}
-                          placeholder="Location"
-                        />
-                        <EditableText
-                          as="p"
-                          value={item.description ?? ""}
-                          editing={_editing}
-                          multiline
-                          onChange={(v) => persistItem(i, "description", v)}
-                          className={styles.description}
-                          placeholder="Description"
-                        />
+                        <p className={styles.location}>
+                          {item.subheading ?? item.location ?? ""}
+                        </p>
+                        <p className={styles.description}>
+                          {item.description ?? ""}
+                        </p>
                         {item.linkHref || _editing ? (
                           <a
                             href={item.linkHref || "#"}
@@ -307,13 +255,7 @@ export default function AutoAccordion({
                               if (_editing) e.preventDefault();
                             }}
                           >
-                            <EditableText
-                              as="span"
-                              value={item.linkLabel ?? ""}
-                              editing={_editing}
-                              onChange={(v) => persistItem(i, "linkLabel", v)}
-                              placeholder="Link label"
-                            />
+                            <span>{item.linkLabel ?? ""}</span>
                             <span aria-hidden>→</span>
                           </a>
                         ) : null}
@@ -334,14 +276,17 @@ export default function AutoAccordion({
 
           <div className={styles.imageHolder}>
             {safeItems.map((item, i) => (
-              <img
+              <div
                 key={i}
                 ref={(el) => setImageRef(el, i)}
-                src={item.image}
-                alt=""
-                loading="lazy"
                 className={styles.image}
-              />
+              >
+                {item.image ? (
+                  <img src={item.image} alt="" loading="lazy" />
+                ) : (
+                  <span>Upload image</span>
+                )}
+              </div>
             ))}
           </div>
         </div>
