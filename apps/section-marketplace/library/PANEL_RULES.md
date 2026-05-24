@@ -34,10 +34,15 @@ The panel is for everything that can't be edited inline.
 
 - **Structure**: how many items, ordering options, layout variants.
 - **Style variants**: a dropdown that swaps the section between presets that
-  pull from the active style guide. Every section ships with at least 3
-  options.
+  pull from the active style guide. A section can temporarily ship only
+  `Default` while other variants are being designed, but keep the dropdown
+  contract in place.
+- **Style controls**: percent sliders for spacing / sizing and token pickers
+  for colors pulled from the active style guide.
 - **Animation**: pick which animation style applies (e.g. `slide`, `fade`,
   `scale`) and how strong it is.
+- **Typography**: token pickers for text tags / scales from the active style
+  guide (`h1`-`h6`, `textLarge`, `textMain`, `textSmall`).
 - **Timing**: percent-based sliders (see rule 4).
 - **Media URLs**: image and video URLs, since they can't be inline-edited.
 - **Hidden hrefs**: link `href` values where the label is the visible text
@@ -69,12 +74,35 @@ needing to know the underlying unit. The section author owns the mapping.
 
 ---
 
-## 5. Style dropdown pulls from the active style guide
+## 5. Focused section panels
 
-Every section ships a `styleVariant` select control with **at least three
-options**. Each option swaps which heading levels / colour tokens / spacing
-tokens the section uses, so the user can preview how their style guide
-changes the section.
+The base inspector should stay light. When a section has grouped controls, the
+base prop panel shows action buttons such as:
+
+- `Update CMS`
+- `Update Styles`
+- `Update Animation`
+- `Update Typography`
+
+Grouped controls opt into a focused panel with `controls[].panel`. Supported
+panel ids are:
+
+- `styles`
+- `animation`
+- `typography`
+
+Unpanelled controls remain in the base inspector. CMS rows live in the top-level
+`cms` block, not in `controls`.
+
+---
+
+## 6. Style dropdown pulls from the active style guide
+
+Every section ships a `styleVariant` select control. When variants are designed,
+ship up to three options that swap which heading levels / colour tokens /
+spacing tokens the section uses, so the user can preview how their style guide
+changes the section. If variants are not designed yet, ship only `Default` and
+keep the dropdown.
 
 A `styleVariant` value is just a string the section interprets. Use semantic
 names:
@@ -87,7 +115,7 @@ names:
 
 ---
 
-## 6. Animation changes restart the animation
+## 7. Animation changes restart the animation
 
 If a section has an `animationStyle` control, changing it must **reset the
 section's animation state** — back to the first item, restart any auto
@@ -96,19 +124,19 @@ actually looks like.
 
 ---
 
-## 7. Arrays ("Add an item")
+## 8. Arrays ("Add an item")
 
 Sections that render repeatable content should use the section CMS contract
-instead of a normal inspector `array-object` control. The Sections panel shows
-a **Section CMS** button for the selected section, and that dedicated panel
-owns adding, removing, and editing CMS rows.
+instead of a normal inspector `array-object` control. The selected section's
+prop panel shows an **Update CMS** button, and that dedicated panel owns adding,
+removing, and editing CMS rows.
 
 Use `array-object` in `controls` only as an escape hatch for non-CMS structural
 arrays. The main inspector remains for section-level style, timing, and layout.
 
 ---
 
-## 8. Section.json shape
+## 9. Section.json shape
 
 ```json
 {
@@ -135,6 +163,10 @@ Supported `controls[].type` values:
 - `array-object` — `{ key, type: 'array-object', label, objectFields: [...] }`
 - `button-variant` — `{ key, type: 'button-variant', label }`; options are
   supplied by the active style guide's `buttons` array.
+- `color-token` — `{ key, type: 'color-token', label }`; options are supplied
+  by the active style guide's `colors` object.
+- `typography-token` — `{ key, type: 'typography-token', label }`; options are
+  supplied by the active style guide's typography scale.
 - `number` — escape hatch for unitless integers that aren't a slider
 - `text` / `textarea` — **forbidden** unless the value is genuinely a hidden
   identifier (href, alt text, etc.) that the user can't see in the rendered
@@ -161,7 +193,12 @@ For repeatable content, add a top-level `cms` block:
 
 ---
 
-## 9. Default props in the React component
+Controls can include `"panel": "styles"`, `"panel": "animation"`, or
+`"panel": "typography"` to move them into a focused update panel.
+
+---
+
+## 10. Default props in the React component
 
 Every section component defaults every controllable prop. Never rely on the
 builder to pass a value. The section must render correctly with **zero
@@ -173,7 +210,7 @@ passes an empty `props` object — the defaults are what the user sees.
 
 ---
 
-## 10. Editable text contract
+## 11. Editable text contract
 
 The section component receives two optional props from the builder:
 

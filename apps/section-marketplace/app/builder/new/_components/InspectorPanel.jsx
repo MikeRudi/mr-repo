@@ -24,8 +24,10 @@ export default function InspectorPanel({
   props = {},
   context = {},
   hasCms = false,
+  panels = [],
   onChange,
   onOpenCms,
+  onOpenPanel,
   onClose,
 }) {
   const scrollRef = useRef(null);
@@ -61,25 +63,39 @@ export default function InspectorPanel({
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-        {hasCms ? (
+        {hasCms || panels.length > 0 ? (
           <div className="rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-3">
             <p
               className="mb-2 text-[11px] text-[var(--chrome-fg-muted)]"
               style={{ textTransform: "none", letterSpacing: "normal" }}
             >
-              Manage this section's repeated content.
+              Open focused panels for this section.
             </p>
-            <button
-              type="button"
-              onClick={onOpenCms}
-              className="btn-chrome btn-chrome--block"
-            >
-              Section CMS
-            </button>
+            <div className="flex flex-col gap-2">
+              {hasCms ? (
+                <button
+                  type="button"
+                  onClick={onOpenCms}
+                  className="btn-chrome btn-chrome--block"
+                >
+                  Update CMS
+                </button>
+              ) : null}
+              {panels.map((panel) => (
+                <button
+                  key={panel.id}
+                  type="button"
+                  onClick={() => onOpenPanel(panel.id)}
+                  className="btn-chrome btn-chrome--ghost btn-chrome--block"
+                >
+                  Update {panel.label}
+                </button>
+              ))}
+            </div>
           </div>
         ) : null}
 
-        {controls.length === 0 ? (
+        {controls.length === 0 && !hasCms && panels.length === 0 ? (
           <p className="text-[12px] text-[var(--chrome-fg-muted)]">
             This section has no editable controls.
           </p>
@@ -100,7 +116,7 @@ export default function InspectorPanel({
   );
 }
 
-function ControlField({ control, value, context = {}, onChange }) {
+export function ControlField({ control, value, context = {}, onChange }) {
   switch (control.type) {
     case "text":
       return (
@@ -168,16 +184,18 @@ function ControlField({ control, value, context = {}, onChange }) {
     }
 
     case "select":
+      const selectOptions = control.options ?? [];
+      const hasDefaultOption = selectOptions.some((opt) => opt.value === "default");
       return (
         <FieldShell label={control.label}>
           <select
-            value={value ?? ""}
+            value={value ?? (hasDefaultOption ? "default" : "")}
             onChange={(e) => onChange(e.target.value)}
             className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
-            <option value="">Default</option>
-            {(control.options ?? []).map((opt) => (
+            {hasDefaultOption ? null : <option value="">Default</option>}
+            {selectOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label ?? opt.value}
               </option>
@@ -200,6 +218,50 @@ function ControlField({ control, value, context = {}, onChange }) {
             {buttons.map((btn) => (
               <option key={btn.id} value={btn.id}>
                 {btn.name ?? btn.id}
+              </option>
+            ))}
+          </select>
+        </FieldShell>
+      );
+    }
+
+    case "color-token": {
+      const colors = Array.isArray(context.colors) ? context.colors : [];
+      return (
+        <FieldShell label={control.label}>
+          <select
+            value={value ?? ""}
+            onChange={(e) => onChange(e.target.value || undefined)}
+            className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            style={{ textTransform: "none", letterSpacing: "normal" }}
+          >
+            <option value="">Default color</option>
+            {colors.map((color) => (
+              <option key={color.value} value={color.value}>
+                {color.label}
+              </option>
+            ))}
+          </select>
+        </FieldShell>
+      );
+    }
+
+    case "typography-token": {
+      const typography = Array.isArray(context.typography)
+        ? context.typography
+        : [];
+      return (
+        <FieldShell label={control.label}>
+          <select
+            value={value ?? ""}
+            onChange={(e) => onChange(e.target.value || undefined)}
+            className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            style={{ textTransform: "none", letterSpacing: "normal" }}
+          >
+            <option value="">Default tag</option>
+            {typography.map((scale) => (
+              <option key={scale.value} value={scale.value}>
+                {scale.label}
               </option>
             ))}
           </select>

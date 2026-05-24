@@ -1,7 +1,7 @@
 /* ----- Style variants ---------------------------------------------------- */
 /* The section uses CSS custom properties so the three variants can simply
    rebind them. This is how a section author bakes in 3 "looks" that all read
-   from the same style guide tokens. See PANEL_RULES.md (rule 5). */
+   from the same style guide tokens. See PANEL_RULES.md (rule 6). */
 
 .root {
   /* defaults — overridden by variant classes */
@@ -25,16 +25,20 @@
   --aa-body-color: var(--chrome-fg-muted, #777169);
   --aa-body-size: 13px;
 
-  --aa-section-py: 80px;
+  --aa-section-pt: 112px;
+  --aa-section-pb: 112px;
   --aa-row-py: 20px;
+  --aa-image-width: 50%;
+  --aa-image-height: 620px;
+  --aa-progress-color: var(--chrome-fg, #000);
 
+  min-height: 100vh;
   background: var(--chrome-ground, #fdfcfc);
   color: var(--chrome-fg, #000);
-  padding: var(--aa-section-py) 0;
+  padding: var(--aa-section-pt) 0 var(--aa-section-pb);
 }
 @media (min-width: 1024px) {
   .root {
-    --aa-section-py: 112px;
     --aa-row-py: 24px;
   }
 }
@@ -54,7 +58,6 @@
   --aa-title-weight: 600;
   --aa-body-size: 12px;
   --aa-row-py: 14px;
-  --aa-section-py: 56px;
 }
 
 .inner {
@@ -102,7 +105,7 @@
 }
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) var(--aa-image-width);
     gap: 64px;
   }
 }
@@ -133,6 +136,10 @@
   flex-direction: column;
   gap: 6px;
   color: inherit;
+}
+.head:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
 }
 
 .region {
@@ -178,7 +185,7 @@
 .location {
   font-size: var(--aa-body-size);
   line-height: 1.6;
-  color: var(--chrome-fg, #000);
+  color: var(--aa-subheading-color, var(--chrome-fg, #000));
 }
 .description {
   font-size: var(--aa-body-size);
@@ -233,13 +240,13 @@
   bottom: 0;
   left: 0;
   width: 0%;
-  background: var(--chrome-fg, #000);
+  background: var(--aa-progress-color, var(--chrome-fg, #000));
 }
 
 .imageHolder {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  height: var(--aa-image-height);
   background: var(--chrome-surface-muted, #f5f3f1);
   overflow: hidden;
   border-radius: var(--chrome-radius-card, 16px);

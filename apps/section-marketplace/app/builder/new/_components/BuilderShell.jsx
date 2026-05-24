@@ -4,12 +4,17 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { getSectionComponent } from "../../../../library/registry.js";
 import { generateCss } from "../../../../lib/styleguide-css.js";
-import { DEFAULT_TOKENS, normalizeTokens } from "../../../../lib/styleguide-defaults.js";
+import {
+  DEFAULT_TOKENS,
+  TYPOGRAPHY_SCALES,
+  normalizeTokens,
+} from "../../../../lib/styleguide-defaults.js";
 import SectionsPanel from "./SectionsPanel.jsx";
 import PagesPanel from "./PagesPanel.jsx";
 import StylePanel from "./StylePanel.jsx";
 import InspectorPanel from "./InspectorPanel.jsx";
 import SectionCmsPanel from "./SectionCmsPanel.jsx";
+import SectionControlsPanel from "./SectionControlsPanel.jsx";
 import StyleGuideEditor from "../../../styleguide/_components/StyleGuideEditor.jsx";
 
 // Must match the key used by /builder/start/StartWizard.jsx
@@ -45,7 +50,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [savedUrl, setSavedUrl] = useState(null);
   const [hydrated, setHydrated] = useState(false);
   const [styleEditorOpen, setStyleEditorOpen] = useState(false);
-  const [cmsOpen, setCmsOpen] = useState(false);
+  const [activeSectionPanel, setActiveSectionPanel] = useState(null);
 
   // Hydrate from the onboarding wizard's sessionStorage payload on mount.
   // If absent (e.g. user came straight to /builder/new), keep defaults.
@@ -96,7 +101,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") {
-        setCmsOpen(false);
+        setActiveSectionPanel(null);
         setSelectedSectionId(null);
       }
     };
@@ -193,6 +198,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
 
   const addSection = (sectionId) => {
     const newId = uid();
+    setActiveSectionPanel(null);
     setPages((p) =>
       p.map((pg) =>
         pg.id !== activePageId
@@ -213,6 +219,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
           : { ...pg, sections: pg.sections.filter((s) => s.id !== instanceId) }
       )
     );
+    setActiveSectionPanel(null);
     if (selectedSectionId === instanceId) setSelectedSectionId(null);
   };
   const moveSection = (instanceId, dir) => {
@@ -258,11 +265,34 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
     : null;
 
   const showInspector = Boolean(selectedSectionId && selectedMeta);
-  const showCmsPanel = Boolean(cmsOpen && selectedInstance && selectedMeta?.cms);
-  const showRightPanel = showCmsPanel || (showInspector && !showCmsPanel);
+  const groupedControls = groupControls(selectedMeta?.controls ?? []);
+  const availablePanels = [
+    groupedControls.styles.length
+      ? { id: "styles", label: "Styles" }
+      : null,
+    groupedControls.animation.length
+      ? { id: "animation", label: "Animation" }
+      : null,
+    groupedControls.typography.length
+      ? { id: "typography", label: "Typography" }
+      : null,
+  ].filter(Boolean);
+  const showCmsPanel = Boolean(
+    activeSectionPanel === "cms" && selectedInstance && selectedMeta?.cms
+  );
+  const activeControls =
+    activeSectionPanel && activeSectionPanel !== "cms"
+      ? groupedControls[activeSectionPanel] ?? []
+      : [];
+  const showControlsPanel = Boolean(
+    activeSectionPanel && activeSectionPanel !== "cms" && selectedInstance
+  );
+  const showRightPanel =
+    showCmsPanel || showControlsPanel || (showInspector && !activeSectionPanel);
   const gridCols = showRightPanel
     ? "grid-cols-[280px_1fr_320px]"
     : "grid-cols-[280px_1fr]";
+  const inspectorContext = makeInspectorContext(tokens);
 
   return (
     <div className={`grid h-dvh grid-rows-[48px_1fr] ${gridCols} bg-[var(--chrome-ground)]`}>
@@ -370,7 +400,10 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       <main
         className="row-start-2 col-start-2 min-h-0 overflow-y-auto"
         onClick={(e) => {
-          if (e.target === e.currentTarget) setSelectedSectionId(null);
+          if (e.target === e.currentTarget) {
+            setActiveSectionPanel(null);
+            setSelectedSectionId(null);
+          }
         }}
       >
         <div className="sg-canvas-builder" style={{ fontSize: "16px" }}>
@@ -379,7 +412,10 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             page={activePage}
             sectionsMeta={initialSections}
             selectedId={selectedSectionId}
-            onSelectSection={setSelectedSectionId}
+            onSelectSection={(id) => {
+              setActiveSectionPanel(null);
+              setSelectedSectionId(id);
+            }}
             onMove={moveSection}
             onRemove={removeSection}
             onPropChange={(instanceId, key, value) => {
@@ -403,19 +439,33 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
                 [selectedMeta.cms.key]: nextItems,
               })
             }
-            onClose={() => setCmsOpen(false)}
+            onClose={() => setActiveSectionPanel(null)}
+          />
+        </aside>
+      ) : showControlsPanel ? (
+        <aside className="row-start-2 col-start-3 min-h-0 overflow-hidden">
+          <SectionControlsPanel
+            name={selectedMeta?.name ?? selectedInstance?.sectionId}
+            panel={activeSectionPanel}
+            controls={activeControls}
+            props={selectedInstance?.props ?? {}}
+            context={inspectorContext}
+            onChange={(next) => updateSectionProps(selectedSectionId, next)}
+            onClose={() => setActiveSectionPanel(null)}
           />
         </aside>
       ) : showInspector ? (
         <aside className="row-start-2 col-start-3 min-h-0 overflow-hidden">
           <InspectorPanel
             name={selectedMeta?.name ?? selectedInstance?.sectionId}
-            controls={selectedMeta?.controls ?? []}
+            controls={groupedControls.other}
             props={selectedInstance?.props ?? {}}
-            context={{ buttons: tokens.buttons ?? [] }}
+            context={inspectorContext}
             hasCms={Boolean(selectedMeta?.cms)}
+            panels={availablePanels}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
-            onOpenCms={() => setCmsOpen(true)}
+            onOpenCms={() => setActiveSectionPanel("cms")}
+            onOpenPanel={setActiveSectionPanel}
             onClose={() => setSelectedSectionId(null)}
             onMoveUp={() => moveSection(selectedSectionId, -1)}
             onMoveDown={() => moveSection(selectedSectionId, +1)}
@@ -464,6 +514,42 @@ function StyleGuideModal({ guide, tokens, onTokensChange, onRename, onClose }) {
       </div>
     </div>
   );
+}
+
+function groupControls(controls) {
+  const groups = { styles: [], animation: [], typography: [], other: [] };
+  for (const control of controls) {
+    const panel = control.panel;
+    if (panel && groups[panel]) {
+      groups[panel].push(control);
+    } else {
+      groups.other.push(control);
+    }
+  }
+  return groups;
+}
+
+function makeInspectorContext(tokens) {
+  const colors = Object.keys(tokens.colors ?? {}).map((key) => ({
+    value: key,
+    label: humanizeToken(key),
+  }));
+  const typography = TYPOGRAPHY_SCALES.map(([key, label]) => ({
+    value: key,
+    label,
+  }));
+  return {
+    buttons: tokens.buttons ?? [],
+    colors,
+    typography,
+  };
+}
+
+function humanizeToken(key) {
+  return key
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRemove, onPropChange }) {

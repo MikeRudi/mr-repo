@@ -76,12 +76,18 @@
               "image",
               "array-object",
               "button-variant",
+              "color-token",
+              "typography-token",
               "number",
               "text",
               "textarea"
             ]
           },
           "label": { "type": "string" },
+          "panel": {
+            "type": "string",
+            "enum": ["styles", "animation", "typography"]
+          },
           "min": { "type": "number" },
           "max": { "type": "number" },
           "step": { "type": "number" },
@@ -110,6 +116,8 @@
                     "select",
                     "image",
                     "button-variant",
+                    "color-token",
+                    "typography-token",
                     "number",
                     "text",
                     "textarea"

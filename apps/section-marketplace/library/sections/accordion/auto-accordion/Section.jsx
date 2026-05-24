@@ -45,6 +45,23 @@ function pctToRevealMs(pct) {
   const p = clamp(pct, 0, 100);
   return Math.round(1200 - (p / 100) * (1200 - 200));
 }
+// Section padding: 0% = 32px, 50% = 112px, 100% = 220px.
+function pctToPaddingPx(pct) {
+  const p = clamp(pct, 0, 100);
+  if (p <= 50) return Math.round(32 + (p / 50) * (112 - 32));
+  return Math.round(112 + ((p - 50) / 50) * (220 - 112));
+}
+// Image width: 0% = 32%, 50% = 50%, 100% = 68% of the desktop grid.
+function pctToImageWidth(pct) {
+  const p = clamp(pct, 0, 100);
+  return `${Math.round(32 + (p / 100) * (68 - 32))}%`;
+}
+// Image height: 0% = 360px, 50% = 620px, 100% = 820px.
+function pctToImageHeightPx(pct) {
+  const p = clamp(pct, 0, 100);
+  if (p <= 50) return Math.round(360 + (p / 50) * (620 - 360));
+  return Math.round(620 + ((p - 50) / 50) * (820 - 620));
+}
 function clamp(n, lo, hi) {
   if (typeof n !== "number" || Number.isNaN(n)) return (lo + hi) / 2;
   return Math.min(hi, Math.max(lo, n));
@@ -60,10 +77,27 @@ export default function AutoAccordion({
   styleVariant = "default",
   animationStyle = "slide",
   linkButtonVariant,
+  sectionPaddingTopPct = 50,
+  sectionPaddingBottomPct = 50,
+  imageWidthPct = 50,
+  imageHeightPct = 50,
+  sectionEyebrowColor,
+  sectionHeadingColor,
+  itemEyebrowColor,
+  itemHeadingColor,
+  itemSubheadingColor,
+  itemDescriptionColor,
+  progressColor,
+  sectionEyebrowTypography,
+  sectionHeadingTypography,
+  itemEyebrowTypography,
+  itemHeadingTypography,
+  itemSubheadingTypography,
+  itemDescriptionTypography,
   autoAdvancePct = 50,
   revealPct = 50,
   items = DEFAULT_ITEMS,
-  // Builder-only props (see PANEL_RULES.md rule 10)
+  // Builder-only props (see PANEL_RULES.md rule 11)
   _editing = false,
   _onPropChange,
 } = {}) {
@@ -90,8 +124,21 @@ export default function AutoAccordion({
 
   const autoAdvanceMs = pctToAutoAdvanceMs(autoAdvancePct);
   const revealMs = pctToRevealMs(revealPct);
+  const styleVars = {
+    "--aa-section-pt": `${pctToPaddingPx(sectionPaddingTopPct)}px`,
+    "--aa-section-pb": `${pctToPaddingPx(sectionPaddingBottomPct)}px`,
+    "--aa-image-width": pctToImageWidth(imageWidthPct),
+    "--aa-image-height": `${pctToImageHeightPx(imageHeightPct)}px`,
+    "--aa-eyebrow-color": colorToken(sectionEyebrowColor, "var(--chrome-fg-subtle, #a59f97)"),
+    "--aa-heading-color": colorToken(sectionHeadingColor, "var(--chrome-fg, #000)"),
+    "--aa-region-color": colorToken(itemEyebrowColor, "var(--chrome-fg-subtle, #a59f97)"),
+    "--aa-title-color": colorToken(itemHeadingColor, "var(--chrome-fg, #000)"),
+    "--aa-subheading-color": colorToken(itemSubheadingColor, "var(--chrome-fg, #000)"),
+    "--aa-body-color": colorToken(itemDescriptionColor, "var(--chrome-fg-muted, #777169)"),
+    "--aa-progress-color": colorToken(progressColor, "var(--chrome-fg, #000)"),
+  };
 
-  // Rule 6: changing animationStyle restarts the section from item 0.
+  // Rule 7: changing animationStyle restarts the section from item 0.
   useEffect(() => {
     setActiveIndex(0);
     setIsAuto(true);
@@ -188,24 +235,24 @@ export default function AutoAccordion({
   const rootClass = `${styles.root} ${styles[styleVariant] ?? ""}`.trim();
 
   return (
-    <section className={rootClass}>
+    <section className={rootClass} style={styleVars}>
       <div className={styles.inner}>
         <header className={styles.header}>
           <EditableText
-            as="p"
+            as={typographyElement(sectionEyebrowTypography, "p")}
             value={eyebrow}
             editing={_editing}
             onChange={(v) => persistTop("eyebrow", v)}
-            className={styles.eyebrow}
+            className={`${styles.eyebrow} ${typographyClass(sectionEyebrowTypography)}`.trim()}
             placeholder="Eyebrow"
           />
           <EditableText
-            as="h2"
+            as={typographyElement(sectionHeadingTypography, "h2")}
             value={heading}
             editing={_editing}
             multiline
             onChange={(v) => persistTop("heading", v)}
-            className={styles.heading}
+            className={`${styles.heading} ${typographyClass(sectionHeadingTypography)}`.trim()}
             placeholder="Section heading"
           />
         </header>
@@ -214,24 +261,35 @@ export default function AutoAccordion({
           <ol className={styles.list}>
             {safeItems.map((item, i) => {
               const isActive = i === activeIndex;
+              const ItemEyebrowTag = typographyElement(itemEyebrowTypography, "span");
+              const ItemHeadingTag = typographyElement(itemHeadingTypography, "span");
+              const ItemSubheadingTag = typographyElement(itemSubheadingTypography, "p");
+              const ItemDescriptionTag = typographyElement(itemDescriptionTypography, "p");
               return (
                 <li
                   key={i}
                   className={`${styles.row} ${isActive ? styles.open : ""}`}
                 >
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => handleItemClick(i)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        handleItemClick(i);
+                      }
+                    }}
                     className={styles.head}
                     aria-expanded={isActive}
                   >
-                    <span className={styles.region}>
+                    <ItemEyebrowTag className={`${styles.region} ${typographyClass(itemEyebrowTypography)}`.trim()}>
                       {item.eyebrow ?? item.region ?? ""}
-                    </span>
-                    <span className={styles.title}>
+                    </ItemEyebrowTag>
+                    <ItemHeadingTag className={`${styles.title} ${typographyClass(itemHeadingTypography)}`.trim()}>
                       {item.heading ?? item.title ?? ""}
-                    </span>
-                  </button>
+                    </ItemHeadingTag>
+                  </div>
 
                   <div className={styles.body}>
                     <div className={styles.bodyInner}>
@@ -239,12 +297,12 @@ export default function AutoAccordion({
                         ref={(el) => setBodyContentRef(el, i)}
                         className={styles.bodyContent}
                       >
-                        <p className={styles.location}>
+                        <ItemSubheadingTag className={`${styles.location} ${typographyClass(itemSubheadingTypography)}`.trim()}>
                           {item.subheading ?? item.location ?? ""}
-                        </p>
-                        <p className={styles.description}>
+                        </ItemSubheadingTag>
+                        <ItemDescriptionTag className={`${styles.description} ${typographyClass(itemDescriptionTypography)}`.trim()}>
                           {item.description ?? ""}
-                        </p>
+                        </ItemDescriptionTag>
                         {item.linkHref || _editing ? (
                           <a
                             href={item.linkHref || "#"}
@@ -321,4 +379,28 @@ function getRevealToVars(style) {
     default:
       return { opacity: 1, y: 0 };
   }
+}
+
+function colorToken(token, fallback) {
+  return token ? `var(--sg-color-${token})` : fallback;
+}
+
+function typographyElement(token, fallback) {
+  if (!token) return fallback;
+  return token.startsWith("h") ? token : "p";
+}
+
+function typographyClass(token) {
+  const map = {
+    h1: "sg-h1",
+    h2: "sg-h2",
+    h3: "sg-h3",
+    h4: "sg-h4",
+    h5: "sg-h5",
+    h6: "sg-h6",
+    textLarge: "sg-text-large",
+    textMain: "sg-text-main",
+    textSmall: "sg-text-small",
+  };
+  return token ? map[token] ?? `sg-${token}` : "";
 }
