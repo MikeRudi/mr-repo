@@ -9,6 +9,7 @@ import SectionsPanel from "./SectionsPanel.jsx";
 import PagesPanel from "./PagesPanel.jsx";
 import StylePanel from "./StylePanel.jsx";
 import InspectorPanel from "./InspectorPanel.jsx";
+import StyleGuideEditor from "../../../styleguide/_components/StyleGuideEditor.jsx";
 
 // Must match the key used by /builder/start/StartWizard.jsx
 const WIZARD_KEY = "mr.builder.wizardState.v1";
@@ -42,6 +43,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [isSaving, setIsSaving] = useState(false);
   const [savedUrl, setSavedUrl] = useState(null);
   const [hydrated, setHydrated] = useState(false);
+  const [styleEditorOpen, setStyleEditorOpen] = useState(false);
 
   // Hydrate from the onboarding wizard's sessionStorage payload on mount.
   // If absent (e.g. user came straight to /builder/new), keep defaults.
@@ -115,6 +117,26 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
         g.id === activeGuideId ? { ...g, tokens: nextTokens } : g
       )
     );
+  }
+
+  function renameActiveGuide(name) {
+    setStyleGuides((prev) =>
+      prev.map((g) =>
+        g.id === activeGuideId ? { ...g, name: name || "Untitled" } : g
+      )
+    );
+  }
+
+  function addStyleGuide() {
+    const next = {
+      id: uid(),
+      name: `Guide ${styleGuides.length + 1}`,
+      tokens: normalizeTokens(tokens),
+      isActive: false,
+    };
+    setStyleGuides((prev) => [...prev, next]);
+    setActiveGuide(next.id);
+    setStyleEditorOpen(true);
   }
 
   async function handleSave() {
@@ -327,6 +349,9 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
               activeGuideId={activeGuideId}
               loading={false}
               onSelect={setActiveGuide}
+              onAdd={addStyleGuide}
+              onEdit={() => setStyleEditorOpen(true)}
+              onRenameActive={renameActiveGuide}
             />
           ) : null}
         </div>
@@ -371,6 +396,45 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
           />
         </aside>
       ) : null}
+
+      {styleEditorOpen && activeGuide ? (
+        <StyleGuideModal
+          guide={activeGuide}
+          tokens={tokens}
+          onTokensChange={updateActiveGuideTokens}
+          onRename={renameActiveGuide}
+          onClose={() => setStyleEditorOpen(false)}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function StyleGuideModal({ guide, tokens, onTokensChange, onRename, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 grid grid-rows-[48px_1fr] bg-[var(--chrome-ground)] text-[var(--chrome-fg)]">
+      <header className="flex items-center gap-3 px-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
+        <span className="text-[11px] tracking-[0.08em] uppercase text-[var(--chrome-fg-subtle)]">
+          Editing style guide
+        </span>
+        <input
+          type="text"
+          value={guide.name}
+          onChange={(e) => onRename(e.target.value)}
+          className="h-8 min-w-0 max-w-[360px] flex-1 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+          style={{ textTransform: "none", letterSpacing: "normal" }}
+          aria-label="Style guide name"
+        />
+        <div className="flex-1" />
+        <button type="button" onClick={onClose} className="btn-chrome btn-chrome--sm">
+          Done
+        </button>
+      </header>
+      <div className="min-h-0 overflow-y-auto px-6 py-8">
+        <div className="mx-auto max-w-[1200px]">
+          <StyleGuideEditor tokens={tokens} onChange={onTokensChange} />
+        </div>
+      </div>
     </div>
   );
 }

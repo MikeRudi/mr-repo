@@ -217,10 +217,11 @@
 - InspectorPanel receives `context` with button variants and renders `button-variant` controls.
 - Auto Accordion renders its link CTA using the picked style guide button variant.
 - `PANEL_RULES.md`, `section.schema.json`, and Auto Accordion `section.json` document the `button-variant` control type.
+- Image controls support upload via Vercel Blob, with local data-URL preview fallback when Blob is not configured locally.
+- Builder Style tab can rename, add, switch, and edit per-site style guides in-place.
 
 **Deferred to follow-up items**
-- Image upload with Vercel Blob (requires Vercel Blob setup).
-- In-builder style guide editing (deferred to keep scope manageable).
+- None for the original item-5 follow-up list.
 
 **Scope (to be refined)**
 - Change how a style guide attaches to a site: today the builder loads guides from `/api/styleguides` and stores `styleGuideId` on the saved site. Likely changes: per‑site style guide selection at site creation, ability to fork/clone a guide for a site, snapshotting the guide into the site at publish time so published sites are immutable against later guide edits.

@@ -118,7 +118,8 @@
                 "label": { "type": "string" }
               }
             }
-          }
+          },
+          "defaultValue": {}
         }
       }
     }

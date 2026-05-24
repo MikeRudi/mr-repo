@@ -1,11 +1,16 @@
 "use client";
 
-// Per-site style guide list. The active guide drives the canvas tokens.
-// In-builder editing of the guide is deferred to a follow-up commit; for
-// now this panel just shows which guides exist on the site and lets the
-// user switch the active one.
+// Per-site style guide list. The active guide drives the canvas tokens and
+// can be edited in-place from the builder.
 
-export default function StylePanel({ guides, activeGuideId, onSelect }) {
+export default function StylePanel({
+  guides,
+  activeGuideId,
+  onSelect,
+  onAdd,
+  onEdit,
+  onRenameActive,
+}) {
   if (!guides || guides.length === 0) {
     return (
       <div className="p-3">
@@ -18,11 +23,38 @@ export default function StylePanel({ guides, activeGuideId, onSelect }) {
       </div>
     );
   }
+  const activeGuide =
+    guides.find((g) => g.id === activeGuideId) ?? guides[0] ?? null;
   return (
     <div className="flex flex-col gap-3 p-3">
       <p className="px-1 text-[10px] uppercase tracking-[0.18em] text-[var(--chrome-fg-subtle)] font-semibold">
         Site style guides
       </p>
+      {activeGuide ? (
+        <div className="flex flex-col gap-2 rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-3">
+          <label
+            htmlFor="active-guide-name"
+            className="text-[10px] uppercase tracking-[0.12em] text-[var(--chrome-fg-subtle)]"
+          >
+            Active guide
+          </label>
+          <input
+            id="active-guide-name"
+            type="text"
+            value={activeGuide.name}
+            onChange={(e) => onRenameActive(e.target.value)}
+            className="h-9 px-2.5 rounded-[8px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            style={{ textTransform: "none", letterSpacing: "normal" }}
+          />
+          <button
+            type="button"
+            onClick={onEdit}
+            className="btn-chrome btn-chrome--block"
+          >
+            Edit style guide
+          </button>
+        </div>
+      ) : null}
       <ul className="flex flex-col gap-1.5">
         {guides.map((g) => {
           const active = g.id === activeGuideId;
@@ -43,13 +75,13 @@ export default function StylePanel({ guides, activeGuideId, onSelect }) {
           );
         })}
       </ul>
-      <p
-        className="text-[11px] text-[var(--chrome-fg-subtle)] mt-2 px-1"
-        style={{ textTransform: "none", letterSpacing: "normal" }}
+      <button
+        type="button"
+        onClick={onAdd}
+        className="btn-chrome btn-chrome--ghost btn-chrome--block"
       >
-        Editing this style guide in the builder is coming soon. For now, set up
-        your guide in the onboarding wizard.
-      </p>
+        + Add guide
+      </button>
     </div>
   );
 }

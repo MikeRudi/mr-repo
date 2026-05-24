@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Generic inspector. Renders controls declared in the section's manifest
 // (section.json -> controls[]). No more per-section hand-wired schemas.
@@ -11,7 +11,7 @@ import { useEffect, useRef } from "react";
 //   number       — numeric input
 //   slider       — range input (min, max, step)
 //   select       — dropdown ({ value, label } options)
-//   image        — URL string (rendered as text input for now)
+//   image        — URL string with upload helper
 //   array-object   — list of objects, each with `objectFields` controls
 //   button-variant — pick a button style from the active style guide
 //                    (option list comes from `context.buttons`)
@@ -83,10 +83,16 @@ export default function InspectorPanel({
 function ControlField({ control, value, context = {}, onChange }) {
   switch (control.type) {
     case "text":
-    case "image":
       return (
         <FieldShell label={control.label}>
           <Input value={value ?? ""} onChange={onChange} />
+        </FieldShell>
+      );
+
+    case "image":
+      return (
+        <FieldShell label={control.label}>
+          <ImageInput value={value ?? ""} onChange={onChange} />
         </FieldShell>
       );
 
@@ -185,7 +191,13 @@ function ControlField({ control, value, context = {}, onChange }) {
       return (
         <ArrayObjectField
           control={control}
-          value={Array.isArray(value) ? value : []}
+          value={
+            Array.isArray(value)
+              ? value
+              : Array.isArray(control.defaultValue)
+                ? structuredClone(control.defaultValue)
+                : []
+          }
           context={context}
           onChange={onChange}
         />
@@ -253,6 +265,11 @@ function ArrayObjectField({ control, value, context = {}, onChange }) {
                     value={row[f.key] ?? ""}
                     onChange={(v) => updateRow(i, f.key, v)}
                   />
+                ) : f.type === "image" ? (
+                  <ImageInput
+                    value={row[f.key] ?? ""}
+                    onChange={(v) => updateRow(i, f.key, v)}
+                  />
                 ) : f.type === "button-variant" ? (
                   <ButtonVariantSelect
                     value={row[f.key]}
@@ -277,6 +294,96 @@ function ArrayObjectField({ control, value, context = {}, onChange }) {
       >
         + Add item
       </button>
+    </div>
+  );
+}
+
+function ImageInput({ value, onChange }) {
+  const [uploading, setUploading] = useState(false);
+  const [status, setStatus] = useState("");
+  const fileRef = useRef(null);
+
+  const readAsDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+
+  const upload = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    setStatus("");
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/uploads/images", {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.url) {
+        onChange(data.url);
+        setStatus("Uploaded");
+        return;
+      }
+
+      const localPreview = await readAsDataUrl(file);
+      onChange(localPreview);
+      setStatus(data?.error ? "Local preview" : "Local preview");
+    } catch {
+      const localPreview = await readAsDataUrl(file);
+      onChange(localPreview);
+      setStatus("Local preview");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      {value ? (
+        <div className="relative overflow-hidden rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] aspect-[4/3]">
+          <img src={value} alt="" className="h-full w-full object-cover" />
+        </div>
+      ) : null}
+      <Input value={value ?? ""} onChange={onChange} />
+      <div className="flex items-center gap-2">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+          onChange={(e) => upload(e.target.files?.[0])}
+          className="sr-only"
+        />
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="h-8 px-3 rounded-[8px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)] disabled:opacity-50"
+        >
+          {uploading ? "Uploading..." : "Upload image"}
+        </button>
+        {value ? (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="h-8 px-3 rounded-[8px] text-[11px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)]"
+          >
+            Clear
+          </button>
+        ) : null}
+        {status ? (
+          <span
+            className="text-[10px] text-[var(--chrome-fg-subtle)]"
+            style={{ textTransform: "none", letterSpacing: "normal" }}
+          >
+            {status}
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 }
