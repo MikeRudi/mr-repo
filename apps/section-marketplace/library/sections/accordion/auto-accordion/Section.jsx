@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { buttonClass } from "../../../../lib/styleguide-defaults.js";
 import styles from "./Section.module.css";
 import EditableText from "../../_shared/EditableText.jsx";
 
@@ -26,7 +27,7 @@ export const DEFAULT_ITEMS = [
     location: "Terminal 1 Domestic, Campinas Viracopos International, Brazil",
     description:
       "A welcoming, design-led lounge that elevates the regional airport experience with thoughtful service, calming spaces, and a generous spread of food and drink throughout the day.",
-    image: "/webflow/images/000.-Hero_Advantage-VIP-Lounge-1.webp",
+    image: "/webflow/images/000.-Hero_Sala-VIP_Advantage-6-1.webp",
     linkLabel: "View lounge",
     linkHref: "#",
   },
@@ -80,6 +81,7 @@ export default function AutoAccordion({
   // Panel-controlled
   styleVariant = "default",
   animationStyle = "slide",
+  linkButtonVariant = "primary",
   autoAdvancePct = 50,
   revealPct = 50,
   items = DEFAULT_ITEMS,
@@ -300,7 +302,7 @@ export default function AutoAccordion({
                             href={item.linkHref || "#"}
                             target="_blank"
                             rel="noreferrer"
-                            className={styles.link}
+                            className={`${styles.link} ${buttonClass(linkButtonVariant)}`}
                             onClick={(e) => {
                               if (_editing) e.preventDefault();
                             }}

@@ -32,7 +32,15 @@ export default function InspectorPanel({
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [name]);
 
-  const setField = (key, value) => onChange({ ...props, [key]: value });
+  const setField = (key, value) => {
+    const next = { ...props };
+    if (value === undefined) {
+      delete next[key];
+    } else {
+      next[key] = value;
+    }
+    onChange(next);
+  };
 
   return (
     <div className="flex flex-col h-full border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)] overflow-hidden">
@@ -152,11 +160,33 @@ function ControlField({ control, value, context = {}, onChange }) {
         </FieldShell>
       );
 
+    case "button-variant": {
+      const buttons = Array.isArray(context.buttons) ? context.buttons : [];
+      return (
+        <FieldShell label={control.label}>
+          <select
+            value={value ?? ""}
+            onChange={(e) => onChange(e.target.value || undefined)}
+            className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            style={{ textTransform: "none", letterSpacing: "normal" }}
+          >
+            <option value="">Default button</option>
+            {buttons.map((btn) => (
+              <option key={btn.id} value={btn.id}>
+                {btn.name ?? btn.id}
+              </option>
+            ))}
+          </select>
+        </FieldShell>
+      );
+    }
+
     case "array-object":
       return (
         <ArrayObjectField
           control={control}
           value={Array.isArray(value) ? value : []}
+          context={context}
           onChange={onChange}
         />
       );
@@ -172,7 +202,7 @@ function ControlField({ control, value, context = {}, onChange }) {
   }
 }
 
-function ArrayObjectField({ control, value, onChange }) {
+function ArrayObjectField({ control, value, context = {}, onChange }) {
   const fields = control.objectFields ?? [];
 
   const updateRow = (index, key, v) => {
@@ -223,6 +253,12 @@ function ArrayObjectField({ control, value, onChange }) {
                     value={row[f.key] ?? ""}
                     onChange={(v) => updateRow(i, f.key, v)}
                   />
+                ) : f.type === "button-variant" ? (
+                  <ButtonVariantSelect
+                    value={row[f.key]}
+                    buttons={Array.isArray(context.buttons) ? context.buttons : []}
+                    onChange={(v) => updateRow(i, f.key, v)}
+                  />
                 ) : (
                   <Input
                     value={row[f.key] ?? ""}
@@ -242,6 +278,24 @@ function ArrayObjectField({ control, value, onChange }) {
         + Add item
       </button>
     </div>
+  );
+}
+
+function ButtonVariantSelect({ value, buttons, onChange }) {
+  return (
+    <select
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value || undefined)}
+      className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+      style={{ textTransform: "none", letterSpacing: "normal" }}
+    >
+      <option value="">Default button</option>
+      {buttons.map((btn) => (
+        <option key={btn.id} value={btn.id}>
+          {btn.name ?? btn.id}
+        </option>
+      ))}
+    </select>
   );
 }
 

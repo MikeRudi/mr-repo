@@ -108,8 +108,9 @@ This is the plain‑English plan for the next phase of work. The order here is t
 - ✅ Extracted `StyleGuideEditor` as reusable component
 - ✅ BuilderShell hydrates from wizard sessionStorage on mount
 - ✅ StylePanel shows per-site guides, lets user switch active
-- ✅ InspectorPanel receives `context` with button variants (wired, not yet used)
-- ⏳ Button picker in InspectorPanel (control type added to docs, case not yet implemented)
+- ✅ InspectorPanel receives `context` with button variants and renders the button picker
+- ✅ Auto Accordion links can use the picked style guide button variant
+- ✅ Panel rules / section contract updated for the button variant control
 - ⏳ Image upload with Vercel Blob (deferred to follow-up item)
 - ⏳ In-builder style guide editing (deferred to follow-up item)
 

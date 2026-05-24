@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getSectionComponent } from "../../../library/registry.js";
 import { generateCss } from "../../../lib/styleguide-css.js";
+import { normalizeTokens } from "../../../lib/styleguide-defaults.js";
 import { sql } from "../../../lib/db.js";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,17 @@ function isNav(sectionId) {
   return typeof sectionId === "string" && sectionId.includes("navigation");
 }
 
+function getActiveSiteTokens(site) {
+  const guides = Array.isArray(site?.styleGuides) ? site.styleGuides : [];
+  const activeGuide =
+    guides.find((g) => g.id === site?.activeStyleGuideId) ??
+    guides.find((g) => g.isActive) ??
+    guides[0] ??
+    null;
+
+  return normalizeTokens(activeGuide?.tokens ?? site?.tokens ?? {});
+}
+
 export default async function PublishedSite({ params }) {
   const { siteId } = await params;
   const site = await loadSite(siteId);
@@ -29,7 +41,7 @@ export default async function PublishedSite({ params }) {
   const activePage = site.pages?.[0];
   if (!activePage) notFound();
 
-  const canvasCss = generateCss(site.tokens ?? {});
+  const canvasCss = generateCss(getActiveSiteTokens(site));
   const sections = activePage.sections ?? [];
   const navSections = sections.filter((s) => isNav(s.sectionId));
   const contentSections = sections.filter((s) => !isNav(s.sectionId));

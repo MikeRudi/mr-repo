@@ -35,6 +35,11 @@
       ]
     },
     {
+      "key": "linkButtonVariant",
+      "type": "button-variant",
+      "label": "Link button variant"
+    },
+    {
       "key": "autoAdvancePct",
       "type": "slider",
       "label": "Time per item",

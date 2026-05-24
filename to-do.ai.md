@@ -214,10 +214,11 @@
 - Extracted `StyleGuideEditor` as reusable component.
 - BuilderShell hydrates from wizard sessionStorage on mount.
 - StylePanel shows per-site guides, lets user switch active.
-- InspectorPanel receives `context` with button variants (wired, not yet used).
+- InspectorPanel receives `context` with button variants and renders `button-variant` controls.
+- Auto Accordion renders its link CTA using the picked style guide button variant.
+- `PANEL_RULES.md`, `section.schema.json`, and Auto Accordion `section.json` document the `button-variant` control type.
 
 **Deferred to follow-up items**
-- Button picker in InspectorPanel (control type added to docs, case not yet implemented).
 - Image upload with Vercel Blob (requires Vercel Blob setup).
 - In-builder style guide editing (deferred to keep scope manageable).
 

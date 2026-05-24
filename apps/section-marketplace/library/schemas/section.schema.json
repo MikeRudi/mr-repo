@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "MakeReign Section Manifest",
   "type": "object",
-  "required": ["id", "name", "category", "version", "entry"],
+  "required": ["id", "name", "category", "version"],
   "properties": {
     "id": {
       "type": "string",
@@ -24,7 +24,8 @@
         "forms",
         "cta",
         "footer",
-        "navigation"
+        "navigation",
+        "accordion"
       ]
     },
     "version": {
@@ -59,6 +60,67 @@
     "tags": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "type", "label"],
+        "properties": {
+          "key": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "slider",
+              "select",
+              "image",
+              "array-object",
+              "button-variant",
+              "number",
+              "text",
+              "textarea"
+            ]
+          },
+          "label": { "type": "string" },
+          "min": { "type": "number" },
+          "max": { "type": "number" },
+          "step": { "type": "number" },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["value"],
+              "properties": {
+                "value": { "type": "string" },
+                "label": { "type": "string" }
+              }
+            }
+          },
+          "objectFields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["key", "type", "label"],
+              "properties": {
+                "key": { "type": "string" },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "slider",
+                    "select",
+                    "image",
+                    "button-variant",
+                    "number",
+                    "text",
+                    "textarea"
+                  ]
+                },
+                "label": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

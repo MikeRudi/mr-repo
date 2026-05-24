@@ -8,7 +8,14 @@ function generateId() {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { pages, tokens, styleGuideId } = body ?? {};
+    const {
+      name,
+      pages,
+      tokens,
+      styleGuides,
+      activeStyleGuideId,
+      styleGuideId,
+    } = body ?? {};
 
     if (!Array.isArray(pages)) {
       return NextResponse.json(
@@ -18,7 +25,21 @@ export async function POST(req) {
     }
 
     const siteId = generateId();
-    const data = { pages, tokens: tokens ?? {}, styleGuideId: styleGuideId ?? null };
+    const siteGuides = Array.isArray(styleGuides) ? styleGuides : [];
+    const activeGuide =
+      siteGuides.find((g) => g.id === activeStyleGuideId) ??
+      siteGuides.find((g) => g.isActive) ??
+      siteGuides[0] ??
+      null;
+    const activeTokens = activeGuide?.tokens ?? tokens ?? {};
+    const data = {
+      name: typeof name === "string" ? name : "Untitled site",
+      pages,
+      styleGuides: siteGuides,
+      activeStyleGuideId: activeGuide?.id ?? activeStyleGuideId ?? null,
+      tokens: activeTokens,
+      styleGuideId: styleGuideId ?? null,
+    };
 
     await sql`
       INSERT INTO sites (id, data)

@@ -42,6 +42,8 @@ The panel is for everything that can't be edited inline.
 - **Media URLs**: image and video URLs, since they can't be inline-edited.
 - **Hidden hrefs**: link `href` values where the label is the visible text
   (the label is inline-editable; the URL is a panel field).
+- **Button variants**: use `button-variant` when a section needs to render
+  a link or button with one of the active style guide's button styles.
 
 ---
 
@@ -130,6 +132,8 @@ Supported `controls[].type` values:
 - `select` — `{ key, type: 'select', label, options: [{ value, label }] }`
 - `image` — `{ key, type: 'image', label }` (URL string for now)
 - `array-object` — `{ key, type: 'array-object', label, objectFields: [...] }`
+- `button-variant` — `{ key, type: 'button-variant', label }`; options are
+  supplied by the active style guide's `buttons` array.
 - `number` — escape hatch for unitless integers that aren't a slider
 - `text` / `textarea` — **forbidden** unless the value is genuinely a hidden
   identifier (href, alt text, etc.) that the user can't see in the rendered
