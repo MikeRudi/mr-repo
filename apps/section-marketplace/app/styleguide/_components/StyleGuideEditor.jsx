@@ -24,13 +24,13 @@ import {
 
 // Container max-width is fixed at 1920 for everyone — no editor section.
 const SECTIONS = [
-  { id: "colors",     eyebrow: "01", title: "Colors",        description: "Light, dark, brand. Add custom colors as needed. Opacity, tint, and shade variants are computed at the point of use." },
-  { id: "typography", eyebrow: "02", title: "Typography",    description: "Nine scales × desktop and mobile. Sizes are in px; the published CSS converts them to rem so they scale with the fluid rem." },
-  { id: "spacing",    eyebrow: "03", title: "Spacing",       description: "Section padding tokens. Desktop values render as em (scale with the fluid rem); mobile values render as rem (static below 992px)." },
-  { id: "radii",      eyebrow: "04", title: "Border radius", description: "Three radii — small, medium, large. Each has a desktop and a mobile value." },
-  { id: "card",       eyebrow: "05", title: "Card",          description: "Filter between card variants. Each is composed from the colors and radii above." },
-  { id: "button",     eyebrow: "06", title: "Button",        description: "Three button variants. Hover the preview to see the hover state apply." },
-  { id: "links",      eyebrow: "07", title: "Links",         description: "Named URLs that footer, contact, or legal sections will reference later." },
+  { id: "colors",     eyebrow: "01", title: "Colors" },
+  { id: "typography", eyebrow: "02", title: "Typography" },
+  { id: "spacing",    eyebrow: "03", title: "Spacing" },
+  { id: "radii",      eyebrow: "04", title: "Border radius" },
+  { id: "card",       eyebrow: "05", title: "Card" },
+  { id: "button",     eyebrow: "06", title: "Button" },
+  { id: "links",      eyebrow: "07", title: "Links" },
 ];
 
 // Pure editor surface — no save buttons, no name input, no list dropdown.
@@ -52,20 +52,20 @@ export default function StyleGuideEditor({ tokens, onChange }) {
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[200px_minmax(0,1fr)] gap-8">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="hidden lg:block">
         <nav
           aria-label="Style guide sections"
           className="sticky top-24 flex flex-col gap-1"
         >
-          <p className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)] mb-2 px-3">
+          <p className="app-eyebrow mb-3 px-3">
             Sections
           </p>
           {SECTIONS.map((s) => (
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="px-3 py-1.5 rounded-[8px] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:bg-[var(--chrome-surface)]"
+              className="rounded-[0.25rem] px-3 py-2 text-[16px] text-[var(--chrome-fg-muted)] hover:bg-[var(--chrome-surface)] hover:text-[var(--chrome-fg)]"
             >
               {s.eyebrow}  {s.title}
             </a>

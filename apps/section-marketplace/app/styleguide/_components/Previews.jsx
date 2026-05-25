@@ -32,9 +32,9 @@ export function WizardryPreview({ tokens }) {
         ].join("\n")}
       </Code>
       <Caption>Container demo</Caption>
-      <div className="relative h-16 rounded-md bg-[var(--chrome-ground)] border border-[var(--chrome-border)] overflow-hidden">
+      <div className="relative h-16 overflow-hidden rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)]">
         <div
-          className="absolute inset-y-0 left-1/2 -translate-x-1/2 bg-[var(--chrome-fg)]/10 border-x border-[var(--chrome-border-strong)] flex items-center justify-center text-[10px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)]"
+          className="absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center justify-center border-x border-[var(--chrome-border-strong)] bg-[var(--chrome-fg)]/10 font-[family-name:var(--chrome-font-mono)] text-[16px] text-[var(--chrome-fg-muted)]"
           style={{ width: `min(100%, ${Math.min(max / 4, 480)}px)` }}
         >
           {max}px max
@@ -56,14 +56,14 @@ export function ColorsPreview({ tokens }) {
         {entries.map(([key, hex]) => (
           <div
             key={key}
-            className="rounded-[10px] overflow-hidden border border-[var(--chrome-border)] bg-[var(--chrome-ground)]"
+            className="overflow-hidden rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)]"
           >
             <div className="h-16" style={{ background: hex || "#000" }} />
             <div className="px-3 py-2">
-              <p className="text-[11px] uppercase tracking-[0.06em] font-bold text-[var(--chrome-fg)]">
+              <p className="text-[16px] font-normal text-[var(--chrome-fg)]">
                 {key}
               </p>
-              <p className="text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)] mt-0.5">
+              <p className="mt-1 font-[family-name:var(--chrome-font-mono)] text-[16px] text-[var(--chrome-fg-muted)]">
                 {hex || "—"}
               </p>
             </div>
@@ -77,7 +77,7 @@ export function ColorsPreview({ tokens }) {
             {ALPHAS.map((a) => (
               <div
                 key={a}
-                className="h-6 rounded-[6px] flex items-center justify-between px-2 text-[10px] font-[family-name:var(--chrome-font-mono)]"
+                className="flex min-h-10 items-center justify-between rounded-[0.25rem] px-3 font-[family-name:var(--chrome-font-mono)] text-[16px]"
                 style={{
                   background: hex ? colorWithAlpha(hex, a) : "transparent",
                   color: key === "light" ? "#0a0b0d" : "#fff",
@@ -108,9 +108,9 @@ export function TypographyPreview({ tokens }) {
           return (
             <div
               key={key}
-              className="grid grid-cols-[80px_1fr] gap-3 items-baseline"
+              className="grid grid-cols-[96px_1fr] items-baseline gap-3"
             >
-              <span className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)] font-[family-name:var(--chrome-font-mono)] pt-1">
+              <span className="pt-1 font-[family-name:var(--chrome-font-mono)] text-[16px] font-normal text-[var(--chrome-fg)]">
                 {label}
                 <br />
                 <span className="opacity-60 font-normal">{scale.size ?? "—"}px</span>
@@ -130,22 +130,22 @@ export function SpacingPreview({ tokens }) {
   return (
     <div className="flex flex-col gap-3">
       <Caption>Vertical rhythm (desktop px → em on site)</Caption>
-      <div className="rounded-[10px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] overflow-hidden">
+      <div className="overflow-hidden rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)]">
         {SPACING_TOKENS.map(([key, label]) => {
           const v = tokens.spacing?.[key]?.desktop ?? 16;
           return (
             <div
               key={key}
-              className="grid grid-cols-[140px_1fr_72px] items-center text-[11px] border-b border-[var(--chrome-border)] last:border-b-0"
+              className="grid grid-cols-[160px_1fr_84px] items-center border-b border-[var(--chrome-border)] text-[16px] last:border-b-0"
             >
-              <span className="px-3 py-2 text-[var(--chrome-fg)] font-bold uppercase tracking-[0.04em]">
+              <span className="px-3 py-3 font-normal text-[var(--chrome-fg)]">
                 {label}
               </span>
               <span
                 className="bg-[var(--chrome-fg)]/8 border-y border-[var(--chrome-border-strong)]"
                 style={{ height: `${v}px` }}
               />
-              <span className="px-3 py-2 text-right font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)]">
+              <span className="px-3 py-3 text-right font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)]">
                 {v}px
               </span>
             </div>
@@ -169,10 +169,10 @@ export function RadiiPreview({ tokens }) {
               className="aspect-[4/3] bg-[var(--chrome-fg)]/8 border border-[var(--chrome-border-strong)] flex items-end justify-between p-3"
               style={{ borderRadius: `${v}px` }}
             >
-              <span className="text-[11px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)]">
+              <span className="text-[16px] font-normal text-[var(--chrome-fg)]">
                 {label}
               </span>
-              <span className="text-[10px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-subtle)]">
+              <span className="font-[family-name:var(--chrome-font-mono)] text-[16px] text-[var(--chrome-fg-subtle)]">
                 {v}px
               </span>
             </div>
@@ -213,7 +213,7 @@ export function ButtonPreview({ activeId }) {
         <button type="button" className={cls}>
           Start a project
         </button>
-        <span className="text-[11px] text-[var(--chrome-fg-subtle)]">
+        <span className="text-[16px] text-[var(--chrome-fg-subtle)]">
           ← hover the button
         </span>
       </div>
@@ -227,20 +227,18 @@ export function LinksPreview({ tokens }) {
     <div className="flex flex-col gap-3">
       <Caption>Named links</Caption>
       {items.length === 0 ? (
-        <p className="text-[12px] text-[var(--chrome-fg-muted)]">
-          Empty. Add a name and URL on the left, then hit Add link.
-        </p>
+        <p className="app-text">Empty.</p>
       ) : (
         <ul className="flex flex-col gap-1">
           {items.map((l, i) => (
             <li
               key={i}
-              className="grid grid-cols-[140px_1fr] gap-3 px-3 py-2 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)]"
+              className="grid grid-cols-[140px_1fr] gap-3 rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] px-3 py-3"
             >
-              <span className="text-[12px] text-[var(--chrome-fg)] truncate">
+              <span className="truncate text-[16px] text-[var(--chrome-fg)]">
                 {l.name || <em className="opacity-50">unnamed</em>}
               </span>
-              <span className="text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)] truncate">
+              <span className="truncate font-[family-name:var(--chrome-font-mono)] text-[16px] text-[var(--chrome-fg-muted)]">
                 {l.url || "—"}
               </span>
             </li>
@@ -253,7 +251,7 @@ export function LinksPreview({ tokens }) {
 
 function Caption({ children }) {
   return (
-    <p className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)]">
+    <p className="app-eyebrow text-[var(--chrome-fg)]">
       {children}
     </p>
   );
@@ -261,7 +259,7 @@ function Caption({ children }) {
 
 function Code({ children }) {
   return (
-    <pre className="text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg)] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] rounded-[8px] p-3 overflow-x-auto leading-relaxed whitespace-pre">
+    <pre className="overflow-x-auto whitespace-pre rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-4 font-[family-name:var(--chrome-font-mono)] text-[16px] leading-relaxed text-[var(--chrome-fg)]">
       {children}
     </pre>
   );

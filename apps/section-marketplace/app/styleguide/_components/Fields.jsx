@@ -6,11 +6,11 @@
 
 export function Field({ label, hint, children, htmlFor }) {
   return (
-    <label htmlFor={htmlFor} className="flex flex-col gap-1.5 text-[12px]">
-      <span className="text-[var(--chrome-fg)] font-medium">{label}</span>
+    <label htmlFor={htmlFor} className="flex flex-col gap-2 text-[16px]">
+      <span className="font-normal text-[var(--chrome-fg)]">{label}</span>
       {children}
       {hint ? (
-        <span className="text-[11px] text-[var(--chrome-fg-subtle)] leading-relaxed">
+        <span className="text-[16px] leading-relaxed text-[var(--chrome-fg-subtle)]">
           {hint}
         </span>
       ) : null}
@@ -19,7 +19,7 @@ export function Field({ label, hint, children, htmlFor }) {
 }
 
 const inputBase =
-  "h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)] tabular-nums";
+  "min-h-11 px-3 rounded-[0.25rem] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[16px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)] tabular-nums";
 
 export function TextInput({ value, onChange, placeholder, id, monospace = true }) {
   return (
@@ -55,7 +55,7 @@ export function NumberInput({ value, onChange, min, max, step, id, suffix }) {
         className={`${inputBase} w-full ${suffix ? "pr-9" : ""}`}
       />
       {suffix ? (
-        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] text-[var(--chrome-fg-subtle)] pointer-events-none">
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[16px] text-[var(--chrome-fg-subtle)]">
           {suffix}
         </span>
       ) : null}
@@ -71,7 +71,7 @@ export function ColorInput({ value, onChange, id }) {
         type="color"
         value={value || "#000000"}
         onChange={(e) => onChange(e.target.value)}
-        className="h-9 w-12 cursor-pointer rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-0.5"
+        className="h-11 w-14 cursor-pointer rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-1"
       />
       <input
         type="text"
@@ -107,7 +107,7 @@ export function SelectInput({ value, onChange, options, id }) {
 // Used by Typography (scale picker), Cards, Buttons.
 export function FilterPills({ items, activeId, onSelect }) {
   return (
-    <div role="tablist" className="flex flex-wrap gap-1.5">
+    <div role="tablist" className="flex flex-wrap gap-2">
       {items.map(({ id, label }) => {
         const sel = id === activeId;
         return (
@@ -117,10 +117,10 @@ export function FilterPills({ items, activeId, onSelect }) {
             type="button"
             aria-selected={sel}
             onClick={() => onSelect(id)}
-            className={`inline-flex items-center h-7 px-3 rounded-full text-[11px] font-medium transition-colors ${
+            className={`inline-flex min-h-11 items-center rounded-[0.25rem] border px-4 text-[16px] font-normal transition-colors ${
               sel
-                ? "bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
-                : "bg-[var(--chrome-ground)] text-[var(--chrome-fg-muted)] hover:bg-[var(--chrome-fg)] hover:text-[var(--chrome-fg-inverse)]"
+                ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                : "border-[var(--chrome-border)] bg-transparent text-[var(--chrome-fg)] hover:border-[var(--chrome-fg)] hover:bg-[var(--chrome-fg)] hover:text-[var(--chrome-fg-inverse)]"
             }`}
           >
             {label}

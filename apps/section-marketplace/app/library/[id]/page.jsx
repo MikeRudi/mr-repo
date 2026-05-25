@@ -21,10 +21,10 @@ function Spec({ label, children }) {
   if (children == null || (Array.isArray(children) && children.length === 0)) return null;
   return (
     <div className="flex items-start gap-4 py-3 border-b border-(--chrome-border)">
-      <dt className="w-[160px] shrink-0 text-[12px] uppercase tracking-[0.08em] text-(--chrome-fg-subtle)">
+      <dt className="app-eyebrow w-[160px] shrink-0">
         {label}
       </dt>
-      <dd className="text-[13px] text-(--chrome-fg) leading-relaxed">{children}</dd>
+      <dd className="text-[16px] leading-relaxed text-(--chrome-fg)">{children}</dd>
     </div>
   );
 }
@@ -36,8 +36,8 @@ export default async function SectionDetailPage({ params }) {
 
   return (
     <AppShell active="/library">
-      <section className="mx-auto max-w-[1200px] px-6 pt-10 pb-6">
-        <p className="text-[12px] uppercase tracking-[0.08em] text-(--chrome-fg-muted)">
+      <section className="mx-auto max-w-[1200px] px-8 pb-6 pt-10">
+        <p className="app-eyebrow">
           <Link href="/library" className="hover:text-(--chrome-fg)">Library</Link>
           <span className="mx-2 text-(--chrome-fg-subtle)">/</span>
           <span className="text-(--chrome-fg)">{s.category}</span>
@@ -49,30 +49,30 @@ export default async function SectionDetailPage({ params }) {
           <TrackBadge track={s.track} />
           <LifecycleBadge lifecycle={s.lifecycle} />
         </div>
-        <h1 className="mt-3 font-[family-name:var(--chrome-font-display)] text-[44px] leading-tight text-(--chrome-fg)">
+        <h1 className="app-title mt-3">
           {s.name}
         </h1>
-        <p className="mt-3 max-w-[680px] text-[14px] text-(--chrome-fg-muted) leading-relaxed">
+        <p className="app-text mt-3 max-w-[680px]">
           {s.description}
         </p>
-        <div className="mt-6 inline-flex items-center gap-3 px-4 h-10 rounded-(--chrome-radius-pill) bg-(--chrome-fg) text-(--chrome-fg-inverse) font-[family-name:var(--chrome-font-mono)] text-[12px]">
+        <div className="mt-6 inline-flex min-h-11 items-center gap-3 rounded-[0.25rem] border border-(--chrome-fg) bg-(--chrome-fg) px-4 font-[family-name:var(--chrome-font-mono)] text-[16px] text-(--chrome-fg-inverse)">
           <span className="text-(--chrome-fg-inverse)/60">$</span>
           mr add {s.id}
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1200px] px-6 pb-16 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
+      <section className="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 px-8 pb-16 lg:grid-cols-[1fr_320px]">
         <div>
-          <div className="rounded-(--chrome-radius-card) bg-(--chrome-surface) border border-(--chrome-border) overflow-hidden">
-            <div className="flex items-center justify-between px-4 h-9 border-b border-(--chrome-border) bg-(--chrome-ground)">
-              <p className="font-[family-name:var(--chrome-font-mono)] text-[11px] text-(--chrome-fg-subtle)">
+          <div className="overflow-hidden rounded-[0.25rem] border border-(--chrome-border) bg-(--chrome-surface)">
+            <div className="flex min-h-12 items-center justify-between border-b border-(--chrome-border) bg-(--chrome-ground) px-4">
+              <p className="font-[family-name:var(--chrome-font-mono)] text-[16px] text-(--chrome-fg-subtle)">
                 preview · {s.id}
               </p>
               <a
                 href={`/sections/${s.id}/preview`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[11px] text-(--chrome-fg-muted) hover:text-(--chrome-fg)"
+                className="text-[16px] text-(--chrome-fg-muted) hover:text-(--chrome-fg)"
               >
                 Open in new tab ↗
               </a>
@@ -87,8 +87,8 @@ export default async function SectionDetailPage({ params }) {
             ) : (
               <div className="aspect-[16/9] grid place-items-center text-center px-6 text-(--chrome-fg-muted)">
                 <div>
-                  <p className="text-[13px]">Implementation coming soon.</p>
-                  <p className="mt-1 text-[11px] text-(--chrome-fg-subtle)">
+                  <p className="text-[16px]">Implementation coming soon.</p>
+                  <p className="mt-1 text-[16px] text-(--chrome-fg-subtle)">
                     Metadata, curation notes and API are in place.
                   </p>
                 </div>
@@ -104,14 +104,14 @@ export default async function SectionDetailPage({ params }) {
           ) : null}
           {s.curation ? (
             <div className="mt-10">
-              <h2 className="text-[12px] uppercase tracking-[0.08em] text-(--chrome-fg-subtle)">
+              <h2 className="app-subtitle">
                 Curation
               </h2>
               <dl className="mt-3">
                 <Spec label="Intent">{s.curation.intent}</Spec>
                 <Spec label="Pattern">{s.curation.structuralPattern}</Spec>
                 <Spec label="Slots">
-                  <code className="font-[family-name:var(--chrome-font-mono)] text-[12px]">
+                  <code className="font-[family-name:var(--chrome-font-mono)] text-[16px]">
                     {s.curation.structuralSlots?.join(" · ")}
                   </code>
                 </Spec>
@@ -135,13 +135,13 @@ export default async function SectionDetailPage({ params }) {
         </div>
 
         <aside className="lg:sticky lg:top-20 self-start">
-          <div className="rounded-(--chrome-radius-card) bg-(--chrome-surface) border border-(--chrome-border) p-5">
-            <h2 className="text-[12px] uppercase tracking-[0.08em] text-(--chrome-fg-subtle)">
+          <div className="app-panel p-5">
+            <h2 className="app-subtitle">
               Specs
             </h2>
             <dl className="mt-2">
               <Spec label="ID">
-                <code className="font-[family-name:var(--chrome-font-mono)] text-[12px]">
+                <code className="font-[family-name:var(--chrome-font-mono)] text-[16px]">
                   {s.id}
                 </code>
               </Spec>
@@ -156,7 +156,7 @@ export default async function SectionDetailPage({ params }) {
                   {(s.dependencies ?? []).map((d) => (
                     <li
                       key={d}
-                      className="font-[family-name:var(--chrome-font-mono)] text-[11px] text-(--chrome-fg-muted)"
+                      className="font-[family-name:var(--chrome-font-mono)] text-[16px] text-(--chrome-fg-muted)"
                     >
                       {d}
                     </li>

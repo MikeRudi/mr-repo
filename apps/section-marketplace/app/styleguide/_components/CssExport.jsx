@@ -19,14 +19,14 @@ export default function CssExport({ css }) {
   return (
     <div className="border-t border-[var(--chrome-border)] mt-12 pt-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-[family-name:var(--chrome-font-display)] text-[20px] text-[var(--chrome-fg)]">
+        <h2 className="app-subtitle">
           Generated CSS
         </h2>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={copy}
-            className="inline-flex items-center h-8 px-3 rounded-full border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
+            className="btn-chrome btn-chrome--ghost btn-chrome--sm"
           >
             {copied ? "Copied" : "Copy"}
           </button>
@@ -34,14 +34,14 @@ export default function CssExport({ css }) {
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
-            className="inline-flex items-center h-8 px-3 rounded-full border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
+            className="btn-chrome btn-chrome--ghost btn-chrome--sm"
           >
             {open ? "Collapse" : "Expand"}
           </button>
         </div>
       </div>
       <pre
-        className={`text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg)] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] rounded-[10px] p-4 overflow-x-auto leading-relaxed whitespace-pre transition-all ${
+        className={`overflow-x-auto whitespace-pre rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-4 font-[family-name:var(--chrome-font-mono)] text-[16px] leading-relaxed text-[var(--chrome-fg)] transition-all ${
           open ? "max-h-[640px] overflow-y-auto" : "max-h-[160px] overflow-hidden"
         }`}
       >

@@ -146,9 +146,7 @@ export default function TypographyEditor({ value, fonts, onChange, onFontsChange
 
       <div>
         <GroupHeading>Font stacks</GroupHeading>
-        <p className="text-[11px] text-[var(--chrome-fg-subtle)] mb-3">
-          Three named stacks. Every typography scale references one of these.
-        </p>
+        <p className="app-text mb-3">Named font stacks.</p>
         <Stack cols={1}>
           {FAMILY_OPTIONS.map(([key, label]) => (
             <Field key={key} label={label} htmlFor={`f-${key}`}>

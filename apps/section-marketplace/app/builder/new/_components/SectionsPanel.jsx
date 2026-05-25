@@ -3,9 +3,6 @@
 import { useMemo, useState } from "react";
 import { hasImplementation } from "../../../../library/registry.js";
 
-// Section picker for the builder. Groups sections by category folder.
-// Category labels render in UPPERCASE. Buttons inherit the global uppercase
-// chrome treatment.
 export default function SectionsPanel({
   sections,
   onAdd,
@@ -31,28 +28,28 @@ export default function SectionsPanel({
   }, [sections, q]);
 
   return (
-    <div className="flex flex-col gap-4 p-3">
+    <div className="flex flex-col gap-5 p-4">
       <input
         type="text"
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search sections"
-        className="h-9 px-3 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+        className="app-input w-full px-3"
         style={{ textTransform: "none", letterSpacing: "normal" }}
       />
 
       {grouped.length === 0 ? (
-        <p className="text-[12px] text-[var(--chrome-fg-subtle)] px-1 py-2">
+        <p className="app-text px-1 py-2">
           Nothing matches.
         </p>
       ) : null}
 
       {grouped.map(([category, items]) => (
-        <div key={category} className="flex flex-col gap-2">
-          <p className="px-1 text-[10px] uppercase tracking-[0.18em] text-[var(--chrome-fg-subtle)] font-semibold">
-            {category}
-          </p>
-          <ul className="flex flex-col gap-1.5">
+        <details key={category} className="app-panel overflow-hidden" open>
+          <summary className="app-subtitle cursor-pointer px-4 py-3">
+            {toTitleCase(category)}
+          </summary>
+          <ul className="flex flex-col gap-2 border-t border-[var(--chrome-border)] p-3">
             {items.map((s) => (
               <li key={s.id}>
                 <button
@@ -61,14 +58,27 @@ export default function SectionsPanel({
                   className="btn-chrome btn-chrome--ghost btn-chrome--block"
                   style={{ justifyContent: "space-between" }}
                 >
-                  <span className="truncate">{s.name}</span>
+                  <span className="truncate">{sectionPickerName(s)}</span>
                   <span aria-hidden>+</span>
                 </button>
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       ))}
     </div>
   );
+}
+
+function sectionPickerName(section) {
+  if (section.id === "auto-accordion") return "Auto progress with image";
+  return section.name;
+}
+
+function toTitleCase(s) {
+  if (!s) return s;
+  return s
+    .split(/[\s_-]+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
 }

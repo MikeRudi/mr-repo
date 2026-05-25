@@ -292,16 +292,16 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const inspectorContext = makeInspectorContext(tokens);
 
   return (
-    <div className={`grid h-dvh grid-rows-[48px_1fr] ${gridCols} bg-[var(--chrome-ground)]`}>
-      <header className="col-span-full flex items-center gap-3 px-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
+    <div className={`grid h-dvh grid-rows-[72px_1fr] ${gridCols} bg-[var(--chrome-ground)]`}>
+      <header className="col-span-full flex items-center gap-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)] px-5">
         <Link
           href="/"
-          className="text-[12px] tracking-[0.04em] text-[var(--chrome-fg)]"
+          className="text-[20px] font-semibold text-[var(--chrome-fg)]"
         >
           MR
         </Link>
         <span className="text-[var(--chrome-border)]">/</span>
-        <span className="text-[12px] text-[var(--chrome-fg-muted)]" style={{ textTransform: "none", letterSpacing: "normal" }}>
+        <span className="text-[16px] text-[var(--chrome-fg-muted)]" style={{ textTransform: "none", letterSpacing: "normal" }}>
           {siteName}{initialTemplate ? ` · from "${initialTemplate}"` : ""}
         </span>
         <div className="flex-1" />
@@ -309,7 +309,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
           aria-label="Active page"
           value={activePage?.id ?? ""}
           onChange={(e) => setActivePageId(e.target.value)}
-          className="h-8 px-2 rounded-[6px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px]"
+          className="app-input px-3"
           style={{ textTransform: "none", letterSpacing: "normal" }}
         >
           {pages.map((p) => (
@@ -342,7 +342,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       </header>
 
       <aside className="row-start-2 col-start-1 min-h-0 border-r border-[var(--chrome-border)] bg-[var(--chrome-surface)] flex flex-col overflow-hidden">
-        <nav role="tablist" className="flex border-b border-[var(--chrome-border)]">
+        <nav role="tablist" className="flex gap-2 border-b border-[var(--chrome-border)] p-3">
           {TOOLS.map((t) => {
             const sel = t.id === activeTool;
             return (
@@ -351,10 +351,10 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
                 role="tab"
                 aria-selected={sel}
                 onClick={() => setActiveTool(t.id)}
-                className={`flex-1 h-9 text-[11px] tracking-[0.06em] transition-colors ${
+                className={`min-h-11 flex-1 rounded-[0.25rem] border px-3 text-[16px] font-normal transition-colors ${
                   sel
-                    ? "bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
-                    : "text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:bg-[var(--chrome-ground)]"
+                    ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
+                    : "border-[var(--chrome-border)] text-[var(--chrome-fg)] hover:border-[var(--chrome-fg)] hover:bg-[var(--chrome-fg)] hover:text-[var(--chrome-fg-inverse)]"
                 }`}
               >
                 {t.label}
@@ -486,16 +486,16 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
 
 function StyleGuideModal({ guide, tokens, onTokensChange, onRename, onClose }) {
   return (
-    <div className="fixed inset-0 z-50 grid grid-rows-[48px_1fr] bg-[var(--chrome-ground)] text-[var(--chrome-fg)]">
-      <header className="flex items-center gap-3 px-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
-        <span className="text-[11px] tracking-[0.08em] uppercase text-[var(--chrome-fg-subtle)]">
+    <div className="fixed inset-0 z-50 grid grid-rows-[72px_1fr] bg-[var(--chrome-ground)] text-[var(--chrome-fg)]">
+      <header className="flex items-center gap-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)] px-5">
+        <span className="app-eyebrow">
           Editing style guide
         </span>
         <input
           type="text"
           value={guide.name}
           onChange={(e) => onRename(e.target.value)}
-          className="h-8 min-w-0 max-w-[360px] flex-1 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+          className="app-input min-w-0 max-w-[360px] flex-1 px-3"
           style={{ textTransform: "none", letterSpacing: "normal" }}
           aria-label="Style guide name"
         />
@@ -527,10 +527,7 @@ function groupControls(controls) {
 }
 
 function makeInspectorContext(tokens) {
-  const colors = Object.keys(tokens.colors ?? {}).map((key) => ({
-    value: key,
-    label: humanizeToken(key),
-  }));
+  const colors = makeColorTokenOptions(tokens.colors ?? {});
   const typography = TYPOGRAPHY_SCALES.map(([key, label]) => ({
     value: key,
     label,
@@ -540,6 +537,25 @@ function makeInspectorContext(tokens) {
     colors,
     typography,
   };
+}
+
+function makeColorTokenOptions(colors) {
+  const alphaSteps = [70, 40, 15, 6];
+  const baseOptions = Object.keys(colors).map((key) => ({
+    value: key,
+    label: humanizeToken(key),
+  }));
+  const fadeOptions = Object.keys(colors).flatMap((key) =>
+    alphaSteps.map((alpha) => ({
+      value: `${key}/${alpha}`,
+      label: `${humanizeToken(key)} ${alpha}%`,
+    }))
+  );
+  return [
+    ...baseOptions,
+    { value: "transparent", label: "Transparent" },
+    ...fadeOptions,
+  ];
 }
 
 function humanizeToken(key) {
@@ -556,9 +572,9 @@ function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRem
     return (
       <div className="grid place-items-center h-full min-h-[60vh] text-[var(--chrome-fg-disabled)]">
         <div className="text-center">
-          <p className="text-[14px]" style={{ textTransform: "none", letterSpacing: "normal" }}>Empty canvas</p>
-          <p className="text-[12px] mt-1 text-[var(--chrome-fg-subtle)]" style={{ textTransform: "none", letterSpacing: "normal" }}>
-            Open the Sections tool on the left and click a section to add it.
+          <p className="app-subtitle" style={{ textTransform: "none", letterSpacing: "normal" }}>Empty canvas</p>
+          <p className="app-text mt-2 text-[var(--chrome-fg-subtle)]" style={{ textTransform: "none", letterSpacing: "normal" }}>
+            Add a section from the left panel.
           </p>
         </div>
       </div>
@@ -615,17 +631,17 @@ function SectionInstance({
         />
       ) : (
         <div className="px-6 py-16 text-center text-[var(--chrome-fg-disabled)]">
-          <p className="text-[12px] tracking-[0.04em]">
+          <p className="text-[16px]">
             {meta?.name ?? instance.sectionId}
           </p>
-          <p className="text-[11px] mt-1" style={{ textTransform: "none", letterSpacing: "normal" }}>
+          <p className="mt-1 text-[16px]" style={{ textTransform: "none", letterSpacing: "normal" }}>
             implementation missing
           </p>
         </div>
       )}
 
       <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <span className="px-2 h-7 inline-flex items-center rounded-[6px] bg-[var(--chrome-fg)]/85 text-[var(--chrome-fg-inverse)] text-[10px] tracking-[0.06em]">
+        <span className="inline-flex min-h-10 items-center rounded-[0.25rem] bg-[var(--chrome-fg)]/85 px-3 text-[16px] text-[var(--chrome-fg-inverse)]">
           {meta?.name ?? instance.sectionId}
         </span>
         <ToolbarBtn label="Move up" onClick={onMoveUp}>↑</ToolbarBtn>
@@ -642,7 +658,7 @@ function ToolbarBtn({ label, onClick, children }) {
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="h-7 w-7 grid place-items-center rounded-[6px] bg-[var(--chrome-fg)]/85 text-[var(--chrome-fg-inverse)] text-[12px] hover:bg-[var(--chrome-fg)]"
+      className="grid min-h-10 w-10 place-items-center rounded-[0.25rem] bg-[var(--chrome-fg)]/85 text-[16px] text-[var(--chrome-fg-inverse)] hover:bg-[var(--chrome-fg)]"
     >
       {children}
     </button>

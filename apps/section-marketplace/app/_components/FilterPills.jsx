@@ -4,10 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useTransition } from "react";
 
 function pillClass(active) {
-  return `inline-flex items-center h-8 px-3 rounded-(--chrome-radius-pill) border text-[12px] transition-colors ${
+  return `inline-flex min-h-11 items-center rounded-[0.25rem] border px-4 text-[16px] font-normal transition-colors ${
     active
       ? "bg-(--chrome-fg) border-(--chrome-fg) text-(--chrome-fg-inverse)"
-      : "bg-(--chrome-surface) border-(--chrome-border) text-(--chrome-fg-muted) hover:border-(--chrome-border-strong) hover:text-(--chrome-fg)"
+      : "bg-transparent border-(--chrome-border) text-(--chrome-fg) hover:border-(--chrome-fg) hover:bg-(--chrome-fg) hover:text-(--chrome-fg-inverse)"
   }`;
 }
 
@@ -86,8 +86,8 @@ function toTitleCase(s) {
 
 function Row({ label, children }) {
   return (
-    <div className="flex items-start gap-3">
-      <span className="shrink-0 mt-1.5 text-[11px] uppercase tracking-[0.08em] text-(--chrome-fg-subtle) w-[72px]">
+    <div className="flex items-start gap-4">
+      <span className="app-eyebrow mt-2 w-[92px] shrink-0">
         {label}
       </span>
       <div className="flex flex-wrap gap-2">{children}</div>

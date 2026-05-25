@@ -8,7 +8,7 @@ export default function TrackBadge({ track }) {
   const color = COLOR[track] ?? COLOR.legacy;
   return (
     <span
-      className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.06em] text-(--chrome-fg-muted)"
+      className="inline-flex items-center gap-2 text-[16px] font-normal text-(--chrome-fg-muted)"
       title={`Track: ${track}`}
     >
       <span

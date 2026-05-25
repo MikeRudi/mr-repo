@@ -54,16 +54,16 @@ export default function StartWizard() {
 
   return (
     <div className="min-h-dvh bg-[var(--chrome-ground)] text-[var(--chrome-fg)] flex flex-col">
-      <header className="h-14 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]/85 backdrop-blur flex items-center px-6">
+      <header className="flex min-h-20 items-center border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]/85 px-6 backdrop-blur">
         <Link
           href="/"
-          className="text-[12px] tracking-[0.04em] text-[var(--chrome-fg)]"
+          className="text-[20px] font-semibold text-[var(--chrome-fg)]"
         >
           MR
         </Link>
         <span className="mx-3 text-[var(--chrome-border)]">/</span>
         <span
-          className="text-[12px] text-[var(--chrome-fg-muted)]"
+          className="text-[16px] text-[var(--chrome-fg-muted)]"
           style={{ textTransform: "none", letterSpacing: "normal" }}
         >
           Start a new site
@@ -107,7 +107,7 @@ export default function StartWizard() {
 function StepDot({ label, active, done }) {
   return (
     <span
-      className={`inline-flex items-center gap-2 text-[11px] tracking-[0.08em] uppercase ${
+      className={`inline-flex items-center gap-2 text-[16px] font-normal ${
         active
           ? "text-[var(--chrome-fg)]"
           : done
@@ -129,17 +129,17 @@ function StepDot({ label, active, done }) {
 function Step1({ siteName, onChange, canAdvance, onNext }) {
   return (
     <div className="mx-auto max-w-[640px] px-6 py-20">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--chrome-fg-subtle)]">
+      <p className="app-eyebrow">
         Step 1 of 2
       </p>
       <h1
-        className="mt-3 text-[clamp(32px,4.5vw,56px)] leading-[1.05] tracking-[-0.01em] font-medium text-[var(--chrome-fg)]"
-        style={{ textTransform: "none", letterSpacing: "-0.01em" }}
+        className="app-title mt-3"
+        style={{ textTransform: "none" }}
       >
         What's your site called?
       </h1>
       <p
-        className="mt-4 text-[14px] text-[var(--chrome-fg-muted)] max-w-[480px]"
+        className="app-text mt-4 max-w-[480px]"
         style={{ textTransform: "none", letterSpacing: "normal" }}
       >
         Just a name for now. You can change it later in the builder.
@@ -148,7 +148,7 @@ function Step1({ siteName, onChange, canAdvance, onNext }) {
       <div className="mt-10">
         <label
           htmlFor="site-name"
-          className="text-[11px] uppercase tracking-[0.18em] text-[var(--chrome-fg)]"
+          className="text-[16px] font-normal text-[var(--chrome-fg)]"
         >
           Site name
         </label>
@@ -162,7 +162,7 @@ function Step1({ siteName, onChange, canAdvance, onNext }) {
             if (e.key === "Enter" && canAdvance) onNext();
           }}
           placeholder="My new site"
-          className="mt-2 w-full h-12 px-3 rounded-[10px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[18px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+          className="app-input mt-2 w-full px-3"
           style={{ textTransform: "none", letterSpacing: "normal" }}
         />
       </div>
@@ -177,7 +177,7 @@ function Step1({ siteName, onChange, canAdvance, onNext }) {
           Continue →
         </button>
         <span
-          className="text-[11px] text-[var(--chrome-fg-subtle)]"
+          className="text-[16px] text-[var(--chrome-fg-subtle)]"
           style={{ textTransform: "none", letterSpacing: "normal" }}
         >
           Or press Enter
@@ -200,22 +200,20 @@ function Step2({
     <div className="mx-auto max-w-[1200px] px-6 py-12">
       <div className="flex items-start justify-between gap-6 mb-10">
         <div className="flex-1">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--chrome-fg-subtle)]">
+          <p className="app-eyebrow">
             Step 2 of 2
           </p>
           <h1
-            className="mt-3 text-[clamp(28px,3.6vw,44px)] leading-[1.1] tracking-[-0.01em] font-medium text-[var(--chrome-fg)]"
-            style={{ textTransform: "none", letterSpacing: "-0.01em" }}
+            className="app-title mt-3"
+            style={{ textTransform: "none" }}
           >
             Set up the style guide for this site
           </h1>
           <p
-            className="mt-3 text-[14px] text-[var(--chrome-fg-muted)] max-w-[560px]"
+            className="app-text mt-3 max-w-[560px]"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
-            Colours, type, spacing, buttons. The site's sections will read from
-            this. You can edit it later, or add more style guides for the same
-            site and switch between them.
+            Colours, type, spacing, buttons.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -236,7 +234,7 @@ function Step2({
       <div className="mb-8">
         <label
           htmlFor="guide-name"
-          className="text-[11px] uppercase tracking-[0.18em] text-[var(--chrome-fg)]"
+          className="text-[16px] font-normal text-[var(--chrome-fg)]"
         >
           Style guide name
         </label>
@@ -246,7 +244,7 @@ function Step2({
           value={guideName}
           onChange={(e) => onGuideNameChange(e.target.value)}
           placeholder="e.g. Default, Editorial, Compact"
-          className="mt-2 w-full max-w-[420px] h-10 px-3 rounded-[10px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[14px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+          className="app-input mt-2 w-full max-w-[420px] px-3"
           style={{ textTransform: "none", letterSpacing: "normal" }}
         />
       </div>

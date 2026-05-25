@@ -29,7 +29,7 @@ export default function LinksEditor({ value, onChange }) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)] mb-3">
+        <p className="app-subtitle mb-3">
           Add a link
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr_auto] gap-2 items-end">
@@ -50,14 +50,14 @@ export default function LinksEditor({ value, onChange }) {
               onChange={(e) => setDraftUrl(e.target.value)}
               onKeyDown={handleKey}
               placeholder="/privacy"
-              className="h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] font-[family-name:var(--chrome-font-mono)]"
+              className="app-input px-3 font-[family-name:var(--chrome-font-mono)]"
             />
           </Field>
           <button
             type="button"
             onClick={add}
             disabled={!draftName.trim() || !draftUrl.trim()}
-            className="h-9 px-4 rounded-full bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[12px] disabled:opacity-40"
+            className="btn-chrome"
           >
             Add link
           </button>
@@ -65,31 +65,28 @@ export default function LinksEditor({ value, onChange }) {
       </div>
 
       <div>
-        <p className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)] mb-3">
+        <p className="app-subtitle mb-3">
           Saved links{items.length > 0 ? ` (${items.length})` : ""}
         </p>
         {items.length === 0 ? (
-          <p className="text-[12px] text-[var(--chrome-fg-muted)]">
-            None yet. Add the URLs that footer, contact, or legal sections will
-            reference later.
-          </p>
+          <p className="app-text">None yet.</p>
         ) : (
           <ul className="flex flex-col gap-1.5">
             {items.map((item, idx) => (
               <li
                 key={idx}
-                className="grid grid-cols-[140px_1fr_auto] gap-3 px-3 py-2 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] items-center"
+                className="grid grid-cols-[140px_1fr_auto] items-center gap-3 rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] px-3 py-3"
               >
-                <span className="text-[12px] text-[var(--chrome-fg)] truncate">
+                <span className="truncate text-[16px] text-[var(--chrome-fg)]">
                   {item.name}
                 </span>
-                <span className="text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)] truncate">
+                <span className="truncate font-[family-name:var(--chrome-font-mono)] text-[16px] text-[var(--chrome-fg-muted)]">
                   {item.url}
                 </span>
                 <button
                   type="button"
                   onClick={() => remove(idx)}
-                  className="text-[11px] text-[var(--chrome-fg-subtle)] hover:text-[var(--chrome-fg)]"
+                  className="text-[16px] text-[var(--chrome-fg-subtle)] hover:text-[var(--chrome-fg)]"
                 >
                   Remove
                 </button>

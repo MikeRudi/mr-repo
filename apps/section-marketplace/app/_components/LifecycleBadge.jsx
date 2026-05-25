@@ -15,7 +15,7 @@ export default function LifecycleBadge({ lifecycle }) {
   const color = `var(--chrome-lifecycle-${key})`;
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2 h-6 rounded-(--chrome-radius-pill) bg-(--chrome-surface) border border-(--chrome-border) text-[11px] font-medium text-(--chrome-fg)"
+      className="inline-flex min-h-10 items-center gap-2 rounded-[0.25rem] border border-(--chrome-border) bg-(--chrome-surface) px-3 text-[16px] font-normal text-(--chrome-fg)"
       title={`Lifecycle: ${lifecycle}`}
     >
       <span

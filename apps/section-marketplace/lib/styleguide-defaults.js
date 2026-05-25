@@ -31,7 +31,7 @@ export const DEFAULT_TOKENS = {
 
   // Three named font stacks — the only places typography references families.
   fonts: {
-    primary:   'Lay Grotesk, "Inter Variable", Inter, system-ui, sans-serif',
+    primary:   '"Inter Variable", Inter, system-ui, sans-serif',
     secondary: '"Inter Variable", Inter, system-ui, sans-serif',
     tertiary:  '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
   },
@@ -40,24 +40,24 @@ export const DEFAULT_TOKENS = {
   // weight (number), letterSpacing (em as a number), lineHeight (unitless number) }.
   typography: {
     h1: {
-      desktop: { family: "primary", size: 96,   weight: 500, letterSpacing: -0.02,  lineHeight: 0.98 },
-      mobile:  { family: "primary", size: 52,   weight: 500, letterSpacing: -0.015, lineHeight: 1.02 },
+      desktop: { family: "primary", size: 96,   weight: 600, letterSpacing: -0.02,  lineHeight: 0.98 },
+      mobile:  { family: "primary", size: 52,   weight: 600, letterSpacing: -0.015, lineHeight: 1.02 },
     },
     h2: {
-      desktop: { family: "primary", size: 64,   weight: 500, letterSpacing: -0.015, lineHeight: 1.02 },
-      mobile:  { family: "primary", size: 40,   weight: 500, letterSpacing: -0.01,  lineHeight: 1.08 },
+      desktop: { family: "primary", size: 64,   weight: 600, letterSpacing: -0.015, lineHeight: 1.02 },
+      mobile:  { family: "primary", size: 40,   weight: 600, letterSpacing: -0.01,  lineHeight: 1.08 },
     },
     h3: {
-      desktop: { family: "primary", size: 44,   weight: 500, letterSpacing: -0.01,  lineHeight: 1.08 },
-      mobile:  { family: "primary", size: 32,   weight: 500, letterSpacing: -0.005, lineHeight: 1.12 },
+      desktop: { family: "primary", size: 44,   weight: 600, letterSpacing: -0.01,  lineHeight: 1.08 },
+      mobile:  { family: "primary", size: 32,   weight: 600, letterSpacing: -0.005, lineHeight: 1.12 },
     },
     h4: {
-      desktop: { family: "primary", size: 32,   weight: 500, letterSpacing: -0.005, lineHeight: 1.15 },
-      mobile:  { family: "primary", size: 26,   weight: 500, letterSpacing: 0,      lineHeight: 1.2 },
+      desktop: { family: "primary", size: 32,   weight: 600, letterSpacing: -0.005, lineHeight: 1.15 },
+      mobile:  { family: "primary", size: 26,   weight: 600, letterSpacing: 0,      lineHeight: 1.2 },
     },
     h5: {
-      desktop: { family: "primary", size: 24,   weight: 500, letterSpacing: 0,      lineHeight: 1.2 },
-      mobile:  { family: "primary", size: 20,   weight: 500, letterSpacing: 0,      lineHeight: 1.25 },
+      desktop: { family: "primary", size: 24,   weight: 600, letterSpacing: 0,      lineHeight: 1.2 },
+      mobile:  { family: "primary", size: 20,   weight: 600, letterSpacing: 0,      lineHeight: 1.25 },
     },
     h6: {
       desktop: { family: "primary", size: 18,   weight: 600, letterSpacing: 0,      lineHeight: 1.3 },
@@ -72,8 +72,8 @@ export const DEFAULT_TOKENS = {
       mobile:  { family: "secondary", size: 16, weight: 400, letterSpacing: 0,      lineHeight: 1.55 },
     },
     textSmall: {
-      desktop: { family: "secondary", size: 14, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
-      mobile:  { family: "secondary", size: 14, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
+      desktop: { family: "secondary", size: 16, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
+      mobile:  { family: "secondary", size: 16, weight: 400, letterSpacing: 0,      lineHeight: 1.5 },
     },
   },
 

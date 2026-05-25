@@ -30,14 +30,14 @@ export default async function LibraryPage({ searchParams }) {
 
   return (
     <AppShell active="/library">
-      <section className="mx-auto max-w-[1200px] px-6 pt-12 pb-6">
-        <p className="text-[12px] uppercase tracking-[0.18em] text-(--chrome-fg-subtle)">
+      <section className="mx-auto max-w-[1200px] px-8 pt-12 pb-6">
+        <p className="app-eyebrow">
           Browse
         </p>
-        <h1 className="mt-2 font-[family-name:var(--chrome-font-display)] text-[44px] leading-tight text-(--chrome-fg)">
+        <h1 className="app-title mt-2">
           Section library
         </h1>
-        <p className="mt-2 text-[14px] text-(--chrome-fg-muted)">
+        <p className="app-text mt-2">
           {sections.length} of {total} sections
           {category ? ` in ${category}` : ""}
           {track ? ` · ${track}` : ""}
@@ -45,13 +45,13 @@ export default async function LibraryPage({ searchParams }) {
         </p>
       </section>
 
-      <section className="mx-auto max-w-[1200px] px-6 py-6 border-y border-(--chrome-border) bg-(--chrome-ground)">
+      <section className="mx-auto max-w-[1200px] border-y border-(--chrome-border) bg-(--chrome-ground) px-8 py-6">
         <FilterPills facets={facets} />
       </section>
 
-      <section className="mx-auto max-w-[1200px] px-6 py-10">
+      <section className="mx-auto max-w-[1200px] px-8 py-10">
         {sections.length === 0 ? (
-          <p className="text-(--chrome-fg-muted)">No sections match these filters.</p>
+          <p className="app-text">No sections match these filters.</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {sections.map((s) => (

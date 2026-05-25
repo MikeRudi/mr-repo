@@ -6,28 +6,27 @@ export default function StartTile({
   body,
   comingSoon = false,
 }) {
-  const Cmp = href ? Link : "div";
-  const props = href ? { href } : {};
+  const Cmp = href && !comingSoon ? Link : "div";
+  const props = href && !comingSoon ? { href } : {};
   return (
     <Cmp
       {...props}
-      className={`group relative flex flex-col h-full p-6 rounded-(--chrome-radius-card) bg-(--chrome-surface) border border-(--chrome-border) transition-colors ${
-        comingSoon ? "opacity-80" : "hover:border-(--chrome-border-strong)"
+      className={`group relative flex h-full flex-col rounded-[0.25rem] border border-(--chrome-border) bg-(--chrome-surface) p-6 transition-colors ${
+        comingSoon ? "opacity-45" : "hover:border-(--chrome-border-strong)"
       }`}
+      aria-disabled={comingSoon ? "true" : undefined}
     >
-      <h3 className="font-[family-name:var(--chrome-font-display)] text-[20px] leading-tight text-(--chrome-fg)">
+      <h3 className="app-subtitle">
         {title}
       </h3>
-      <p className="mt-2 text-[13px] text-(--chrome-fg-muted) leading-relaxed">
-        {body}
-      </p>
+      {body ? <p className="app-text mt-3">{body}</p> : null}
       <div className="mt-5 flex items-center justify-between">
         {comingSoon ? (
-          <span className="inline-flex items-center h-6 px-2.5 rounded-(--chrome-radius-pill) border border-(--chrome-border) text-[10px] uppercase tracking-[0.12em] text-(--chrome-fg-muted)">
+          <span className="inline-flex min-h-10 items-center rounded-[0.25rem] border border-(--chrome-border) px-3 text-[16px] text-(--chrome-fg-muted)">
             Coming soon
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 text-[12px] text-(--chrome-fg) group-hover:translate-x-0.5 transition-transform">
+          <span className="inline-flex items-center gap-1 text-[16px] text-(--chrome-fg) transition-transform group-hover:translate-x-0.5">
             Open <span aria-hidden>→</span>
           </span>
         )}

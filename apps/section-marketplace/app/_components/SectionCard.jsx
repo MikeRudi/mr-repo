@@ -17,17 +17,17 @@ export default function SectionCard({ section }) {
   return (
     <Link
       href={`/library/${section.id}`}
-      className="group flex flex-col rounded-(--chrome-radius-card) bg-(--chrome-surface) border border-(--chrome-border) hover:border-(--chrome-border-strong) transition-colors overflow-hidden"
+      className="group flex flex-col overflow-hidden rounded-[0.25rem] border border-(--chrome-border) bg-(--chrome-surface) transition-colors hover:border-(--chrome-border-strong)"
     >
       <div className="relative aspect-[16/10] bg-(--chrome-surface-muted) border-b border-(--chrome-border) grid place-items-center text-(--chrome-fg-disabled) overflow-hidden">
-        <span className="font-[family-name:var(--chrome-font-mono)] text-xs">
+        <span className="font-[family-name:var(--chrome-font-mono)] text-[16px]">
           {section.id}
         </span>
         <span
-          className={`absolute top-3 right-3 inline-flex items-center gap-1.5 h-6 px-2.5 rounded-(--chrome-radius-pill) text-[10px] uppercase tracking-[0.12em] ${
+          className={`absolute right-3 top-3 inline-flex min-h-10 items-center gap-2 rounded-[0.25rem] border px-3 text-[16px] ${
             live
-              ? "bg-(--chrome-fg) text-(--chrome-fg-inverse)"
-              : "bg-(--chrome-surface) border border-(--chrome-border) text-(--chrome-fg-muted)"
+              ? "border-(--chrome-fg) bg-(--chrome-fg) text-(--chrome-fg-inverse)"
+              : "border-(--chrome-border) bg-(--chrome-surface) text-(--chrome-fg-muted)"
           }`}
         >
           {live ? (
@@ -43,22 +43,22 @@ export default function SectionCard({ section }) {
           )}
         </span>
       </div>
-      <div className="p-5 flex flex-col gap-3">
+      <div className="flex flex-col gap-4 p-6">
         <div className="flex items-center justify-between gap-3">
           <Chip>{toTitleCase(section.category)}</Chip>
           <TrackBadge track={section.track} />
         </div>
         <div>
-          <h3 className="font-[family-name:var(--chrome-font-display)] text-[18px] leading-tight text-(--chrome-fg)">
+          <h3 className="app-subtitle">
             {section.name}
           </h3>
-          <p className="mt-1.5 text-[13px] text-(--chrome-fg-muted) line-clamp-2">
+          <p className="app-text mt-2 line-clamp-2">
             {section.description}
           </p>
         </div>
         <div className="flex items-center justify-between mt-1">
           <LifecycleBadge lifecycle={section.lifecycle} />
-          <span className="text-[11px] text-(--chrome-fg-subtle) font-[family-name:var(--chrome-font-mono)]">
+          <span className="font-[family-name:var(--chrome-font-mono)] text-[16px] text-(--chrome-fg-subtle)">
             v{section.version}
           </span>
         </div>

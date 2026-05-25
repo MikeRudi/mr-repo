@@ -64,28 +64,27 @@ export default function ColorsEditor({ value, onChange }) {
       <div>
         <GroupHeading>Custom colors</GroupHeading>
         {customEntries.length === 0 ? (
-          <p className="text-[12px] text-[var(--chrome-fg-muted)] mb-3">
-            No custom colors yet. Add accents, surfaces, or anything else the
-            brand needs beyond light / dark / brand.
+          <p className="app-text mb-3">
+            No custom colors yet.
           </p>
         ) : (
           <ul className="flex flex-col gap-2 mb-3">
             {customEntries.map(([key, hex]) => (
               <li
                 key={key}
-                className="grid grid-cols-[140px_1fr_auto] gap-2 items-center"
+                className="grid grid-cols-[140px_1fr_auto] items-center gap-3"
               >
                 <input
                   type="text"
                   value={key}
                   onChange={(e) => renameKey(key, slugify(e.target.value))}
-                  className="h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[12px] font-[family-name:var(--chrome-font-mono)]"
+                  className="app-input px-3 font-[family-name:var(--chrome-font-mono)]"
                 />
                 <ColorInput value={hex} onChange={(v) => set(key, v)} />
                 <button
                   type="button"
                   onClick={() => remove(key)}
-                  className="h-9 px-3 rounded-[8px] border border-[var(--chrome-border)] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
+                  className="btn-chrome btn-chrome--ghost btn-chrome--sm"
                 >
                   Remove
                 </button>
@@ -94,7 +93,7 @@ export default function ColorsEditor({ value, onChange }) {
           </ul>
         )}
 
-        <div className="grid grid-cols-[140px_1fr_auto] gap-2 items-end">
+        <div className="grid grid-cols-[140px_1fr_auto] items-end gap-3">
           <Field label="New color name" htmlFor="c-new-name">
             <TextInput
               id="c-new-name"
@@ -111,7 +110,7 @@ export default function ColorsEditor({ value, onChange }) {
             type="button"
             onClick={add}
             disabled={!draftName.trim()}
-            className="h-9 px-3 rounded-full bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[12px] disabled:opacity-40"
+            className="btn-chrome"
           >
             Add color
           </button>

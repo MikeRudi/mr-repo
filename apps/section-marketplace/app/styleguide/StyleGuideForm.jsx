@@ -29,13 +29,13 @@ import {
 
 // Container max-width is fixed at 1920 for everyone — no editor section.
 const SECTIONS = [
-  { id: "colors",     eyebrow: "01",  title: "Colors",         description: "Light, dark, brand. Add custom colors as needed. Opacity, tint, and shade variants are computed at the point of use." },
-  { id: "typography", eyebrow: "02",  title: "Typography",     description: "Nine scales × desktop and mobile. Sizes are in px; the published CSS converts them to rem so they scale with the fluid rem." },
-  { id: "spacing",    eyebrow: "03",  title: "Spacing",        description: "Section padding tokens. Desktop values render as em (scale with the fluid rem); mobile values render as rem (static below 992px)." },
-  { id: "radii",      eyebrow: "04",  title: "Border radius",  description: "Three radii — small, medium, large. Each has a desktop and a mobile value." },
-  { id: "card",       eyebrow: "05",  title: "Card",           description: "Filter between card variants. Each is composed from the colors and radii above." },
-  { id: "button",     eyebrow: "06",  title: "Button",         description: "Three button variants. Hover the preview to see the hover state apply." },
-  { id: "links",      eyebrow: "07",  title: "Links",          description: "Named URLs that footer, contact, or legal sections will reference later." },
+  { id: "colors",     eyebrow: "01",  title: "Colors" },
+  { id: "typography", eyebrow: "02",  title: "Typography" },
+  { id: "spacing",    eyebrow: "03",  title: "Spacing" },
+  { id: "radii",      eyebrow: "04",  title: "Border radius" },
+  { id: "card",       eyebrow: "05",  title: "Card" },
+  { id: "button",     eyebrow: "06",  title: "Button" },
+  { id: "links",      eyebrow: "07",  title: "Links" },
 ];
 
 export default function StyleGuideForm() {
@@ -166,27 +166,27 @@ export default function StyleGuideForm() {
   const exportCss = useMemo(() => generateCss(tokens, ":root"), [tokens]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[200px_minmax(0,1fr)] gap-8">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="hidden lg:block">
         <nav
           aria-label="Style guide sections"
           className="sticky top-24 flex flex-col gap-1"
         >
-          <p className="text-[10px] uppercase tracking-[0.04em] font-bold text-[var(--chrome-fg)] mb-2 px-3">
+          <p className="app-eyebrow mb-3 px-3">
             Sections
           </p>
           {SECTIONS.map((s) => (
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="px-3 py-1.5 rounded-[8px] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:bg-[var(--chrome-surface)]"
+              className="rounded-[0.25rem] px-3 py-2 text-[16px] text-[var(--chrome-fg-muted)] hover:bg-[var(--chrome-surface)] hover:text-[var(--chrome-fg)]"
             >
               {s.eyebrow}  {s.title}
             </a>
           ))}
           <a
             href="#css"
-            className="mt-2 px-3 py-1.5 rounded-[8px] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:bg-[var(--chrome-surface)]"
+            className="mt-2 rounded-[0.25rem] px-3 py-2 text-[16px] text-[var(--chrome-fg-muted)] hover:bg-[var(--chrome-surface)] hover:text-[var(--chrome-fg)]"
           >
             CSS export
           </a>
@@ -199,7 +199,7 @@ export default function StyleGuideForm() {
             <div className="flex items-center gap-2">
               <label
                 htmlFor="sg-pick"
-                className="text-[11px] font-bold uppercase tracking-[0.04em] text-[var(--chrome-fg)]"
+                className="text-[16px] font-normal text-[var(--chrome-fg)]"
               >
                 Guide
               </label>
@@ -211,7 +211,7 @@ export default function StyleGuideForm() {
                   if (v === "__new__") startNew();
                   else if (v) load(v);
                 }}
-                className="h-9 px-2 rounded-[8px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[12px] min-w-[180px]"
+                className="app-input min-w-[200px] px-3"
               >
                 {loadingList && guides.length === 0 ? (
                   <option value="">Loading…</option>
@@ -236,14 +236,14 @@ export default function StyleGuideForm() {
                 setDirty(true);
               }}
               placeholder="Style guide name"
-              className="h-9 px-3 rounded-[8px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[13px] min-w-[200px] flex-1"
+              className="app-input min-w-[220px] flex-1 px-3"
             />
 
             <button
               type="button"
               onClick={save}
               disabled={status.kind === "saving"}
-              className="h-9 px-4 rounded-full bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[12px] disabled:opacity-50"
+              className="btn-chrome"
             >
               {status.kind === "saving"
                 ? "Saving…"
@@ -254,7 +254,7 @@ export default function StyleGuideForm() {
                   : "Create"}
             </button>
 
-            <span className="text-[11px] text-[var(--chrome-fg-subtle)] min-h-4">
+            <span className="min-h-4 text-[16px] text-[var(--chrome-fg-subtle)]">
               {status.kind === "saved" ? `✓ ${status.msg}` : null}
               {status.kind === "loaded" ? status.msg : null}
               {status.kind === "error" ? (
@@ -363,4 +363,3 @@ export default function StyleGuideForm() {
     </div>
   );
 }
-

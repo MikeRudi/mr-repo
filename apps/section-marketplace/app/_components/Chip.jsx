@@ -7,7 +7,7 @@ export default function Chip({ children, tone = "neutral", className = "" }) {
         : "border-(--chrome-border) text-(--chrome-fg-muted)";
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2.5 h-6 rounded-(--chrome-radius-pill) border text-[11px] font-medium uppercase tracking-[0.04em] ${toneClass} ${className}`}
+      className={`inline-flex min-h-10 items-center gap-1 rounded-[0.25rem] border px-3 text-[16px] font-normal ${toneClass} ${className}`}
     >
       {children}
     </span>

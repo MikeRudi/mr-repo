@@ -152,7 +152,7 @@ function build(tokens, scope) {
     lines.push(`  border: ${btn.border?.width ?? 0}px solid ${borderColor};`);
     lines.push(`  padding: ${px.toEm(btn.padding?.desktop ?? 0)} ${px.toEm(btn.paddingX?.desktop ?? 0)};`);
     lines.push(`  font-family: var(--sg-font-secondary);`);
-    lines.push(`  font-size: ${px.toRem(14)};`);
+    lines.push(`  font-size: ${px.toRem(16)};`);
     lines.push(`  cursor: pointer;`);
     lines.push(`  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;`);
     lines.push(`}`);

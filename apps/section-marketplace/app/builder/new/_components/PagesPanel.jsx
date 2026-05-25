@@ -10,11 +10,11 @@ export default function PagesPanel({
   onRemove,
 }) {
   return (
-    <div className="flex flex-col gap-3 p-3">
+    <div className="flex flex-col gap-4 p-4">
       <button
         type="button"
         onClick={onAdd}
-        className="h-9 rounded-[8px] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)] text-[12px] font-medium"
+        className="btn-chrome btn-chrome--block"
       >
         + Add page
       </button>
@@ -25,7 +25,7 @@ export default function PagesPanel({
           return (
             <li
               key={p.id}
-              className={`rounded-[10px] border p-3 transition-colors ${
+              className={`rounded-[0.25rem] border p-4 transition-colors ${
                 active
                   ? "bg-[var(--chrome-ground)] border-[var(--chrome-border-strong)]"
                   : "bg-[var(--chrome-ground)] border-[var(--chrome-border)]"
@@ -35,7 +35,7 @@ export default function PagesPanel({
                 <button
                   type="button"
                   onClick={() => onSelect(p.id)}
-                  className={`text-[12px] font-bold uppercase tracking-[0.04em] ${
+                    className={`text-[16px] font-normal ${
                     active ? "text-[var(--chrome-fg)]" : "text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)]"
                   }`}
                 >
@@ -46,7 +46,7 @@ export default function PagesPanel({
                   <button
                     type="button"
                     onClick={() => onRemove(p.id)}
-                    className="text-[11px] text-[var(--chrome-fg-subtle)] hover:text-[var(--chrome-fg)]"
+                    className="text-[16px] text-[var(--chrome-fg-subtle)] hover:text-[var(--chrome-fg)]"
                   >
                     Remove
                   </button>
@@ -56,17 +56,17 @@ export default function PagesPanel({
                 type="text"
                 value={p.name}
                 onChange={(e) => onRename(p.id, e.target.value)}
-                className="w-full h-8 px-2 rounded-[6px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[12px] mb-1.5"
+                className="app-input mb-2 w-full px-3"
                 aria-label="Page name"
               />
               <input
                 type="text"
                 value={p.slug}
                 onChange={(e) => onReslug(p.id, e.target.value)}
-                className="w-full h-8 px-2 rounded-[6px] bg-[var(--chrome-surface)] border border-[var(--chrome-border)] text-[11px] font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)]"
+                className="app-input w-full px-3 font-[family-name:var(--chrome-font-mono)] text-[var(--chrome-fg-muted)]"
                 aria-label="Page slug"
               />
-              <p className="text-[10px] text-[var(--chrome-fg-subtle)] mt-1.5">
+              <p className="mt-2 text-[16px] text-[var(--chrome-fg-subtle)]">
                 {p.sections.length} section{p.sections.length === 1 ? "" : "s"}
               </p>
             </li>

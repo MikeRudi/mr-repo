@@ -41,13 +41,13 @@ export default function SectionCmsPanel({
 
   return (
     <div className="flex h-full flex-col overflow-hidden border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
-      <header className="flex h-10 shrink-0 items-center justify-between gap-3 border-b border-[var(--chrome-border)] px-4">
+      <header className="flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--chrome-border)] px-5">
         <div className="min-w-0">
-          <p className="truncate text-[11px] tracking-[0.06em] text-[var(--chrome-fg)]">
+          <p className="app-subtitle truncate">
             Section CMS
           </p>
           <p
-            className="truncate text-[10px] text-[var(--chrome-fg-subtle)]"
+            className="truncate text-[16px] text-[var(--chrome-fg-subtle)]"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
             {name}
@@ -56,16 +56,16 @@ export default function SectionCmsPanel({
         <button
           type="button"
           onClick={onClose}
-          className="grid h-7 w-7 place-items-center rounded-[6px] text-[12px] text-[var(--chrome-fg-muted)] hover:bg-[var(--chrome-ground)] hover:text-[var(--chrome-fg)]"
+          className="btn-chrome btn-chrome--ghost btn-chrome--sm !min-h-10 !w-10 !px-0"
           aria-label="Close section CMS"
         >
           x
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <p className="text-[11px] tracking-[0.06em] text-[var(--chrome-fg)]">
+          <p className="app-subtitle">
             {cms?.label ?? "Items"}
           </p>
           <button
@@ -79,7 +79,7 @@ export default function SectionCmsPanel({
 
         {rows.length === 0 ? (
           <p
-            className="text-[12px] text-[var(--chrome-fg-muted)]"
+            className="app-text"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
             No items yet.
@@ -90,16 +90,16 @@ export default function SectionCmsPanel({
           {rows.map((row, index) => (
             <li
               key={index}
-              className="rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-3"
+              className="app-panel bg-[var(--chrome-ground)] p-4"
             >
               <div className="mb-3 flex items-center justify-between gap-2">
-                <span className="text-[10px] tracking-[0.08em] text-[var(--chrome-fg-subtle)]">
+                <span className="app-eyebrow">
                   Item {index + 1}
                 </span>
                 <button
                   type="button"
                   onClick={() => removeRow(index)}
-                  className="text-[10px] text-[var(--chrome-track-experimental)] hover:opacity-70"
+                  className="text-[16px] text-[var(--chrome-track-experimental)] hover:opacity-70"
                 >
                   Remove
                 </button>
@@ -128,7 +128,7 @@ export default function SectionCmsPanel({
 function CmsField({ field, value, onChange }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[10px] tracking-[0.06em] text-[var(--chrome-fg)]">
+      <span className="text-[16px] font-normal text-[var(--chrome-fg)]">
         {field.label}
       </span>
       {field.type === "textarea" ? (
@@ -136,7 +136,7 @@ function CmsField({ field, value, onChange }) {
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
           rows={3}
-          className="w-full resize-y rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-surface)] px-2.5 py-2 text-[13px] text-[var(--chrome-fg)] focus:border-[var(--chrome-border-strong)] focus:outline-none"
+          className="app-input w-full resize-y px-3 py-2"
           style={{ textTransform: "none", letterSpacing: "normal" }}
         />
       ) : field.type === "image" ? (
@@ -146,7 +146,7 @@ function CmsField({ field, value, onChange }) {
           type="text"
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
-          className="h-9 w-full rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-surface)] px-2.5 text-[13px] text-[var(--chrome-fg)] focus:border-[var(--chrome-border-strong)] focus:outline-none"
+          className="app-input w-full px-3"
           style={{ textTransform: "none", letterSpacing: "normal" }}
         />
       )}

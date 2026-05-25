@@ -63,7 +63,7 @@ export default function ButtonEditor({ value, colors, activeId, onActiveChange, 
           <button
             type="button"
             onClick={addBtn}
-            className="inline-flex items-center h-7 px-3 rounded-full border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
+            className="btn-chrome btn-chrome--ghost btn-chrome--sm"
           >
             + Add
           </button>
@@ -71,7 +71,7 @@ export default function ButtonEditor({ value, colors, activeId, onActiveChange, 
             <button
               type="button"
               onClick={removeBtn}
-              className="inline-flex items-center h-7 px-3 rounded-full border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)]"
+              className="btn-chrome btn-chrome--ghost btn-chrome--sm"
             >
               Remove
             </button>

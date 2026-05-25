@@ -48,29 +48,29 @@ export default function InspectorPanel({
   };
 
   return (
-    <div className="flex flex-col h-full border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)] overflow-hidden">
-      <header className="flex items-center justify-between gap-3 px-4 h-10 border-b border-[var(--chrome-border)] shrink-0">
-        <span className="text-[11px] tracking-[0.06em] text-[var(--chrome-fg)] truncate">
+    <div className="flex h-full flex-col overflow-hidden border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
+      <header className="flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--chrome-border)] px-5">
+        <span className="app-subtitle truncate">
           {name}
         </span>
         <button
           type="button"
           onClick={onClose}
-          className="h-7 w-7 grid place-items-center rounded-[6px] text-[12px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)] hover:bg-[var(--chrome-ground)]"
+          className="btn-chrome btn-chrome--ghost btn-chrome--sm !min-h-10 !w-10 !px-0"
           aria-label="Close inspector"
         >
           ×
         </button>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
+      <div ref={scrollRef} className="flex flex-1 flex-col gap-5 overflow-y-auto p-5">
         {hasCms || panels.length > 0 ? (
-          <div className="rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] p-3">
+          <div className="app-panel bg-[var(--chrome-ground)] p-4">
             <p
-              className="mb-2 text-[11px] text-[var(--chrome-fg-muted)]"
+              className="app-text mb-3"
               style={{ textTransform: "none", letterSpacing: "normal" }}
             >
-              Open focused panels for this section.
+              Section panels
             </p>
             <div className="flex flex-col gap-2">
               {hasCms ? (
@@ -97,7 +97,7 @@ export default function InspectorPanel({
         ) : null}
 
         {controls.length === 0 && !hasCms && panels.length === 0 ? (
-          <p className="text-[12px] text-[var(--chrome-fg-muted)]">
+          <p className="app-text">
             This section has no editable controls.
           </p>
         ) : null}
@@ -206,20 +206,19 @@ export function ControlField({ control, value, context = {}, onChange }) {
 
     case "select":
       const selectOptions = control.options ?? [];
-      const hasDefaultOption = selectOptions.some((opt) => opt.value === "default");
       const selectValue =
         value ??
         control.defaultValue ??
-        (hasDefaultOption ? "default" : selectOptions[0]?.value ?? "");
+        selectOptions[0]?.value ??
+        "";
       return (
         <FieldShell label={control.label}>
           <select
             value={selectValue}
             onChange={(e) => onChange(e.target.value)}
-            className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            className="app-input mt-1 w-full px-3"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
-            {hasDefaultOption ? null : <option value="">Default</option>}
             {selectOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label ?? opt.value}
@@ -236,7 +235,7 @@ export function ControlField({ control, value, context = {}, onChange }) {
           <select
             value={value ?? ""}
             onChange={(e) => onChange(e.target.value || undefined)}
-            className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            className="app-input mt-1 w-full px-3"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
             <option value="">Default button</option>
@@ -258,7 +257,7 @@ export function ControlField({ control, value, context = {}, onChange }) {
           <select
             value={colorValue}
             onChange={(e) => onChange(e.target.value || undefined)}
-            className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            className="app-input mt-1 w-full px-3"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
             {control.defaultValue ? null : <option value="">Default color</option>}
@@ -281,7 +280,7 @@ export function ControlField({ control, value, context = {}, onChange }) {
           <select
             value={value ?? control.defaultValue ?? typography[0]?.value ?? ""}
             onChange={(e) => onChange(e.target.value || undefined)}
-            className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+            className="app-input mt-1 w-full px-3"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
             {control.defaultValue ? null : <option value="">Default tag</option>}
@@ -345,23 +344,23 @@ function ArrayObjectField({ control, value, context = {}, onChange }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[11px] tracking-[0.06em] text-[var(--chrome-fg)]">
+      <p className="app-subtitle">
         {control.label}
       </p>
       <ul className="flex flex-col gap-3">
         {value.map((row, i) => (
           <li
             key={i}
-            className="rounded-[10px] border border-[var(--chrome-border)] p-3 flex flex-col gap-3 bg-[var(--chrome-ground)]"
+            className="app-panel flex flex-col gap-3 bg-[var(--chrome-ground)] p-4"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] tracking-[0.06em] text-[var(--chrome-fg-subtle)]">
+              <span className="app-eyebrow">
                 Item {i + 1}
               </span>
               <button
                 type="button"
                 onClick={() => removeRow(i)}
-                className="text-[10px] text-[var(--chrome-track-experimental)] hover:opacity-70"
+                className="text-[16px] text-[var(--chrome-track-experimental)] hover:opacity-70"
               >
                 Remove
               </button>
@@ -398,7 +397,7 @@ function ArrayObjectField({ control, value, context = {}, onChange }) {
       <button
         type="button"
         onClick={addRow}
-        className="h-9 rounded-[8px] border border-dashed border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg-muted)] hover:border-[var(--chrome-border-strong)] hover:text-[var(--chrome-fg)]"
+        className="btn-chrome btn-chrome--ghost btn-chrome--block"
       >
         + Add item
       </button>
@@ -453,7 +452,7 @@ export function ImageInput({ value, onChange }) {
   return (
     <div className="flex flex-col gap-2">
       {value ? (
-        <div className="relative overflow-hidden rounded-[8px] border border-[var(--chrome-border)] bg-[var(--chrome-ground)] aspect-[4/3]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[0.25rem] border border-[var(--chrome-border)] bg-[var(--chrome-ground)]">
           <img src={value} alt="" className="h-full w-full object-cover" />
         </div>
       ) : null}
@@ -470,7 +469,7 @@ export function ImageInput({ value, onChange }) {
           type="button"
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
-          className="h-8 px-3 rounded-[8px] border border-[var(--chrome-border)] text-[11px] text-[var(--chrome-fg)] hover:border-[var(--chrome-border-strong)] disabled:opacity-50"
+          className="btn-chrome btn-chrome--ghost btn-chrome--sm"
         >
           {uploading ? "Uploading..." : "Upload image"}
         </button>
@@ -478,14 +477,14 @@ export function ImageInput({ value, onChange }) {
           <button
             type="button"
             onClick={() => onChange("")}
-            className="h-8 px-3 rounded-[8px] text-[11px] text-[var(--chrome-fg-muted)] hover:text-[var(--chrome-fg)]"
+            className="btn-chrome btn-chrome--ghost btn-chrome--sm"
           >
             Clear
           </button>
         ) : null}
         {status ? (
           <span
-            className="text-[10px] text-[var(--chrome-fg-subtle)]"
+            className="text-[16px] text-[var(--chrome-fg-subtle)]"
             style={{ textTransform: "none", letterSpacing: "normal" }}
           >
             {status}
@@ -501,7 +500,7 @@ function ButtonVariantSelect({ value, buttons, onChange }) {
     <select
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value || undefined)}
-      className="mt-1 w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+      className="app-input mt-1 w-full px-3"
       style={{ textTransform: "none", letterSpacing: "normal" }}
     >
       <option value="">Default button</option>
@@ -518,8 +517,8 @@ function FieldShell({ label, size = "md", children }) {
   return (
     <div className="flex flex-col gap-1.5">
       <label
-        className={`tracking-[0.06em] text-[var(--chrome-fg)] ${
-          size === "sm" ? "text-[10px]" : "text-[11px]"
+        className={`text-[16px] font-normal text-[var(--chrome-fg)] ${
+          size === "sm" ? "" : ""
         }`}
       >
         {label}
@@ -535,7 +534,7 @@ function Input({ value, onChange, type = "text" }) {
       type={type}
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full h-9 px-2.5 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)]"
+      className="app-input w-full px-3"
       style={{ textTransform: "none", letterSpacing: "normal" }}
     />
   );
@@ -547,7 +546,7 @@ function Textarea({ value, onChange }) {
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value)}
       rows={3}
-      className="w-full px-2.5 py-2 rounded-[8px] bg-[var(--chrome-ground)] border border-[var(--chrome-border)] text-[13px] text-[var(--chrome-fg)] focus:outline-none focus:border-[var(--chrome-border-strong)] resize-y"
+      className="app-input w-full resize-y px-3 py-2"
       style={{ textTransform: "none", letterSpacing: "normal" }}
     />
   );

@@ -427,13 +427,28 @@ function getRevealToVars(style) {
 }
 
 function colorToken(token, fallback) {
-  return token ? `var(--sg-color-${token})` : fallback;
+  if (!token) return fallback;
+  if (token === "transparent") return "transparent";
+  const parsed = parseColorToken(token);
+  if (parsed.alpha == null) return `var(--sg-color-${parsed.key})`;
+  return `color-mix(in srgb, var(--sg-color-${parsed.key}) ${parsed.alpha}%, transparent)`;
 }
 
 function colorTokenMix(token, opacity, fallback) {
-  return token
-    ? `color-mix(in srgb, var(--sg-color-${token}) ${opacity}%, transparent)`
-    : fallback;
+  if (!token) return fallback;
+  if (token === "transparent") return "transparent";
+  const parsed = parseColorToken(token);
+  const alpha = parsed.alpha == null ? opacity : Math.round((parsed.alpha / 100) * opacity);
+  return `color-mix(in srgb, var(--sg-color-${parsed.key}) ${alpha}%, transparent)`;
+}
+
+function parseColorToken(token) {
+  const [key, alpha] = String(token).split("/");
+  const alphaNumber = Number(alpha);
+  return {
+    key,
+    alpha: Number.isFinite(alphaNumber) ? alphaNumber : null,
+  };
 }
 
 function typographyElement(token, fallback) {
