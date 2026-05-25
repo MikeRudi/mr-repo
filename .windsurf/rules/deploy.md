@@ -7,6 +7,8 @@ description: GitHub + Vercel + Neon database deploy workflow for the MakeReign a
 
 This file governs **anything that leaves the local machine** — git, GitHub, Vercel, and the Neon Postgres database. It complements `roadmap.md`. If a change is roadmap-sanctioned and ready to ship, deployment goes through this file.
 
+When the user says **deploy**, **publish**, **ship**, or **push it live**, that means: run the local checks, commit the changes, and push to GitHub so the existing GitHub → Vercel integration deploys. It does **not** mean running a Vercel deployment command.
+
 ## The single allowed path
 
 Local edit → local build passes → commit on a feature branch → push → open PR to `main` → review → merge → Vercel auto-deploys `main`.
@@ -27,17 +29,18 @@ For solo work right now, the user may collapse this to: local → build → comm
 
 ## Prime directives
 
-1. **Never run the Vercel CLI to deploy.** No `vercel`, `vercel deploy`, `vercel --prod`, `vercel build`. Deployment is exclusively GitHub-driven. The CLI may be used **read-only** for inspection (`vercel ls`, `vercel inspect --logs`) and only when the user explicitly asks.
+1. **Never run the Vercel CLI to deploy.** No `vercel`, `vercel deploy`, `vercel --prod`, `vercel build`, `npx vercel --prod --yes`, or `npx vercel --prod --yes --scope ...`. Deployment is exclusively GitHub-driven. The CLI may be used **read-only** for inspection (`vercel ls`, `vercel inspect --logs`) and only when the user explicitly asks.
 2. **PRs to `main` are the multi-user mode.** For now, direct push to `main` is allowed for solo work. Do not introduce branch protection assumptions until the user flips this on.
-3. **Local build must pass before any push.** Always run `npx next build apps/section-marketplace` (or `npm run build --workspace apps/section-marketplace`). If the build fails, do not push.
+3. **Local build must pass before any push.** Always run `npm --workspace apps/section-marketplace exec next build` for a fast Next.js verification, or `npm --workspace apps/section-marketplace run build` when you intentionally need the full app build including manifest and DB migration runner. If the build fails, do not push.
 4. **Never push secrets.** No `DATABASE_URL`, API keys, `.env` contents, or anything from `.env*` files goes into git. If a secret is needed in production, the user sets it in the Vercel dashboard.
 5. **Never bypass `to-do.*.md`.** No deploy may include changes outside the current kicked-off roadmap item. If it would, stop and surface it (see `roadmap.md`).
+6. **Ignore `.vercel/` as a deploy signal.** A local `.vercel/project.json` may be stale, missing, or accidentally created by a failed CLI attempt. Do not use it to choose a deploy path, create/link a project, or infer that direct CLI deployment is allowed.
 
 ## Pre-flight checklist (run mentally before every push)
 
 - [ ] All edits are in scope for the current roadmap item.
 - [ ] `to-do.human.md` and `to-do.ai.md` reflect any status/scope changes.
-- [ ] `npx next build apps/section-marketplace` passes locally.
+- [ ] `npm --workspace apps/section-marketplace exec next build` passes locally.
 - [ ] If `library/sections/` or `library/templates/` changed: `npm run library:manifest` was run and the manifest is committed.
 - [ ] If a new migration was added: it is forward-only, idempotent, and lexicographically ordered after the last one in `apps/section-marketplace/db/migrations/`.
 - [ ] No `.env*` files are staged.
@@ -49,19 +52,21 @@ For solo work right now, the user may collapse this to: local → build → comm
 # From the monorepo root: /Users/mike/Documents/Make Reign/react - mr
 
 # 1. Local build (must pass)
-npx next build apps/section-marketplace
+npm --workspace apps/section-marketplace exec next build
 
 # 2. (If you touched library/sections or library/templates)
 npm run library:manifest
 
-# 3. Stage, commit, push
+# 3. Stage, commit, push. This is the deploy trigger.
 git add -A
 git status               # eyeball what is staged
 git commit -m "item-N: <concise description>"
 git push origin main
 ```
 
-After push, Vercel auto-deploys. Verify by checking the production URL and, if needed, `npx vercel ls react-mr-frontend` (read-only inspection only).
+After push, Vercel auto-deploys from GitHub. Verify by checking the production URL and, if needed, `npx vercel ls react-mr-frontend` or `npx vercel inspect --logs <deployment-url>` as read-only inspection only.
+
+If no new deployment appears after a push, do **not** run `vercel --prod` as a fallback. Report that the GitHub-triggered deployment is not visible yet, confirm the pushed commit SHA, and ask the user whether they want Vercel dashboard/GitHub integration checked.
 
 ## Database (Neon Postgres) rules
 
@@ -98,7 +103,9 @@ When the user says "turn on multi-user mode", switch directive 2 to require PRs:
 ## Things the agent must never do
 
 - Run `vercel deploy` / `vercel --prod` / `vercel build`.
+- Run `npx vercel --prod --yes` or retry a failed direct CLI deploy.
 - Create new Vercel projects.
+- Link a local folder to a Vercel project as part of deploying.
 - Change the Vercel root directory or build command from the agent side. (Those are dashboard-only.)
 - Edit, delete, or reorder applied migrations.
 - Commit `.env*` files or any secret.
@@ -111,4 +118,5 @@ When the user says "turn on multi-user mode", switch directive 2 to require PRs:
 - Surface a one-line summary of what is about to be pushed, before pushing.
 - Run the local build itself rather than asking the user to.
 - After a push, confirm the commit SHA and remind the user that Vercel will auto-deploy in ~1–2 minutes.
+- If the user says GitHub auto-deploy is configured, treat `git push origin main` as the deployment action.
 - If a build fails on Vercel, immediately pull the logs (read-only CLI) and report the root cause.

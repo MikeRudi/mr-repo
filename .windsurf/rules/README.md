@@ -1,6 +1,6 @@
 # Windsurf Rules — MakeReign
 
-This folder contains workspace rules that Windsurf's Cascade reads automatically for every session in this repo. Every rule applies to every model Cascade can run (Claude, GPT, Gemini, etc.).
+This folder contains the canonical workspace rules for this repo. Windsurf's Cascade reads them automatically, but they are written for **every language model or coding agent** that works in this workspace.
 
 ## Files in this folder
 
@@ -15,4 +15,6 @@ This folder contains workspace rules that Windsurf's Cascade reads automatically
 
 ## Scope
 
-These rules apply **only inside Windsurf Cascade**. Other tools (ChatGPT web, Claude web, Cursor, etc.) do not read them automatically. If we adopt another tool later, we mirror the rules into that tool's expected location (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`, etc.) — but `to-do.ai.md` and these rule files remain the single source of truth.
+These rules apply to **all agents and models** working in this repo. Some tools do not read `.windsurf/rules` automatically, so the agent must manually read these files before acting when the user points at the rules folder or asks for deploy/roadmap-sensitive work.
+
+If we adopt another tool later, mirror these rules into that tool's expected location (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`, etc.) — but `to-do.ai.md` and these rule files remain the single source of truth.
