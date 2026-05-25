@@ -296,7 +296,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       <header className="col-span-full flex items-center gap-4 border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)] px-5">
         <Link
           href="/"
-          className="text-[20px] font-semibold text-[var(--chrome-fg)]"
+          className="text-[16px] font-semibold text-[var(--chrome-fg)]"
         >
           MR
         </Link>
@@ -572,7 +572,7 @@ function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRem
     return (
       <div className="grid place-items-center h-full min-h-[60vh] text-[var(--chrome-fg-disabled)]">
         <div className="text-center">
-          <p className="app-subtitle" style={{ textTransform: "none", letterSpacing: "normal" }}>Empty canvas</p>
+          <p className="text-[16px] font-medium text-[var(--chrome-fg)]" style={{ textTransform: "none", letterSpacing: "normal" }}>Empty canvas</p>
           <p className="app-text mt-2 text-[var(--chrome-fg-subtle)]" style={{ textTransform: "none", letterSpacing: "normal" }}>
             Add a section from the left panel.
           </p>

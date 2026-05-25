@@ -46,7 +46,7 @@ export default function SectionsPanel({
 
       {grouped.map(([category, items]) => (
         <details key={category} className="app-panel overflow-hidden" open>
-          <summary className="app-subtitle cursor-pointer px-4 py-3">
+          <summary className="cursor-pointer px-4 py-3 text-[16px] font-medium text-[var(--chrome-fg)]">
             {toTitleCase(category)}
           </summary>
           <ul className="flex flex-col gap-2 border-t border-[var(--chrome-border)] p-3">

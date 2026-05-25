@@ -50,7 +50,7 @@ export default function InspectorPanel({
   return (
     <div className="flex h-full flex-col overflow-hidden border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
       <header className="flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--chrome-border)] px-5">
-        <span className="app-subtitle truncate">
+        <span className="truncate text-[16px] font-medium text-[var(--chrome-fg)]">
           {name}
         </span>
         <button
@@ -344,7 +344,7 @@ function ArrayObjectField({ control, value, context = {}, onChange }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="app-subtitle">
+      <p className="text-[16px] font-medium text-[var(--chrome-fg)]">
         {control.label}
       </p>
       <ul className="flex flex-col gap-3">

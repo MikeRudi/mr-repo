@@ -192,6 +192,51 @@ button {
   border-color: var(--chrome-border-strong);
 }
 
+.app-nav-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  border: 1px solid var(--chrome-border);
+  border-radius: 0.25rem;
+  padding: 10px 16px;
+  color: var(--chrome-fg);
+  font-size: 16px;
+  font-weight: 400;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.app-nav-link:hover,
+.app-nav-link[aria-current="page"] {
+  border-color: var(--chrome-fg);
+  background: var(--chrome-fg);
+  color: var(--chrome-fg-inverse);
+}
+
+.app-label-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  border: 1px solid var(--chrome-border);
+  border-radius: 0.25rem;
+  padding: 10px 16px;
+  color: var(--chrome-fg);
+  font-size: 16px;
+  font-weight: 400;
+  text-decoration: none;
+  text-underline-offset: 4px;
+  transition: border-color 0.15s ease, color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.app-label-button:hover {
+  border-color: var(--chrome-fg);
+  text-decoration: underline;
+}
+
+.app-label-button[aria-pressed="true"],
+.app-label-button[aria-selected="true"] {
+  border-color: var(--chrome-fg);
+}
+
 /* MakeReign chrome button system.
    One look, app-wide: black background, white text. On hover: invert.
    Apply via the `.btn-chrome` class. Disabled state dims the button and

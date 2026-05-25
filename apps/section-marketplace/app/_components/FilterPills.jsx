@@ -3,12 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useTransition } from "react";
 
-function pillClass(active) {
-  return `inline-flex min-h-11 items-center rounded-[0.25rem] border px-4 text-[16px] font-normal transition-colors ${
-    active
-      ? "bg-(--chrome-fg) border-(--chrome-fg) text-(--chrome-fg-inverse)"
-      : "bg-transparent border-(--chrome-border) text-(--chrome-fg) hover:border-(--chrome-fg) hover:bg-(--chrome-fg) hover:text-(--chrome-fg-inverse)"
-  }`;
+function pillClass() {
+  return "app-label-button";
 }
 
 export default function FilterPills({ facets }) {
@@ -45,6 +41,7 @@ export default function FilterPills({ facets }) {
             key={c}
             onClick={() => setParam("category", c)}
             className={pillClass(current.category === c)}
+            aria-pressed={current.category === c}
           >
             {toTitleCase(c)}
           </button>
@@ -56,6 +53,7 @@ export default function FilterPills({ facets }) {
             key={t}
             onClick={() => setParam("track", t)}
             className={pillClass(current.track === t)}
+            aria-pressed={current.track === t}
           >
             {toTitleCase(t)}
           </button>
@@ -67,6 +65,7 @@ export default function FilterPills({ facets }) {
             key={l}
             onClick={() => setParam("lifecycle", l)}
             className={pillClass(current.lifecycle === l)}
+            aria-pressed={current.lifecycle === l}
           >
             {l}
           </button>

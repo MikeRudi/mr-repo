@@ -57,7 +57,7 @@ export default function StartWizard() {
       <header className="flex min-h-20 items-center border-b border-[var(--chrome-border)] bg-[var(--chrome-surface)]/85 px-6 backdrop-blur">
         <Link
           href="/"
-          className="text-[20px] font-semibold text-[var(--chrome-fg)]"
+          className="text-[16px] font-semibold text-[var(--chrome-fg)]"
         >
           MR
         </Link>

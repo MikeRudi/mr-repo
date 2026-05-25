@@ -39,7 +39,7 @@ export default function SectionControlsPanel({
     <div className="flex h-full flex-col overflow-hidden border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
       <header className="flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--chrome-border)] px-5">
         <div className="min-w-0">
-          <p className="app-subtitle truncate">
+          <p className="truncate text-[16px] font-medium text-[var(--chrome-fg)]">
             {PANEL_TITLES[panel] ?? "Controls"}
           </p>
           <p
@@ -75,7 +75,7 @@ export default function SectionControlsPanel({
                 open={group.open}
                 className="app-panel bg-[var(--chrome-ground)]"
               >
-                <summary className="app-subtitle cursor-pointer px-4 py-3">
+                <summary className="cursor-pointer px-4 py-3 text-[16px] font-medium text-[var(--chrome-fg)]">
                   {group.label}
                 </summary>
                 <div className="flex flex-col gap-5 border-t border-[var(--chrome-border)] p-4">

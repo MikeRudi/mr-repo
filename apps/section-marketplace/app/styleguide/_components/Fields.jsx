@@ -117,11 +117,7 @@ export function FilterPills({ items, activeId, onSelect }) {
             type="button"
             aria-selected={sel}
             onClick={() => onSelect(id)}
-            className={`inline-flex min-h-11 items-center rounded-[0.25rem] border px-4 text-[16px] font-normal transition-colors ${
-              sel
-                ? "border-[var(--chrome-fg)] bg-[var(--chrome-fg)] text-[var(--chrome-fg-inverse)]"
-                : "border-[var(--chrome-border)] bg-transparent text-[var(--chrome-fg)] hover:border-[var(--chrome-fg)] hover:bg-[var(--chrome-fg)] hover:text-[var(--chrome-fg-inverse)]"
-            }`}
+            className="app-label-button"
           >
             {label}
           </button>

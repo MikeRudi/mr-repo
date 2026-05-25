@@ -22,7 +22,7 @@ export default function AppShell({ children, active }) {
             >
               M
             </span>
-            <span className="font-[family-name:var(--chrome-font-display)] text-[20px] font-semibold">
+            <span className="font-[family-name:var(--chrome-font-display)] text-[16px] font-semibold">
               MakeReign
             </span>
           </Link>
@@ -33,11 +33,8 @@ export default function AppShell({ children, active }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`inline-flex min-h-11 items-center rounded-[0.25rem] border px-4 text-[16px] font-normal transition-colors ${
-                    isActive
-                      ? "border-(--chrome-fg) bg-(--chrome-fg) text-(--chrome-fg-inverse)"
-                      : "border-(--chrome-border) text-(--chrome-fg) hover:border-(--chrome-fg) hover:bg-(--chrome-fg) hover:text-(--chrome-fg-inverse)"
-                  }`}
+                  aria-current={isActive ? "page" : undefined}
+                  className="app-nav-link"
                 >
                   {item.label}
                 </Link>
