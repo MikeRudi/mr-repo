@@ -4,7 +4,7 @@ This is the plain‑English plan for the next phase of work. The order here is t
 
 ---
 
-## 1. Reset the section library to one starter section *(IN PROGRESS)*
+## 1. Reset the section library to one starter section *(DONE)*
 
 **What this means in plain English**
 - Wipe out all the existing sections in the library.
@@ -28,7 +28,7 @@ This is the plain‑English plan for the next phase of work. The order here is t
 
 ---
 
-## 2. Build a "Build Mode" for the library
+## 2. Build a "Build Mode" for the library *(IN PROGRESS)*
 
 **What this means in plain English**
 - Give users the ability to create a brand new section asset directly from the library.
@@ -43,40 +43,28 @@ This is the plain‑English plan for the next phase of work. The order here is t
 - Keep section authoring close to real code (local), but make the round‑trip easy.
 
 **More to come**
-- I'll provide the resources/spec for what an uploaded section needs to contain.
-- We'll define the builder panel schema and how it gets generated from the uploaded section.
+- First slice: library button downloads a section template package, upload stores the edited package for review.
+- Admin review / activation will stay manual until we build the admin panel later.
+- We'll keep refining the downloaded rules and guidance after the first working path is live.
 
 ---
 
-## 3. Update the library UI
+## 3. Update UI across everything and do a full clean
 
 **What this means in plain English**
-- Redesign the library page (the catalogue).
-- Use design resources I'll send you.
+- Clean up the UI across the full app.
+- Make the homepage, style guide, builder, library, panels, navigation, buttons, typography, and spacing feel consistent.
+- Revisit any rough interaction or architecture details that block a clean UI pass.
 
 **Goal**
-- A library that actually feels like a product surface, not a dev list.
+- A cleaner, more consistent product surface across the whole app.
 
 **More to come**
-- I'll send the visual references / design files.
+- We'll list the specific UI pain points and cleanup passes once we get here.
 
 ---
 
-## 4. Update the site builder UI and architecture
-
-**What this means in plain English**
-- Refresh the builder UI.
-- Revisit the underlying architecture (how pages, sections, tokens, and saves are wired together).
-
-**Goal**
-- A builder that's faster to use, cleaner to look at, and easier to extend.
-
-**More to come**
-- We'll list the specific UI pain points and architecture changes once we get here.
-
----
-
-## 4.5 Fix "Start a site from a library template" flow
+## 4. Fix "Start a site from a library template" flow
 
 **What this means in plain English**
 - Today, clicking "From a library template" on the homepage just opens the blank builder. It does nothing useful.
@@ -91,7 +79,7 @@ This is the plain‑English plan for the next phase of work. The order here is t
 
 ---
 
-## 5. Rework the style guide
+## 5. Rework the style guide *(ONGOING)*
 
 **What this means in plain English**
 - Change the way a user picks/uses a style guide for each new site.
@@ -101,7 +89,7 @@ This is the plain‑English plan for the next phase of work. The order here is t
 **Goal**
 - Brand-once, apply-everywhere should feel real and obvious in the flow.
 
-**Status**: PARTIALLY COMPLETE
+**Status**: ONGOING
 - ✅ Two-step onboarding wizard at `/builder/start` (site name → blank style guide)
 - ✅ Per-site style guides stored in `sites.data` (round-trip on Save)
 - ✅ Removed max-width control from style guide editor (fixed at 1920px)

@@ -46,6 +46,21 @@ style_guides
   tokens      jsonb        not null default '{}'::jsonb
   created_at  timestamptz  not null default now()
   updated_at  timestamptz  not null default now()
+
+sites
+  id          text         pk
+  data        jsonb        not null
+  created_at  timestamptz  not null default now()
+  updated_at  timestamptz  not null default now()
+
+section_submissions
+  id          uuid         pk default gen_random_uuid()
+  section_id  text         not null
+  name        text         not null
+  status      text         not null default 'submitted'
+  package     jsonb        not null
+  created_at  timestamptz  not null default now()
+  updated_at  timestamptz  not null default now()
 ```
 
 Phase B will add `projects`, `pages`, `section_instances`, plus a `users`

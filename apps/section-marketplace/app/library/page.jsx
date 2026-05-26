@@ -1,6 +1,7 @@
 import AppShell from "../_components/AppShell.jsx";
 import FilterPills from "../_components/FilterPills.jsx";
 import SectionCard from "../_components/SectionCard.jsx";
+import BuildModeActions from "./BuildModeActions.jsx";
 import {
   filterSections,
   getAllSections,
@@ -8,6 +9,7 @@ import {
   listLifecycles,
   listTracks,
 } from "../../lib/sections.js";
+import { listSectionSubmissions } from "../../lib/section-submissions.js";
 
 export const metadata = {
   title: "Library — MakeReign",
@@ -27,22 +29,26 @@ export default async function LibraryPage({ searchParams }) {
     lifecycles: listLifecycles(),
   };
   const total = getAllSections().length;
+  const submissions = await listSectionSubmissions();
 
   return (
     <AppShell active="/library">
       <section className="mx-auto max-w-[1200px] px-8 pt-12 pb-6">
-        <p className="app-eyebrow">
-          Browse
-        </p>
-        <h1 className="app-title mt-2">
-          Section library
-        </h1>
-        <p className="app-text mt-2">
-          {sections.length} of {total} sections
-          {category ? ` in ${category}` : ""}
-          {track ? ` · ${track}` : ""}
-          {lifecycle ? ` · ${lifecycle}` : ""}
-        </p>
+        <div className="flex flex-col items-start gap-5">
+          <BuildModeActions />
+          <p className="app-eyebrow">
+            Browse
+          </p>
+          <h1 className="app-title">
+            Section library
+          </h1>
+          <p className="app-text">
+            {sections.length} of {total} sections
+            {category ? ` in ${category}` : ""}
+            {track ? ` · ${track}` : ""}
+            {lifecycle ? ` · ${lifecycle}` : ""}
+          </p>
+        </div>
       </section>
 
       <section className="mx-auto max-w-[1200px] border-y border-(--chrome-border) bg-(--chrome-ground) px-8 py-6">
@@ -62,6 +68,40 @@ export default async function LibraryPage({ searchParams }) {
           </ul>
         )}
       </section>
+
+      {submissions.length > 0 ? (
+        <section className="mx-auto max-w-[1200px] px-8 pb-12">
+          <div className="border-t border-[var(--chrome-border)] pt-8">
+            <p className="app-eyebrow">Review queue</p>
+            <h2 className="mt-2 text-[20px] font-medium text-[var(--chrome-fg)]">
+              Submitted sections
+            </h2>
+            <ul className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+              {submissions.map((submission) => (
+                <li
+                  key={submission.id}
+                  className="app-panel flex items-center justify-between gap-4 p-4"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-[16px] font-medium text-[var(--chrome-fg)]">
+                      {submission.name}
+                    </p>
+                    <p
+                      className="mt-1 truncate text-[16px] text-[var(--chrome-fg-muted)]"
+                      style={{ textTransform: "none", letterSpacing: "normal" }}
+                    >
+                      {submission.section_id}
+                    </p>
+                  </div>
+                  <span className="app-label-button shrink-0" aria-selected="true">
+                    {submission.status}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
     </AppShell>
   );
 }

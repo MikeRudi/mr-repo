@@ -33,7 +33,7 @@
 
 ## 1. Reset library to a single starter section
 
-**Status**: IN PROGRESS.
+**Status**: DONE.
 
 **Locked-in decisions**
 - Source: AwardsShowcase auto-accordion in `library/templates/excellence-awards/sections/AwardsShowcase.jsx` (markup ~L763–1184) + jQuery/GSAP logic in `public/script.js` `aaItemsAuto()` (L82–299). Port to React/JSX with GSAP only (no jQuery).
@@ -102,62 +102,51 @@
 
 ## 2. "Build Mode" for the library (author → download → local edit → upload)
 
-**Status**: pending user kickoff (resources incoming).
+**Status**: IN PROGRESS. First Build Mode slice kicked off.
 
-**Scope (high level)**
-- New library UI affordance: "Create new section".
-- Server endpoint to scaffold a section package and stream it as a downloadable archive (zip) with the canonical folder shape (`Section.jsx`, `meta.json`/`section.json`, optional preview, README).
-- Server endpoint to accept an uploaded archive, validate against `section.schema.json`, write into `library/sections/<category>/<slug>/`, regenerate the manifest, and dynamically derive the builder inspector panel from the section's prop schema.
-- Builder panel auto‑generation: define a contract so a section's exported `propsSchema` (or `meta.json` `controls` block) drives `InspectorPanel.jsx` controls without hand‑authoring per section.
+**Scope (current slice)**
+- New library hero affordance: "Make a new section".
+- Server endpoint to generate a portable JSON section package for download.
+- The package includes starter `section/section.json`, `section/Section.jsx`, `section/Section.module.css`, `section/README.md`, section panel rules, and schema guidance.
+- Upload endpoint accepts the edited JSON package, validates the required section files and panel contract basics, and stores it as a review submission.
+- Library page shows submitted sections waiting for review.
+- Admin review / activation remains manual until the admin panel is built later.
 
 **Likely touchpoints**
-- New routes under `app/api/library/` (e.g. `scaffold`, `upload`).
-- New page/flow under `app/library/` (or a modal in the existing library UI).
-- New util in `library/scripts/` for archive pack/unpack and validation.
-- Extension of `library/schemas/section.schema.json` to formalise control metadata.
-- `InspectorPanel.jsx` generic renderer driven by control metadata.
+- `app/library/page.jsx`
+- `app/library/BuildModeActions.jsx`
+- `app/api/library/build-mode/package/route.js`
+- `app/api/library/build-mode/submissions/route.js`
+- `lib/section-package.js`
+- `lib/section-submissions.js`
+- `db/migrations/*_section_submissions.sql`
 
 **Constraints**
-- Vercel filesystem is read‑only at runtime. Uploaded sections cannot be written to `library/` on Vercel; design must account for this. Options to discuss with user: (a) authoring is local‑only, with upload meaning "open a PR / write to git", (b) uploaded sections live in DB/blob storage and are loaded dynamically, (c) hybrid. Do **not** assume; surface the choice when item 2 starts.
+- Vercel filesystem is read-only at runtime. Uploaded sections must not be written to `library/` on Vercel. Store review submissions in DB/blob/git-backed workflow until an admin activates approved sections in code.
 - Security: any archive upload must be size‑limited, content‑type checked, and path‑traversal hardened. No arbitrary code execution server‑side.
 - Local agent edit loop is out of scope for the server — assume the user runs their own local tooling between download and upload.
 
 **Inputs required from user**
-- The reference resources/spec for what an uploaded section must contain.
-- Decision on the runtime storage model (filesystem vs. DB/blob vs. git PR).
-- Decision on the panel‑generation contract (props schema shape).
+- More detailed instructions/rules to include in the downloaded package.
+- Admin review and activation flow when ready.
 
 **Acceptance**
-- A user can: click "Create section" → download a working scaffold → re‑upload → see it in the library and builder with a generated inspector panel — without manual code edits to registry/manifest.
+- A user can click "Make a new section" in the library and download the package.
+- The downloaded package includes starter section code plus rules/instructions.
+- A user can upload the edited package.
+- The uploaded package is validated and saved as a submitted review item.
+- Admin activation is manual for now.
 
 ---
 
-## 3. Library UI redesign
-
-**Status**: pending user kickoff (design resources incoming).
-
-**Scope**
-- Redesign `app/library/page.jsx` and `app/library/[id]/page.jsx` per the supplied design.
-- Reuse `packages/section-library-ui` where possible; promote new shared chrome into that package if it's used in more than one place.
-- Keep filter/lifecycle/track semantics (defined in `library/lib/filtering`‑adjacent code) unless the user changes them explicitly.
-
-**Inputs required from user**
-- Design files / references.
-- Any new metadata fields the redesign depends on (must round‑trip through manifest + schema).
-
-**Acceptance**
-- Visual parity with supplied design.
-- No regressions in section detail/preview routes.
-- No new TypeScript; Tailwind v4 tokens only.
-
----
-
-## 4. Site builder UI + architecture refresh
+## 3. Update UI across everything and do a full clean
 
 **Status**: pending user kickoff.
 
 **Scope (to be refined)**
-- UI: revisit `BuilderShell.jsx`, `SectionsPanel.jsx`, `PagesPanel.jsx`, `StylePanel.jsx`, `InspectorPanel.jsx`.
+- Clean up the UI across homepage, style guide, builder, library, section panels, navigation, buttons, typography, and spacing.
+- Make styling consistent across the whole app: typography scale, button treatment, panel density, hover states, labels, inputs, filters, and layout padding.
+- Revisit `BuilderShell.jsx`, `SectionsPanel.jsx`, `PagesPanel.jsx`, `StylePanel.jsx`, `InspectorPanel.jsx`, homepage routes, style guide routes, and library routes as needed.
 - Architecture candidates to discuss before any work:
   - State model: current `useState` tree in `BuilderShell.jsx` → consider a single store (zustand or context+reducer) for pages/tokens/selection.
   - Persistence: today, save = full snapshot to `sites` table. Consider draft autosave, versioning, and per‑page persistence.
@@ -178,7 +167,7 @@
 
 ---
 
-## 4.5. Fix "Start a site from a library template" flow
+## 4. Fix "Start a site from a library template" flow
 
 **Status**: pending user kickoff. Raised during item 1.
 
@@ -205,7 +194,7 @@
 
 ## 5. Style guide rework
 
-**Status**: PARTIALLY COMPLETE (user kicked off, work done, follow-ups deferred).
+**Status**: ONGOING. Partially complete, with follow-ups deferred until this item is kicked off again.
 
 **Completed in this session**
 - Two-step onboarding wizard at `/builder/start` (site name → blank style guide).
