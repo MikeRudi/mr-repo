@@ -129,19 +129,30 @@ Use `text` and `textarea` sparingly outside CMS. They are forbidden for visible 
 
 ## Build Mode Export Rules
 
-When a section is created through Library Build Mode, the downloaded package is a folder archive. The AI working on that folder must keep the folder structure intact and zip the whole folder when the section is complete.
+When a section is created through Library Build Mode, the downloaded package is a folder archive. The AI working on that folder must keep the folder structure intact, use the bundled localhost preview, and zip the whole folder when the section is complete.
+
+The downloaded folder is allowed to include a small local preview app at the package root. That app is only for testing the generated section and panel locally; the source of truth remains `section/Section.jsx`, `section/Section.module.css`, `section/section.json`, and `section/README.md`.
 
 The export zip must contain:
 
 ```text
 make-reign-section/
+  AI_TASK.md
+  package.json
+  index.html
+  vite.config.js
+  scripts/
   make-reign-section-package.json
   README.md
+  _shared/
+  preview/
   rules/
   section/
 ```
 
-Do not upload loose files. Do not remove `make-reign-section-package.json`. Do not include `node_modules`, build output, temp files, private keys, or absolute filesystem paths.
+Local AI tools should run `npm install` and `npm run dev` inside the unzipped folder when the user asks to view or edit the section on localhost. They should run `npm run export` when the section is ready so the upload zip excludes `node_modules`, `dist`, and build artifacts. Do not create a second app.
+
+Do not upload loose files. Do not remove `make-reign-section-package.json`. Do not include `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
 
 ## Implementation Rules
 

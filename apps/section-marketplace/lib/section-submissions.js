@@ -7,6 +7,7 @@ export async function listSectionSubmissions({ limit = 20 } = {}) {
     return await sql`
       SELECT id, section_id, name, status, created_at, updated_at
       FROM section_submissions
+      WHERE status <> 'deleted'
       ORDER BY created_at DESC
       LIMIT ${limit}
     `;
@@ -77,6 +78,17 @@ export async function deactivateSectionSubmission(id) {
   const [row] = await sql`
     UPDATE section_submissions
     SET status = 'pending',
+        updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING id, section_id, name, status, created_at, updated_at
+  `;
+  return row ?? null;
+}
+
+export async function deleteSectionSubmission(id) {
+  const [row] = await sql`
+    UPDATE section_submissions
+    SET status = 'deleted',
         updated_at = NOW()
     WHERE id = ${id}
     RETURNING id, section_id, name, status, created_at, updated_at

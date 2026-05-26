@@ -43,8 +43,8 @@ This is the plain‑English plan for the next phase of work. The order here is t
 - Keep section authoring close to real code (local), but make the round‑trip easy.
 
 **More to come**
-- First slice: library button downloads a section template folder zip, upload stores the edited zip for review.
-- A temporary public Activate button is visible in the review queue for now, but turning a brand-new uploaded section into real live code is still manually promoted until we build the admin panel later.
+- First slice: library button downloads a section template folder zip with rules, a JSON manifest, and a localhost preview app; upload stores the edited zip for review.
+- Temporary public Activate, Deactivate, and Delete controls are visible in the review queue for now, but turning a brand-new uploaded section into real live code is still manually promoted until we build the admin panel later.
 - We'll keep refining the downloaded rules and guidance after the first working path is live.
 
 ---
