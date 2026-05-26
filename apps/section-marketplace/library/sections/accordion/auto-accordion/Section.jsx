@@ -34,53 +34,47 @@ export const DEFAULT_ITEMS = [
 // ----- Percent → concrete mappers -----------------------------------------
 // Per app-rules-ai/making-a-section/section-panel.md, the section owns these mappings.
 
-// Panel sliders use 2x sensitivity: 25/75 reach the old edge values.
-function amplifyPct(pct) {
-  return clamp(50 + (pct - 50) * 2, 0, 100);
+function safePct(pct) {
+  return clamp(pct, 0, 100);
 }
-// Time per item: 25% = 2000ms (snappy), 50% = 5000ms (designer baseline), 75% = 12000ms (slow).
+function pctToBiRange(pct, low, mid, high) {
+  const p = safePct(pct);
+  if (p <= 50) return mid + ((50 - p) / 50) * (low - mid);
+  return mid + ((p - 50) / 50) * (high - mid);
+}
+// Time per item: 0% = 1000ms, 50% = 5000ms, 100% = 19000ms.
 function pctToAutoAdvanceMs(pct) {
-  const p = amplifyPct(pct);
-  return Math.round(2000 + (p / 100) * (12000 - 2000));
+  return Math.round(pctToBiRange(pct, 1000, 5000, 19000));
 }
 // Reveal speed slider: higher % = faster reveal.
-// 25% = 1200ms (slow), 50% = 600ms (designer baseline), 75% = 200ms (snap).
+// 0% = 1800ms (slow), 50% = 600ms (designer baseline), 100% = 100ms (snap).
 function pctToRevealMs(pct) {
-  const p = amplifyPct(pct);
-  return Math.round(1200 - (p / 100) * (1200 - 200));
+  return Math.round(pctToBiRange(pct, 1800, 600, 100));
 }
-// Section padding: 25% = 32px, 50% = 112px, 75% = 220px.
+// Section padding: 0% = 8px, 50% = 112px, 100% = 328px.
 function pctToPaddingPx(pct) {
-  const p = amplifyPct(pct);
-  if (p <= 50) return Math.round(32 + (p / 50) * (112 - 32));
-  return Math.round(112 + ((p - 50) / 50) * (220 - 112));
+  return Math.round(pctToBiRange(pct, 8, 112, 328));
 }
-// Split: 25% = left 32% / right 68%, 50% = even, 75% = left 68% / right 32%.
+// Split: 0% = left 14% / right 86%, 50% = even, 100% = left 86% / right 14%.
 function pctToLeftSplit(pct) {
-  const p = amplifyPct(pct);
-  return `${Math.round(32 + (p / 100) * (68 - 32))}%`;
+  return `${Math.round(pctToBiRange(pct, 14, 50, 86))}%`;
 }
 function pctToRightSplit(pct) {
-  const p = amplifyPct(pct);
-  return `${Math.round(68 - (p / 100) * (68 - 32))}%`;
+  return `${Math.round(pctToBiRange(pct, 86, 50, 14))}%`;
 }
-// Image height: 25% = 360px, 50% = 620px, 75% = 820px.
+// Image height: 0% = 100px, 50% = 620px, 100% = 1020px.
 function pctToImageHeightPx(pct) {
-  const p = amplifyPct(pct);
-  if (p <= 50) return Math.round(360 + (p / 50) * (620 - 360));
-  return Math.round(620 + ((p - 50) / 50) * (820 - 620));
+  return Math.round(pctToBiRange(pct, 100, 620, 1020));
 }
-// Compact spacing: 25% = min, 50% = baseline, 75% = roomy.
+// Compact spacing: 0% = extra compact, 50% = baseline, 100% = extra roomy.
 function pctToRangePx(pct, min, mid, max) {
-  const p = amplifyPct(pct);
-  if (p <= 50) return Math.round(min + (p / 50) * (mid - min));
-  return Math.round(mid + ((p - 50) / 50) * (max - mid));
+  const low = Math.max(0, mid - (mid - min) * 2);
+  const high = mid + (max - mid) * 2;
+  return Math.round(pctToBiRange(pct, low, mid, high));
 }
-// Button scale: 25% = 75%, 50% = default, 75% = 150%.
+// Button scale: 0% = 50%, 50% = default, 100% = 200%.
 function pctToButtonScale(pct) {
-  const p = amplifyPct(pct);
-  if (p <= 50) return 0.75 + (p / 50) * 0.25;
-  return 1 + ((p - 50) / 50) * 0.5;
+  return pctToBiRange(pct, 0.5, 1, 2);
 }
 function clamp(n, lo, hi) {
   if (typeof n !== "number" || Number.isNaN(n)) return (lo + hi) / 2;

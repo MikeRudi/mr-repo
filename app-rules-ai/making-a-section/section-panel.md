@@ -61,7 +61,7 @@ All section panel sliders use:
 
 Slider mappings live inside the section component, not in the builder. The section must document each mapping in code.
 
-For the current section panel behavior, sliders should use 2x sensitivity around the midpoint: `25` reaches the old low edge, `50` is baseline, and `75` reaches the old high edge. Values outside `25..75` stay clamped to the old edge effect unless the section documents a larger safe range.
+For the current section panel behavior, sliders should use the full `0..100` range with no dead zones. To make controls feel more responsive, the section should use a wider concrete range than the first baseline pass: `50` is still baseline, but `0` and `100` must keep changing beyond the old low/high effect instead of clamping at `25` and `75`.
 
 ## Animation Rules
 
