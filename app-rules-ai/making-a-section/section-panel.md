@@ -127,6 +127,22 @@ Supported control types:
 
 Use `text` and `textarea` sparingly outside CMS. They are forbidden for visible section-level copy.
 
+## Build Mode Export Rules
+
+When a section is created through Library Build Mode, the downloaded package is a folder archive. The AI working on that folder must keep the folder structure intact and zip the whole folder when the section is complete.
+
+The export zip must contain:
+
+```text
+make-reign-section/
+  make-reign-section-package.json
+  README.md
+  rules/
+  section/
+```
+
+Do not upload loose files. Do not remove `make-reign-section-package.json`. Do not include `node_modules`, build output, temp files, private keys, or absolute filesystem paths.
+
 ## Implementation Rules
 
 Every section component must render correctly with zero props. Defaults belong in the component signature or an exported defaults object.

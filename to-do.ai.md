@@ -106,9 +106,9 @@
 
 **Scope (current slice)**
 - New library hero affordance: "Make a new section".
-- Server endpoint to generate a portable JSON section package for download.
-- The package includes starter `section/section.json`, `section/Section.jsx`, `section/Section.module.css`, `section/README.md`, section panel rules, and schema guidance.
-- Upload endpoint accepts the edited JSON package, validates the required section files and panel contract basics, and stores it as a review submission.
+- Server endpoint to generate a portable zipped section folder for download.
+- The folder includes starter `section/section.json`, `section/Section.jsx`, `section/Section.module.css`, `section/README.md`, section panel rules, export rules, schema guidance, and the review manifest JSON inside the folder.
+- Upload endpoint accepts the edited zip package, validates the required section files and panel contract basics, and stores it as a review submission. JSON manifest upload can remain as a compatibility path, but the primary user flow is folder zip download/edit/upload.
 - Library page shows submitted sections waiting for review.
 - Admin review / activation remains manual until the admin panel is built later.
 
@@ -131,8 +131,8 @@
 - Admin review and activation flow when ready.
 
 **Acceptance**
-- A user can click "Make a new section" in the library and download the package.
-- The downloaded package includes starter section code plus rules/instructions.
+- A user can click "Make a new section" in the library and download a zip that expands into a section folder.
+- The downloaded folder includes starter section code plus rules/instructions, including the rule that the completed folder must be zipped for upload.
 - A user can upload the edited package.
 - The uploaded package is validated and saved as a submitted review item.
 - Admin activation is manual for now.

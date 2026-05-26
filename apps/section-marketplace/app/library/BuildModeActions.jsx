@@ -47,7 +47,7 @@ export default function BuildModeActions() {
       <input
         ref={inputRef}
         type="file"
-        accept="application/json,.json"
+        accept="application/zip,.zip,application/json,.json"
         className="sr-only"
         onChange={(event) => uploadPackage(event.target.files?.[0])}
       />

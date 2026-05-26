@@ -1,4 +1,6 @@
 const PACKAGE_VERSION = "0.1.0";
+export const SECTION_PACKAGE_FOLDER = "make-reign-section";
+export const SECTION_PACKAGE_MANIFEST = "make-reign-section-package.json";
 
 export async function buildSectionTemplatePackage() {
   return {
@@ -6,9 +8,10 @@ export async function buildSectionTemplatePackage() {
     packageVersion: PACKAGE_VERSION,
     createdAt: new Date().toISOString(),
     instructions:
-      "Edit the files in this package with your local AI model, then upload this same JSON file back to the MakeReign library.",
+      "Unzip this folder, edit the section files with your local AI model, then zip the folder and upload the zip back to the MakeReign library.",
     files: {
       "README.md": buildReadme(),
+      "rules/export.md": SECTION_EXPORT_RULES,
       "rules/section-panel.md": SECTION_PANEL_RULES,
       "rules/section.schema.json": SECTION_SCHEMA_REFERENCE,
       "section/section.json": buildSectionJson(),
@@ -16,6 +19,37 @@ export async function buildSectionTemplatePackage() {
       "section/Section.module.css": buildSectionCss(),
       "section/README.md": buildSectionReadme(),
     },
+  };
+}
+
+export function buildSectionPackageFolderFiles(packageData) {
+  const files = {};
+
+  for (const [path, content] of Object.entries(packageData.files ?? {})) {
+    files[`${SECTION_PACKAGE_FOLDER}/${path}`] = content;
+  }
+
+  files[`${SECTION_PACKAGE_FOLDER}/${SECTION_PACKAGE_MANIFEST}`] = JSON.stringify(packageData, null, 2);
+  return files;
+}
+
+export function buildPackageFromFolderFiles(files) {
+  const prefix = findPackagePrefix(files);
+  const packageFiles = {};
+  for (const [path, content] of Object.entries(files)) {
+    if (prefix && !path.startsWith(prefix)) continue;
+    const relativePath = prefix ? path.slice(prefix.length) : path;
+    if (!relativePath || relativePath === SECTION_PACKAGE_MANIFEST) continue;
+    packageFiles[relativePath] = content;
+  }
+
+  return {
+    kind: "make-reign-section-package",
+    packageVersion: PACKAGE_VERSION,
+    createdAt: new Date().toISOString(),
+    instructions:
+      "This package was rebuilt from an uploaded MakeReign section folder.",
+    files: packageFiles,
   };
 }
 
@@ -79,14 +113,16 @@ export function validateSectionPackage(packageData) {
 function buildReadme() {
   return `# MakeReign Section Package
 
-This is a portable section template for local AI-assisted section creation.
+This folder is a portable section template for local AI-assisted section creation.
 
 ## What to do
 
-1. Give this JSON file to your local AI model.
-2. Ask it to edit the files under \`section/\`.
-3. Keep the package shape the same.
-4. Upload this edited JSON file back to the MakeReign library.
+1. Unzip the downloaded folder.
+2. Give this folder to your local AI model.
+3. Ask it to edit the files under \`section/\`.
+4. Keep the package shape the same.
+5. When the section is ready, zip the whole folder.
+6. Upload the edited zip back to the MakeReign library.
 
 ## Required files
 
@@ -94,6 +130,8 @@ This is a portable section template for local AI-assisted section creation.
 - \`section/Section.jsx\` exports the React section component.
 - \`section/Section.module.css\` contains scoped section styles.
 - \`section/README.md\` explains the section.
+- \`make-reign-section-package.json\` is the review manifest for MakeReign.
+- \`rules/export.md\` tells the AI how to package the folder for upload.
 - \`rules/section-panel.md\` tells the AI how panel controls must work.
 - \`rules/section.schema.json\` is the manifest schema reference.
 
@@ -102,6 +140,36 @@ This is a portable section template for local AI-assisted section creation.
 The upload does not publish the section immediately. It creates a review submission. An admin manually reviews and activates approved sections later.
 `;
 }
+
+const SECTION_EXPORT_RULES = `# Export Rules
+
+These rules apply when the section is complete and ready to upload to MakeReign.
+
+## Required Export
+
+Zip the entire \`make-reign-section\` folder for export. Do not upload loose files.
+
+The zip must keep this folder shape:
+
+\`\`\`
+make-reign-section/
+  make-reign-section-package.json
+  README.md
+  rules/
+  section/
+\`\`\`
+
+## Before Zipping
+
+- Keep \`make-reign-section-package.json\` inside the folder.
+- Update the files under \`section/\` with the completed section code and metadata.
+- Keep all paths relative to the folder. Do not add absolute paths.
+- Do not include \`node_modules\`, build outputs, screenshots, temp files, or private keys.
+
+## Upload
+
+Upload the completed zip through the MakeReign library \`Upload section\` button.
+`;
 
 const SECTION_PANEL_RULES = `# Section Panel Rules
 
@@ -222,6 +290,13 @@ function buildSectionJson() {
     null,
     2
   );
+}
+
+function findPackagePrefix(files) {
+  const paths = Object.keys(files);
+  const sectionPath = paths.find((path) => path.endsWith("/section/section.json"));
+  if (!sectionPath) return "";
+  return sectionPath.slice(0, sectionPath.length - "section/section.json".length);
 }
 
 function buildSectionJsx() {

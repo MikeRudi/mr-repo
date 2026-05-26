@@ -34,16 +34,16 @@ This is the plain‑English plan for the next phase of work. The order here is t
 - Give users the ability to create a brand new section asset directly from the library.
 - The flow I want:
   1. From the library UI, the user starts a new section.
-  2. They download the section to their local machine.
+  2. They download a zipped section folder to their local machine.
   3. They edit it locally — either in their own editor with a coding agent, or with a local model.
-  4. When done, they upload it back to the library, and a builder panel is auto‑generated for it.
+  4. When done, they zip that folder and upload it back to the library, and a builder panel is auto‑generated for it.
 
 **Goal**
 - Make the library a two‑way street: not just "browse and use", but "create and contribute".
 - Keep section authoring close to real code (local), but make the round‑trip easy.
 
 **More to come**
-- First slice: library button downloads a section template package, upload stores the edited package for review.
+- First slice: library button downloads a section template folder zip, upload stores the edited zip for review.
 - Admin review / activation will stay manual until we build the admin panel later.
 - We'll keep refining the downloaded rules and guidance after the first working path is live.
 
