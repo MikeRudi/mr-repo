@@ -127,32 +127,58 @@ Supported control types:
 
 Use `text` and `textarea` sparingly outside CMS. They are forbidden for visible section-level copy.
 
+## Build Mode Local App Rules
+
+Library Build Mode downloads `make-reign-section-builder.zip`. It expands into a reusable local app named `make-reign-section-builder/`.
+
+The local app is downloaded once and can create many sections. Do not tell the user to redownload the app for every new section unless the MakeReign app ships a newer builder package.
+
+Each local section lives in:
+
+```text
+make-reign-section-builder/
+  sections/
+    <section-id>/
+      Section.jsx
+      Section.module.css
+      section.json
+      README.md
+```
+
+Local AI tools should run `npm install` and `npm run dev` inside `make-reign-section-builder/` when the user asks to view or edit the section on localhost. They should create new section projects with:
+
+```bash
+npm run new -- kebab-case-section-id
+```
+
+The app preview must render the section and the generated MakeReign-style prop panel. The panel must include the required base actions and focused panels described above.
+
 ## Build Mode Export Rules
 
-When a section is created through Library Build Mode, the downloaded package is a folder archive. The AI working on that folder must keep the folder structure intact, use the bundled localhost preview, and zip the whole folder when the section is complete.
+When a local section is ready, export only that section. Do not zip the whole builder app.
 
-The downloaded folder is allowed to include a small local preview app at the package root. That app is only for testing the generated section and panel locally; the source of truth remains `section/Section.jsx`, `section/Section.module.css`, `section/section.json`, and `section/README.md`.
+Use the in-app `Export section` button for the selected section, or run:
 
-The export zip must contain:
+```bash
+npm run export -- kebab-case-section-id
+```
+
+The exported upload zip must contain:
 
 ```text
 make-reign-section/
-  AI_TASK.md
-  package.json
-  index.html
-  vite.config.js
-  scripts/
   make-reign-section-package.json
-  README.md
-  _shared/
-  preview/
   rules/
   section/
+    Section.jsx
+    Section.module.css
+    section.json
+    README.md
 ```
 
-Local AI tools should run `npm install` and `npm run dev` inside the unzipped folder when the user asks to view or edit the section on localhost. They should run `npm run export` when the section is ready so the upload zip excludes `node_modules`, `dist`, and build artifacts. Do not create a second app.
+The upload zip must not contain the reusable builder app, `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
 
-Do not upload loose files. Do not remove `make-reign-section-package.json`. Do not include `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
+Do not upload loose files. Do not remove `make-reign-section-package.json`.
 
 ## Implementation Rules
 

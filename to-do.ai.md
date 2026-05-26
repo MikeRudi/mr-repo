@@ -106,9 +106,10 @@
 
 **Scope (current slice)**
 - New library hero affordance: "Make a new section".
-- Server endpoint to generate a portable zipped section folder for download.
-- The folder includes starter `section/section.json`, `section/Section.jsx`, `section/Section.module.css`, `section/README.md`, section panel rules, export rules, local preview rules, schema guidance, a runnable localhost preview harness, and the review manifest JSON inside the folder.
-- Upload endpoint accepts the edited zip package, validates the required section files and panel contract basics, and stores it as a review submission. JSON manifest upload can remain as a compatibility path, but the primary user flow is folder zip download/edit/upload.
+- Server endpoint to generate a reusable zipped local section builder app for download.
+- The builder app includes starter `sections/<section-id>/section.json`, `Section.jsx`, `Section.module.css`, `README.md`, section panel rules, export rules, local builder rules, schema guidance, a runnable localhost preview harness, and scripts to create/export sections.
+- The downloaded builder app can create many local section folders. Users should not need to redownload it for every section.
+- Upload endpoint accepts the exported section zip, validates the required section files and panel contract basics, and stores it as a review submission. JSON manifest upload can remain as a compatibility path, but the primary user flow is builder app download/edit/export section zip/upload.
 - Library page shows submitted sections waiting for review.
 - Library page includes temporary public Activate, Deactivate, and Delete controls for review submissions. These controls manage DB submission status, while brand-new section implementations still need manual code promotion into `library/sections/` until the admin panel/git-backed activation flow is built.
 - Admin review / full activation workflow remains manual until the admin panel is built later.
@@ -132,9 +133,10 @@
 - Admin review and activation flow when ready.
 
 **Acceptance**
-- A user can click "Make a new section" in the library and download a zip that expands into a section folder.
-- The downloaded folder includes starter section code plus rules/instructions, including the rule that the completed folder must be previewed locally and zipped for upload.
-- A user can upload the edited package.
+- A user can click "Make a new section" in the library and download `make-reign-section-builder.zip`.
+- The downloaded zip expands into a reusable local app that can create many `sections/<section-id>/` projects, preview each section on localhost, and show the generated prop panel.
+- The local app can export a clean `make-reign-<section-id>.zip` for one selected section.
+- A user can upload the exported section package.
 - The uploaded package is validated and saved as a submitted review item.
 - Temporary public Activate, Deactivate, and Delete controls can manage submission status.
 - Admin promotion of new section code is manual for now.

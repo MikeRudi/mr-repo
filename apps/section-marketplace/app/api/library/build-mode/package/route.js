@@ -13,7 +13,7 @@ export async function GET() {
   return new Response(body, {
     headers: {
       "Content-Type": "application/zip",
-      "Content-Disposition": 'attachment; filename="make-reign-section-package.zip"',
+      "Content-Disposition": 'attachment; filename="make-reign-section-builder.zip"',
       "Cache-Control": "no-store",
     },
   });
