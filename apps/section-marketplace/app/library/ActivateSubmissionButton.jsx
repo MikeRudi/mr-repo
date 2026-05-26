@@ -27,14 +27,47 @@ export default function ActivateSubmissionButton({ submissionId, initialStatus }
     }
   }
 
+  async function deactivate() {
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/library/build-mode/submissions/${submissionId}/deactivate`, {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.ok) {
+        alert(data?.error ?? "Could not deactivate section");
+        return;
+      }
+      setStatus(data.submission.status);
+      window.location.reload();
+    } catch {
+      alert("Could not deactivate section");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
-    <button
-      type="button"
-      onClick={activate}
-      disabled={busy || active}
-      className="btn-chrome btn-chrome--ghost shrink-0"
-    >
-      {active ? "Active" : busy ? "Activating..." : "Activate"}
-    </button>
+    <>
+      {active ? (
+        <button
+          type="button"
+          onClick={deactivate}
+          disabled={busy}
+          className="btn-chrome btn-chrome--ghost shrink-0"
+        >
+          {busy ? "Deactivating..." : "Deactivate"}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={activate}
+          disabled={busy}
+          className="btn-chrome btn-chrome--ghost shrink-0"
+        >
+          {busy ? "Activating..." : "Activate"}
+        </button>
+      )}
+    </>
   );
 }

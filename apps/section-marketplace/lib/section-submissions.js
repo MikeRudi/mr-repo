@@ -73,6 +73,17 @@ export async function activateSectionSubmission(id) {
   return row ?? null;
 }
 
+export async function deactivateSectionSubmission(id) {
+  const [row] = await sql`
+    UPDATE section_submissions
+    SET status = 'pending',
+        updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING id, section_id, name, status, created_at, updated_at
+  `;
+  return row ?? null;
+}
+
 function submissionToSection(row) {
   if (!row?.package?.files?.["section/section.json"]) return null;
 
