@@ -24,3 +24,14 @@ export async function createSectionSubmission({ sectionId, name, packageData }) 
   `;
   return row;
 }
+
+export async function activateSectionSubmission(id) {
+  const [row] = await sql`
+    UPDATE section_submissions
+    SET status = 'active',
+        updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING id, section_id, name, status, created_at, updated_at
+  `;
+  return row ?? null;
+}

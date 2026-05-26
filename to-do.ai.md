@@ -110,7 +110,8 @@
 - The folder includes starter `section/section.json`, `section/Section.jsx`, `section/Section.module.css`, `section/README.md`, section panel rules, export rules, schema guidance, and the review manifest JSON inside the folder.
 - Upload endpoint accepts the edited zip package, validates the required section files and panel contract basics, and stores it as a review submission. JSON manifest upload can remain as a compatibility path, but the primary user flow is folder zip download/edit/upload.
 - Library page shows submitted sections waiting for review.
-- Admin review / activation remains manual until the admin panel is built later.
+- Library page includes a temporary public Activate button for review submissions. It can mark DB submissions active, while brand-new section implementations still need manual code promotion into `library/sections/` until the admin panel/git-backed activation flow is built.
+- Admin review / full activation workflow remains manual until the admin panel is built later.
 
 **Likely touchpoints**
 - `app/library/page.jsx`
@@ -135,7 +136,8 @@
 - The downloaded folder includes starter section code plus rules/instructions, including the rule that the completed folder must be zipped for upload.
 - A user can upload the edited package.
 - The uploaded package is validated and saved as a submitted review item.
-- Admin activation is manual for now.
+- A temporary public Activate button can mark a submission active.
+- Admin promotion of new section code is manual for now.
 
 ---
 

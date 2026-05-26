@@ -1,0 +1,151 @@
+.root {
+  padding: var(--section-padding, 112px) var(--sg-space-sitePadding, 2rem);
+  background: var(--chrome-ground);
+  color: var(--section-text, var(--chrome-fg));
+}
+
+.inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  margin-bottom: 64px;
+  flex-wrap: wrap;
+}
+
+.headerText {
+  flex: 1;
+  min-width: 280px;
+}
+
+.eyebrow {
+  margin: 0 0 16px;
+  color: var(--accent-color);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.heading {
+  max-width: 600px;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em 1.75em;
+  background: var(--accent-color);
+  color: var(--chrome-ground);
+  border: 1px solid var(--accent-color);
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+  white-space: nowrap;
+}
+
+.cta:hover {
+  background: transparent;
+  color: var(--accent-color);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--card-gap, 32px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.card.featured {
+  grid-column: span 2;
+  background: var(--accent-color);
+  color: var(--chrome-ground);
+  border-color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+  .card.featured {
+    grid-column: span 1;
+  }
+}
+
+.portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quote {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.card.featured .quote {
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.author {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.role {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .heading {
+    max-width: 100%;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

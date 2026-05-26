@@ -4,9 +4,11 @@
 // reference section IDs that no longer exist in the library).
 
 import AutoAccordion from "./sections/accordion/auto-accordion/Section.jsx";
+import KlarheitTestimonial05 from "./sections/testimonials/klarheit-testimonial-05/Section.jsx";
 
 const REGISTRY = {
   "auto-accordion": AutoAccordion,
+  "klarheit-testimonial-05": KlarheitTestimonial05,
 };
 
 export function getSectionComponent(id) {

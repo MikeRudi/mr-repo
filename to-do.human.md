@@ -44,7 +44,7 @@ This is the plain‑English plan for the next phase of work. The order here is t
 
 **More to come**
 - First slice: library button downloads a section template folder zip, upload stores the edited zip for review.
-- Admin review / activation will stay manual until we build the admin panel later.
+- A temporary public Activate button is visible in the review queue for now, but turning a brand-new uploaded section into real live code is still manually promoted until we build the admin panel later.
 - We'll keep refining the downloaded rules and guidance after the first working path is live.
 
 ---

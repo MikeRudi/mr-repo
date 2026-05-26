@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-26T13:14:42.747Z",
+  "generatedAt": "2026-05-26T13:28:19.553Z",
   "counts": {
-    "sections": 1,
+    "sections": 2,
     "templates": 1
   },
   "sections": [
@@ -352,6 +352,133 @@
       },
       "kind": "section",
       "path": "sections/accordion/auto-accordion"
+    },
+    {
+      "id": "klarheit-testimonial-05",
+      "name": "Klarheit Testimonial 05",
+      "category": "testimonials",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Mixed-media testimonial gallery with a large section heading, supporting call-to-action, portrait cards, and a featured quote card in a horizontal grid.",
+      "dependencies": [],
+      "tags": [
+        "testimonial",
+        "klarheit",
+        "gallery"
+      ],
+      "controls": [
+        {
+          "key": "headingTypography",
+          "type": "typography-token",
+          "label": "Heading tag",
+          "panel": "styles",
+          "group": "typography",
+          "defaultValue": "h2"
+        },
+        {
+          "key": "textColor",
+          "type": "color-token",
+          "label": "Text color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "dark"
+        },
+        {
+          "key": "accentColor",
+          "type": "color-token",
+          "label": "Accent color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "brand"
+        },
+        {
+          "key": "sectionPaddingPct",
+          "type": "slider",
+          "label": "Section padding",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "cardGapPct",
+          "type": "slider",
+          "label": "Card gap",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 30
+        },
+        {
+          "key": "ctaButtonVariant",
+          "type": "button-variant",
+          "label": "CTA button style",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "primary"
+        }
+      ],
+      "cms": {
+        "key": "testimonials",
+        "label": "Testimonials",
+        "defaultValue": [
+          {
+            "name": "Sarah Johnson",
+            "role": "CEO, Creative Studio",
+            "image": "",
+            "quote": "This transformed how we present our work. The attention to detail is incredible.",
+            "featured": false
+          },
+          {
+            "name": "Michael Chen",
+            "role": "Design Director",
+            "image": "",
+            "quote": "Bold, expressive, and exactly what modern agencies need to stand out.",
+            "featured": false
+          },
+          {
+            "name": "Emma Williams",
+            "role": "Founder, Brand Co",
+            "image": "",
+            "quote": "The typography and color system helped us create a lasting impression from the first scroll.",
+            "featured": true
+          }
+        ],
+        "fields": [
+          {
+            "key": "name",
+            "type": "text",
+            "label": "Name"
+          },
+          {
+            "key": "role",
+            "type": "text",
+            "label": "Role"
+          },
+          {
+            "key": "image",
+            "type": "image",
+            "label": "Portrait image"
+          },
+          {
+            "key": "quote",
+            "type": "textarea",
+            "label": "Quote"
+          },
+          {
+            "key": "featured",
+            "type": "text",
+            "label": "Featured (true/false)"
+          }
+        ]
+      },
+      "kind": "section",
+      "path": "sections/testimonials/klarheit-testimonial-05"
     }
   ],
   "templates": [

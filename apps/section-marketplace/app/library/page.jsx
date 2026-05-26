@@ -1,6 +1,7 @@
 import AppShell from "../_components/AppShell.jsx";
 import FilterPills from "../_components/FilterPills.jsx";
 import SectionCard from "../_components/SectionCard.jsx";
+import ActivateSubmissionButton from "./ActivateSubmissionButton.jsx";
 import BuildModeActions from "./BuildModeActions.jsx";
 import {
   filterSections,
@@ -93,9 +94,15 @@ export default async function LibraryPage({ searchParams }) {
                       {submission.section_id}
                     </p>
                   </div>
-                  <span className="app-label-button shrink-0" aria-selected="true">
-                    {submission.status}
-                  </span>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="app-label-button" aria-selected="true">
+                      {submission.status}
+                    </span>
+                    <ActivateSubmissionButton
+                      submissionId={submission.id}
+                      initialStatus={submission.status}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>
