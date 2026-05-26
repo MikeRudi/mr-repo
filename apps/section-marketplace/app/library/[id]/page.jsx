@@ -5,6 +5,7 @@ import Chip from "../../_components/Chip.jsx";
 import LifecycleBadge from "../../_components/LifecycleBadge.jsx";
 import TrackBadge from "../../_components/TrackBadge.jsx";
 import { getAllSections, getSectionById } from "../../../lib/sections.js";
+import { getActiveSubmittedSectionById } from "../../../lib/section-submissions.js";
 import { hasImplementation } from "../../../library/registry.js";
 
 export async function generateStaticParams() {
@@ -13,7 +14,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const s = getSectionById(id);
+  const s = getSectionById(id) ?? await getActiveSubmittedSectionById(id);
   return { title: s ? `${s.name} — Library — MakeReign` : "Section — MakeReign" };
 }
 
@@ -31,7 +32,7 @@ function Spec({ label, children }) {
 
 export default async function SectionDetailPage({ params }) {
   const { id } = await params;
-  const s = getSectionById(id);
+  const s = getSectionById(id) ?? await getActiveSubmittedSectionById(id);
   if (!s) notFound();
 
   return (

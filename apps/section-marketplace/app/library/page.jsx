@@ -10,7 +10,7 @@ import {
   listLifecycles,
   listTracks,
 } from "../../lib/sections.js";
-import { listSectionSubmissions } from "../../lib/section-submissions.js";
+import { listActiveSubmittedSections, listSectionSubmissions } from "../../lib/section-submissions.js";
 
 export const metadata = {
   title: "Library — MakeReign",
@@ -23,13 +23,16 @@ export default async function LibraryPage({ searchParams }) {
   const lifecycle = typeof params.lifecycle === "string" ? params.lifecycle : undefined;
   const q = typeof params.q === "string" ? params.q : undefined;
 
-  const sections = filterSections({ category, track, lifecycle, q });
+  const staticSections = filterSections({ category, track, lifecycle, q });
+  const activeSubmittedSections = await listActiveSubmittedSections();
+  const submittedSections = filterSubmittedSections(activeSubmittedSections, { category, track, lifecycle, q });
+  const sections = mergeSections(staticSections, submittedSections);
   const facets = {
-    categories: listCategories(),
-    tracks: listTracks(),
-    lifecycles: listLifecycles(),
+    categories: [...new Set([...listCategories(), ...activeSubmittedSections.map((s) => s.category)])].sort(),
+    tracks: [...new Set([...listTracks(), ...activeSubmittedSections.map((s) => s.track)])].sort(),
+    lifecycles: [...new Set([...listLifecycles(), ...activeSubmittedSections.map((s) => s.lifecycle)])].sort(),
   };
-  const total = getAllSections().length;
+  const total = mergeSections(getAllSections(), activeSubmittedSections).length;
   const submissions = await listSectionSubmissions();
 
   return (
@@ -111,4 +114,33 @@ export default async function LibraryPage({ searchParams }) {
       ) : null}
     </AppShell>
   );
+}
+
+function filterSubmittedSections(sections, { category, track, lifecycle, q } = {}) {
+  return sections.filter((s) => {
+    if (category && s.category !== category) return false;
+    if (track && s.track !== track) return false;
+    if (lifecycle && s.lifecycle !== lifecycle) return false;
+    if (q) {
+      const needle = q.toLowerCase();
+      const haystack = [
+        s.name,
+        s.id,
+        s.description ?? "",
+        ...(s.tags ?? []),
+      ]
+        .join(" ")
+        .toLowerCase();
+      if (!haystack.includes(needle)) return false;
+    }
+    return true;
+  });
+}
+
+function mergeSections(staticSections, submittedSections) {
+  const byId = new Map(staticSections.map((section) => [section.id, section]));
+  for (const section of submittedSections) {
+    byId.set(section.id, section);
+  }
+  return [...byId.values()];
 }
