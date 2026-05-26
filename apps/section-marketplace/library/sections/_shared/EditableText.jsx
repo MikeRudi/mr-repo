@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-// Shared inline-edit helper used by every section. See ../PANEL_RULES.md (rule 1, 10).
+// Shared inline-edit helper used by every section. See app-rules-ai/making-a-section/section-panel.md.
 //
 // Behaviour:
 //   - When `editing` is false, renders the text as plain content.

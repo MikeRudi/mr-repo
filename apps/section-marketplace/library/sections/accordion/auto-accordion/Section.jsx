@@ -32,45 +32,55 @@ export const DEFAULT_ITEMS = [
 ];
 
 // ----- Percent → concrete mappers -----------------------------------------
-// Per PANEL_RULES.md (rule 4) the section owns these mappings.
+// Per app-rules-ai/making-a-section/section-panel.md, the section owns these mappings.
 
-// Time per item: 0% = 2000ms (snappy), 50% = 5000ms (designer baseline), 100% = 12000ms (slow).
+// Panel sliders use 2x sensitivity: 25/75 reach the old edge values.
+function amplifyPct(pct) {
+  return clamp(50 + (pct - 50) * 2, 0, 100);
+}
+// Time per item: 25% = 2000ms (snappy), 50% = 5000ms (designer baseline), 75% = 12000ms (slow).
 function pctToAutoAdvanceMs(pct) {
-  const p = clamp(pct, 0, 100);
+  const p = amplifyPct(pct);
   return Math.round(2000 + (p / 100) * (12000 - 2000));
 }
 // Reveal speed slider: higher % = faster reveal.
-// 0% = 1200ms (slow), 50% = 600ms (designer baseline), 100% = 200ms (snap).
+// 25% = 1200ms (slow), 50% = 600ms (designer baseline), 75% = 200ms (snap).
 function pctToRevealMs(pct) {
-  const p = clamp(pct, 0, 100);
+  const p = amplifyPct(pct);
   return Math.round(1200 - (p / 100) * (1200 - 200));
 }
-// Section padding: 0% = 32px, 50% = 112px, 100% = 220px.
+// Section padding: 25% = 32px, 50% = 112px, 75% = 220px.
 function pctToPaddingPx(pct) {
-  const p = clamp(pct, 0, 100);
+  const p = amplifyPct(pct);
   if (p <= 50) return Math.round(32 + (p / 50) * (112 - 32));
   return Math.round(112 + ((p - 50) / 50) * (220 - 112));
 }
-// Split: 0% = left 32% / right 68%, 50% = even, 100% = left 68% / right 32%.
+// Split: 25% = left 32% / right 68%, 50% = even, 75% = left 68% / right 32%.
 function pctToLeftSplit(pct) {
-  const p = clamp(pct, 0, 100);
+  const p = amplifyPct(pct);
   return `${Math.round(32 + (p / 100) * (68 - 32))}%`;
 }
 function pctToRightSplit(pct) {
-  const p = clamp(pct, 0, 100);
+  const p = amplifyPct(pct);
   return `${Math.round(68 - (p / 100) * (68 - 32))}%`;
 }
-// Image height: 0% = 360px, 50% = 620px, 100% = 820px.
+// Image height: 25% = 360px, 50% = 620px, 75% = 820px.
 function pctToImageHeightPx(pct) {
-  const p = clamp(pct, 0, 100);
+  const p = amplifyPct(pct);
   if (p <= 50) return Math.round(360 + (p / 50) * (620 - 360));
   return Math.round(620 + ((p - 50) / 50) * (820 - 620));
 }
-// Compact spacing: 0% = min, 50% = baseline, 100% = roomy.
+// Compact spacing: 25% = min, 50% = baseline, 75% = roomy.
 function pctToRangePx(pct, min, mid, max) {
-  const p = clamp(pct, 0, 100);
+  const p = amplifyPct(pct);
   if (p <= 50) return Math.round(min + (p / 50) * (mid - min));
   return Math.round(mid + ((p - 50) / 50) * (max - mid));
+}
+// Button scale: 25% = 75%, 50% = default, 75% = 150%.
+function pctToButtonScale(pct) {
+  const p = amplifyPct(pct);
+  if (p <= 50) return 0.75 + (p / 50) * 0.25;
+  return 1 + ((p - 50) / 50) * 0.5;
 }
 function clamp(n, lo, hi) {
   if (typeof n !== "number" || Number.isNaN(n)) return (lo + hi) / 2;
@@ -87,6 +97,7 @@ export default function AutoAccordion({
   animationStyle = "slide",
   autoEnabled = true,
   linkButtonVariant,
+  linkButtonScalePct = 50,
   sectionPaddingYPct,
   sectionPaddingTopPct,
   sectionPaddingBottomPct,
@@ -115,7 +126,7 @@ export default function AutoAccordion({
   autoAdvancePct = 50,
   revealPct = 50,
   items = DEFAULT_ITEMS,
-  // Builder-only props (see PANEL_RULES.md rule 10)
+  // Builder-only props (see app-rules-ai/making-a-section/section-panel.md)
   _editing = false,
   _onPropChange,
 } = {}) {
@@ -142,6 +153,7 @@ export default function AutoAccordion({
 
   const autoAdvanceMs = pctToAutoAdvanceMs(autoAdvancePct);
   const revealMs = pctToRevealMs(revealPct);
+  const linkButtonScale = pctToButtonScale(linkButtonScalePct);
   const paddingYPct =
     typeof sectionPaddingYPct === "number"
       ? sectionPaddingYPct
@@ -353,6 +365,9 @@ export default function AutoAccordion({
                             href={item.linkHref || "#"}
                             target="_blank"
                             rel="noreferrer"
+                            style={{
+                              fontSize: `${(linkButtonVariant ? 16 : 10) * linkButtonScale}px`,
+                            }}
                             className={
                               linkButtonVariant
                                 ? `${styles.link} ${buttonClass(linkButtonVariant)}`

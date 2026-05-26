@@ -72,8 +72,9 @@ Before responding to the first user message in a new session, read:
 1. `to-do.human.md`
 2. `to-do.ai.md`
 3. `README.md` (repo orientation)
-4. `.windsurf/rules/roadmap.md` (this file)
-5. `.windsurf/rules/deploy.md` (deploy workflow)
+4. `app-rules-ai/whole-app/roadmap.md` (this file)
+5. `app-rules-ai/whole-app/deploy.md` (deploy workflow)
+6. `app-rules-ai/making-a-section/section-panel.md` before changing or creating a section panel
 
 If any of these is missing or unreadable, say so and stop until the user resolves it.
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T12:48:46.820Z",
+  "generatedAt": "2026-05-26T12:15:34.095Z",
   "counts": {
     "sections": 1,
     "templates": 1
@@ -276,6 +276,17 @@
           "label": "Link button variant",
           "panel": "styles",
           "group": "layout"
+        },
+        {
+          "key": "linkButtonScalePct",
+          "type": "slider",
+          "label": "Link button scale",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
         }
       ],
       "cms": {

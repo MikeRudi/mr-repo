@@ -1,6 +1,6 @@
-# Windsurf Rules — MakeReign
+# App Rules AI — MakeReign
 
-This folder contains the canonical workspace rules for this repo. Windsurf's Cascade reads them automatically, but they are written for **every language model or coding agent** that works in this workspace.
+This folder contains the app-wide workspace rules for this repo. They are written for **every language model or coding agent** that works in this workspace.
 
 ## Files in this folder
 
@@ -9,12 +9,12 @@ This folder contains the canonical workspace rules for this repo. Windsurf's Cas
 
 ## How to maintain
 
-- Edit the `.md` files directly. Windsurf re-reads them at the start of each new session (and on file change in most builds).
+- Edit the `.md` files directly.
 - Keep each rule concise. If a rule gets very long, Windsurf may truncate it.
 - Commit changes alongside any process change so history is traceable.
 
 ## Scope
 
-These rules apply to **all agents and models** working in this repo. Some tools do not read `.windsurf/rules` automatically, so the agent must manually read these files before acting when the user points at the rules folder or asks for deploy/roadmap-sensitive work.
+These rules apply to **all agents and models** working in this repo. Some tools do not read `app-rules-ai` automatically, so the agent must manually read these files before acting when the user points at the rules folder or asks for deploy/roadmap-sensitive work.
 
 If we adopt another tool later, mirror these rules into that tool's expected location (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`, etc.) — but `to-do.ai.md` and these rule files remain the single source of truth.

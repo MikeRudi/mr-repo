@@ -216,7 +216,7 @@
 - StylePanel shows per-site guides, lets user switch active.
 - InspectorPanel receives `context` with button variants and renders `button-variant` controls.
 - Auto Accordion renders its link CTA using the picked style guide button variant.
-- `PANEL_RULES.md`, `section.schema.json`, and Auto Accordion `section.json` document the `button-variant` control type.
+- `app-rules-ai/making-a-section/section-panel.md`, `section.schema.json`, and Auto Accordion `section.json` document the `button-variant` control type.
 - Image controls support upload via Vercel Blob, with local data-URL preview fallback when Blob is not configured locally.
 - Builder Style tab can rename, add, switch, and edit per-site style guides in-place.
 - Auto Accordion selected-section prop panel now opens focused panels via `controls[].panel`: Update CMS, Update Styles, and Update Animation, and includes an Auto play toggle in the base inspector.

@@ -18,7 +18,7 @@ import { useEffect, useRef, useState } from "react";
 //   toggle       — boolean on/off control
 
 // The inspector edits **content + style** only. Move-up / move-down / remove
-// live on the canvas hover toolbar — never here. See PANEL_RULES.md (rule 3).
+// live on the canvas hover toolbar — never here. See app-rules-ai/making-a-section/section-panel.md.
 export default function InspectorPanel({
   name,
   controls = [],
@@ -171,11 +171,13 @@ export function ControlField({ control, value, context = {}, onChange }) {
     }
 
     case "slider": {
-      // PANEL_RULES.md (rule 4): sliders are percent-based, centred at 50.
+      // Section panel rules: sliders are percent-based and centred at 50.
       const min = control.min ?? 0;
       const max = control.max ?? 100;
       const mid = Math.round((min + max) / 2);
-      const current = typeof value === "number" ? value : mid;
+      const defaultValue =
+        typeof control.defaultValue === "number" ? control.defaultValue : mid;
+      const current = typeof value === "number" ? value : defaultValue;
       const isPercent = min === 0 && max === 100;
       const displayValue = isPercent ? `${current}%` : current;
       return (
@@ -188,7 +190,7 @@ export function ControlField({ control, value, context = {}, onChange }) {
             value={current}
             onInput={(e) => onChange(Number(e.target.value))}
             onChange={(e) => onChange(Number(e.target.value))}
-            onDoubleClick={() => onChange(mid)}
+            onDoubleClick={() => onChange(defaultValue)}
             className="w-full accent-black"
             title="Double-click to reset"
           />
@@ -197,7 +199,7 @@ export function ControlField({ control, value, context = {}, onChange }) {
             style={{ textTransform: "none", letterSpacing: "0.06em" }}
           >
             <span>{isPercent ? "0%" : min}</span>
-            <span>{isPercent ? "50%" : mid}</span>
+            <span>{isPercent ? `${defaultValue}%` : defaultValue}</span>
             <span>{isPercent ? "100%" : max}</span>
           </div>
         </FieldShell>

@@ -55,7 +55,7 @@ For solo work right now, the user may collapse this to: local → build → comm
 npm --workspace apps/section-marketplace exec next build
 
 # 2. (If you touched library/sections or library/templates)
-npm run library:manifest
+npm --workspace apps/section-marketplace run library:manifest
 
 # 3. Stage, commit, push. This is the deploy trigger.
 git add -A
