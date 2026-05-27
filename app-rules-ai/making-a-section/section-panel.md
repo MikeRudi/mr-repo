@@ -212,6 +212,8 @@ Image and media sizing must survive the main app builder. For animated, absolute
 
 Spacing controls must visibly affect the named gap. For text-stack controls like `eyebrowHeadingGapPct`, prefer applying the value through a parent `gap`/`row-gap` or an explicit wrapper spacing rule. Do not rely on a margin that can collapse, be hidden by grid placement, or be visually cancelled by another text style.
 
+For multi-line text groups, create explicit elements or wrappers for each named gap. Example: eyebrow uses `margin-bottom: var(--eyebrow-heading-gap)`, heading uses `margin-bottom: var(--heading-body-gap)`, and the whole text/media stack uses a separate `gap` for the media. Never map two different sliders to the same CSS gap, and never leave a slider key unused in `Section.jsx`.
+
 The upload JSON must not contain the reusable builder app, `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
 
 Do not upload loose files. ZIP exports are still accepted for backward compatibility, but JSON is the preferred export from the local builder.

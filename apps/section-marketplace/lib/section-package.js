@@ -1,4 +1,4 @@
-const PACKAGE_VERSION = "0.2.0";
+const PACKAGE_VERSION = "0.2.1";
 const ALLOWED_COLOR_TOKENS = new Set(["light", "dark", "brand"]);
 const ALLOWED_TYPOGRAPHY_TOKENS = new Set(["h1", "h2", "h3", "h4", "h5", "h6", "textLarge", "textMain", "textSmall"]);
 const ALLOWED_BUTTON_VARIANTS = new Set(["primary", "secondary", "ghost"]);
@@ -1535,6 +1535,8 @@ For animated or absolute-positioned images, set explicit dimensions and guard ag
 
 Spacing controls must visibly affect their named gap. For text stack controls such as \`eyebrowHeadingGapPct\`, apply the value through parent \`gap\`/\`row-gap\` or a wrapper rule instead of a margin that can collapse or be cancelled by another style.
 
+For multi-line text groups, create explicit elements or wrappers for each named gap. Example: eyebrow uses \`margin-bottom: var(--eyebrow-heading-gap)\`, heading uses \`margin-bottom: var(--heading-body-gap)\`, and the whole text/media stack uses a separate \`gap\` for the media. Never map two different sliders to the same CSS gap, and never leave a slider key unused in \`Section.jsx\`.
+
 If the section uses local images or media, place them in \`public/<section-id>/...\` before export. The export script packages that folder into the JSON upload.
 
 Do not upload the whole local builder app. Upload only the exported \`make-reign-<section-id>.json\`.
@@ -1640,6 +1642,14 @@ Every section must include a builder panel contract in \`section.json\`.
 
 Styles should cover layout gaps, section padding, media sizing, text block spacing, typography choices, color choices, and button/link styles.
 
+For text groups, create named spacing controls and wire each one to a visible CSS rule. Example:
+
+- \`eyebrowHeadingGapPct\` -> \`--eyebrow-heading-gap\`
+- \`headingBodyGapPct\` -> \`--heading-body-gap\`
+- \`headingImageGapPct\` -> \`--heading-image-gap\`
+
+Do not leave slider keys unused. Do not map two different sliders to the same CSS variable. Prefer parent \`gap\`/wrapper spacing or explicit non-collapsing margins over fragile layout tricks.
+
 Use:
 
 - \`typography-token\`
@@ -1691,12 +1701,17 @@ function buildSectionJson() {
       controls: [
         { key: "eyebrowTypography", type: "typography-token", label: "Eyebrow typography", panel: "styles", group: "typography", defaultValue: "textSmall" },
         { key: "headingTypography", type: "typography-token", label: "Heading typography", panel: "styles", group: "typography", defaultValue: "h2" },
+        { key: "bodyTypography", type: "typography-token", label: "Body typography", panel: "styles", group: "typography", defaultValue: "textMain" },
         { key: "eyebrowColor", type: "color-token", label: "Eyebrow color", panel: "styles", group: "color", defaultValue: "dark/70" },
         { key: "headingColor", type: "color-token", label: "Heading color", panel: "styles", group: "color", defaultValue: "dark" },
+        { key: "bodyColor", type: "color-token", label: "Body color", panel: "styles", group: "color", defaultValue: "dark/70" },
         { key: "image", type: "image", label: "Main image", panel: "styles", group: "layout", defaultValue: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80" },
         { key: "sectionPaddingYPct", type: "slider", label: "Section padding Y", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
         { key: "sectionPaddingXPct", type: "slider", label: "Section padding X", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
-        { key: "itemGapPct", type: "slider", label: "Item gap", panel: "styles", group: "spacing", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "eyebrowHeadingGapPct", type: "slider", label: "Eyebrow heading gap", panel: "styles", group: "spacing", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "headingBodyGapPct", type: "slider", label: "Heading body gap", panel: "styles", group: "spacing", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "headingImageGapPct", type: "slider", label: "Heading image gap", panel: "styles", group: "spacing", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "cardGapPct", type: "slider", label: "Card gap", panel: "styles", group: "spacing", min: 0, max: 100, step: 5, defaultValue: 50 },
         { key: "imageWidthPct", type: "slider", label: "Image width", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
         { key: "imageHeightPct", type: "slider", label: "Image height", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
         { key: "cardOverlayOpacityPct", type: "slider", label: "Card overlay transparency", panel: "styles", group: "color", min: 0, max: 100, step: 5, defaultValue: 45 },
@@ -1794,15 +1809,21 @@ function typographyClass(token) {
 export default function NewSectionTemplate({
   eyebrow = "Starter template",
   heading = "A cleaner starting point for new sections.",
+  body = "Use this template to model editable text, real spacing controls, responsive media, CMS cards, and the shared Play animation button.",
   image = DEFAULT_IMAGE,
   imageAlt = "Editorial workspace",
   eyebrowTypography = "textSmall",
   headingTypography = "h2",
+  bodyTypography = "textMain",
   eyebrowColor = "dark/70",
   headingColor = "dark",
+  bodyColor = "dark/70",
   sectionPaddingYPct = 50,
   sectionPaddingXPct = 50,
-  itemGapPct = 50,
+  eyebrowHeadingGapPct = 50,
+  headingBodyGapPct = 50,
+  headingImageGapPct = 50,
+  cardGapPct = 50,
   imageWidthPct = 50,
   imageHeightPct = 50,
   cardOverlayOpacityPct = 45,
@@ -1810,6 +1831,7 @@ export default function NewSectionTemplate({
   animationStrengthPct = 50,
   cards = DEFAULT_ITEMS,
   _editing = false,
+  _playAnimationKey = 0,
   _onPropChange,
 } = {}) {
   const safeCards = Array.isArray(cards) && cards.length ? cards : DEFAULT_ITEMS;
@@ -1826,19 +1848,26 @@ export default function NewSectionTemplate({
       style={{
         "--section-padding-y": pctToRange(sectionPaddingYPct, 32, 220) + "px",
         "--section-padding-x": pctToRange(sectionPaddingXPct, 16, 120) + "px",
-        "--item-gap": pctToRange(itemGapPct, 12, 84) + "px",
+        "--eyebrow-heading-gap": pctToRange(eyebrowHeadingGapPct, 4, 48) + "px",
+        "--heading-body-gap": pctToRange(headingBodyGapPct, 8, 56) + "px",
+        "--heading-image-gap": pctToRange(headingImageGapPct, 20, 120) + "px",
+        "--card-gap": pctToRange(cardGapPct, 12, 48) + "px",
         "--image-width": pctToRange(imageWidthPct, 44, 100) + "%",
         "--image-height": pctToRange(imageHeightPct, 220, 720) + "px",
         "--eyebrow-color": colorTokenValue(eyebrowColor, "rgba(10, 11, 13, 0.7)"),
         "--heading-color": colorTokenValue(headingColor, "var(--chrome-fg)"),
+        "--body-color": colorTokenValue(bodyColor, "rgba(10, 11, 13, 0.7)"),
         "--card-overlay": Math.max(0, Math.min(100, Number(cardOverlayOpacityPct) || 0)) / 100,
         "--animation-distance": Math.round(8 + (strength / 100) * 48) + "px",
         "--animation-scale": 1 + (strength / 100) * 0.08,
       }}
     >
-      <div className={styles.inner + " " + animationClass}>
-        <EditableText as="p" value={eyebrow} editing={_editing} onChange={(value) => persist("eyebrow", value)} className={styles.eyebrow + " " + typographyClass(eyebrowTypography)} placeholder="Eyebrow" />
-        <EditableText as={HeadingTag} value={heading} editing={_editing} onChange={(value) => persist("heading", value)} className={styles.heading + " " + typographyClass(headingTypography)} placeholder="Heading" />
+      <div key={_playAnimationKey} className={styles.inner + " " + animationClass}>
+        <div className={styles.copyStack}>
+          <EditableText as="p" value={eyebrow} editing={_editing} onChange={(value) => persist("eyebrow", value)} className={styles.eyebrow + " " + typographyClass(eyebrowTypography)} placeholder="Eyebrow" />
+          <EditableText as={HeadingTag} value={heading} editing={_editing} onChange={(value) => persist("heading", value)} className={styles.heading + " " + typographyClass(headingTypography)} placeholder="Heading" />
+          <EditableText as="p" value={body} editing={_editing} onChange={(value) => persist("body", value)} className={styles.body + " " + typographyClass(bodyTypography)} multiline placeholder="Body copy" />
+        </div>
         <img className={styles.image} src={image} alt={imageAlt} />
         <ul className={styles.cards}>
           {safeCards.map((item, index) => (
@@ -1866,9 +1895,15 @@ function buildSectionCss() {
 
 .inner {
   display: grid;
-  gap: var(--item-gap, 40px);
+  gap: var(--heading-image-gap, 70px);
   max-width: 1180px;
   margin: 0 auto;
+}
+
+.copyStack {
+  display: grid;
+  row-gap: 0;
+  max-width: 760px;
 }
 
 .liftFade {
@@ -1880,7 +1915,7 @@ function buildSectionCss() {
 }
 
 .eyebrow {
-  margin: 0;
+  margin: 0 0 var(--eyebrow-heading-gap, 26px);
   color: var(--eyebrow-color, color-mix(in srgb, currentColor 70%, transparent));
   font-size: 1rem;
   text-transform: uppercase;
@@ -1888,13 +1923,20 @@ function buildSectionCss() {
 
 .heading {
   max-width: 760px;
-  margin: 0;
+  margin: 0 0 var(--heading-body-gap, 28px);
   color: var(--heading-color, currentColor);
+}
+
+.body {
+  max-width: 620px;
+  margin: 0;
+  color: var(--body-color, color-mix(in srgb, currentColor 70%, transparent));
 }
 
 .image {
   display: block;
   width: min(100%, var(--image-width, 72%));
+  max-width: none;
   height: var(--image-height, 460px);
   object-fit: cover;
   border-radius: 0.25rem;
@@ -1903,7 +1945,7 @@ function buildSectionCss() {
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
+  gap: var(--card-gap, 24px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1953,7 +1995,7 @@ function buildSectionCss() {
   }
 
   .inner {
-    gap: min(var(--item-gap, 32px), 40px);
+    gap: min(var(--heading-image-gap, 56px), 64px);
   }
 
   .image {
