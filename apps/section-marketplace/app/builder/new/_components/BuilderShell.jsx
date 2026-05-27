@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { getSectionComponent } from "../../../../library/registry.js";
+import SubmittedSectionRenderer from "../../../_components/SubmittedSectionRenderer.jsx";
 import { generateCss } from "../../../../lib/styleguide-css.js";
 import {
   DEFAULT_TOKENS,
@@ -611,6 +612,7 @@ function SectionInstance({
   onPropChange,
 }) {
   const Component = getSectionComponent(instance.sectionId);
+  const isSubmitted = meta?.source === "submission";
   return (
     <div
       className={`group relative border-b border-[var(--chrome-border)] cursor-pointer ${
@@ -628,6 +630,13 @@ function SectionInstance({
           {...instance.props}
           _editing
           _onPropChange={onPropChange}
+        />
+      ) : isSubmitted ? (
+        <SubmittedSectionRenderer
+          section={meta}
+          props={instance.props}
+          editing
+          onPropChange={onPropChange}
         />
       ) : (
         <div className="px-6 py-16 text-center text-[var(--chrome-fg-disabled)]">

@@ -115,6 +115,7 @@ function submissionToSection(row) {
       kind: "section",
       source: "submission",
       submissionId: row.id,
+      packageData: row.package,
       submittedBy: manifest.submittedBy ?? "library upload",
       created: manifest.created ?? row.created_at,
       updated: manifest.updated ?? row.updated_at,

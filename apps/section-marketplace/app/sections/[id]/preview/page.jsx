@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { getSectionById, getAllSections } from "../../../../lib/sections.js";
+import { getActiveSubmittedSectionById } from "../../../../lib/section-submissions.js";
 import { getSectionComponent } from "../../../../library/registry.js";
+import SubmittedSectionRenderer from "../../../_components/SubmittedSectionRenderer.jsx";
 
 export async function generateStaticParams() {
   return getAllSections().map((s) => ({ id: s.id }));
@@ -8,7 +10,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const s = getSectionById(id);
+  const s = getSectionById(id) ?? await getActiveSubmittedSectionById(id);
   return {
     title: s ? `${s.name} — Preview` : "Section preview",
     robots: { index: false, follow: false },
@@ -17,10 +19,18 @@ export async function generateMetadata({ params }) {
 
 export default async function SectionPreviewPage({ params }) {
   const { id } = await params;
-  const meta = getSectionById(id);
+  const meta = getSectionById(id) ?? await getActiveSubmittedSectionById(id);
   if (!meta) notFound();
 
   const Component = getSectionComponent(id);
+
+  if (!Component && meta.source === "submission") {
+    return (
+      <div className="sg-section-preview">
+        <SubmittedSectionRenderer section={meta} />
+      </div>
+    );
+  }
 
   if (!Component) {
     return (

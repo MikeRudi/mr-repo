@@ -78,7 +78,7 @@ export default async function SectionDetailPage({ params }) {
                 Open in new tab ↗
               </a>
             </div>
-            {hasImplementation(s.id) ? (
+            {hasImplementation(s.id) || s.source === "submission" ? (
               <iframe
                 src={`/sections/${s.id}/preview`}
                 title={`${s.name} preview`}

@@ -189,10 +189,13 @@ The exported upload JSON must be a single `make-reign-section-package` object wi
     "section/Section.module.css": "...",
     "section/section.json": "...",
     "section/README.md": "...",
+    "assets/<section-id>/image.png": { "encoding": "base64", "content": "...", "mimeType": "image/png" },
     "rules/section-panel.md": "..."
   }
 }
 ```
+
+If a section uses local images or media, put them under `public/<section-id>/...` before export. The export script packages those assets into JSON so the main app can render them after upload.
 
 The upload JSON must not contain the reusable builder app, `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
 

@@ -1227,6 +1227,47 @@ async function collectRules(root) {
   return rules;
 }
 
+async function collectPublicAssets(root, sectionId) {
+  const assets = {};
+  const assetRoot = path.join(root, "public", sectionId);
+
+  async function walk(dir) {
+    let entries = [];
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(fullPath);
+      } else if (entry.isFile()) {
+        const relative = path.relative(path.join(root, "public"), fullPath).split(path.sep).join("/");
+        const bytes = await fs.readFile(fullPath);
+        assets["assets/" + relative] = {
+          encoding: "base64",
+          content: bytes.toString("base64"),
+          mimeType: mimeTypeFor(entry.name),
+        };
+      }
+    }
+  }
+
+  await walk(assetRoot);
+  return assets;
+}
+
+function mimeTypeFor(fileName) {
+  const ext = path.extname(fileName).toLowerCase();
+  if (ext === ".png") return "image/png";
+  if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+  if (ext === ".webp") return "image/webp";
+  if (ext === ".gif") return "image/gif";
+  if (ext === ".svg") return "image/svg+xml";
+  return "application/octet-stream";
+}
+
 const root = process.cwd();
 const requested = process.argv[2];
 let sectionId = requested;
@@ -1247,6 +1288,7 @@ const files = {
   "section/section.json": await read(path.join(sectionRoot, "section.json")),
   "section/README.md": await read(path.join(sectionRoot, "README.md")),
   ...await collectRules(root),
+  ...await collectPublicAssets(root, sectionId),
 };
 const manifest = JSON.parse(files["section/section.json"]);
 const reviewManifest = {
@@ -1452,10 +1494,13 @@ The exported upload JSON must be a single \`make-reign-section-package\` object 
     "section/Section.module.css": "...",
     "section/README.md": "...",
     "section/section.json": "...",
+    "assets/<section-id>/image.png": { "encoding": "base64", "content": "...", "mimeType": "image/png" },
     "rules/section-panel.md": "..."
   }
 }
 \`\`\`
+
+If the section uses local images or media, place them in \`public/<section-id>/...\` before export. The export script packages that folder into the JSON upload.
 
 Do not upload the whole local builder app. Upload only the exported \`make-reign-<section-id>.json\`.
 

@@ -7,7 +7,7 @@ import { extractStoredZip, isZipBuffer } from "../../../../../lib/zip.js";
 
 export const runtime = "nodejs";
 
-const MAX_PACKAGE_BYTES = 5_000_000;
+const MAX_PACKAGE_BYTES = 25_000_000;
 
 export async function GET() {
   const submissions = await listSectionSubmissions();
@@ -42,7 +42,7 @@ export async function POST(req) {
 
   if (!bytes?.length || bytes.length > MAX_PACKAGE_BYTES) {
     return Response.json(
-      { ok: false, error: "Package must be a JSON or ZIP file smaller than 5MB." },
+      { ok: false, error: "Package must be a JSON or ZIP file smaller than 25MB." },
       { status: 400 }
     );
   }

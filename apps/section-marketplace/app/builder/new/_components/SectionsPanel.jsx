@@ -11,7 +11,7 @@ export default function SectionsPanel({
 
   const grouped = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const live = sections.filter((s) => hasImplementation(s.id));
+    const live = sections.filter((s) => hasImplementation(s.id) || s.source === "submission");
     const filtered = needle
       ? live.filter((s) => {
           const hay = `${s.name} ${s.id} ${s.category}`.toLowerCase();
