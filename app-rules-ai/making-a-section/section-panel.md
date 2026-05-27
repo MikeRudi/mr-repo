@@ -153,32 +153,63 @@ npm run new -- kebab-case-section-id
 
 The app preview must render the section and the generated MakeReign-style prop panel. The panel must include the required base actions and focused panels described above.
 
+The local builder UI template must use this structure:
+
+- Left panel: section project selector, `Start a new section`, and export.
+- Left panel: `Preview fullscreen` so the user can inspect the selected section without panels.
+- Center: live section preview.
+- Right panel: `Update CMS`, `Update Styles`, `Update Animation`, and `Play animation`.
+
+When the user first gives this prompt:
+
+```text
+Start the app inside make-reign-section-builder.zip; run it on local and give me the link.
+```
+
+The AI should unzip the app, install dependencies, start the local dev server, give the user the localhost URL, and then ask what new section they want to make. It should not start building a section until the user gives a section URL or description.
+
 ## Build Mode Export Rules
 
 When a local section is ready, export only that section. Do not zip the whole builder app.
 
-Use the in-app `Export section` button for the selected section, or run:
+Use the in-app `Export section JSON` button for the selected section, or run:
 
 ```bash
 npm run export -- kebab-case-section-id
 ```
 
-The exported upload zip must contain:
+The exported upload JSON must be a single `make-reign-section-package` object with:
 
 ```text
-make-reign-section/
-  make-reign-section-package.json
-  rules/
-  section/
-    Section.jsx
-    Section.module.css
-    section.json
-    README.md
+{
+  "kind": "make-reign-section-package",
+  "packageVersion": "0.2.0",
+  "files": {
+    "section/Section.jsx": "...",
+    "section/Section.module.css": "...",
+    "section/section.json": "...",
+    "section/README.md": "...",
+    "rules/section-panel.md": "..."
+  }
+}
 ```
 
-The upload zip must not contain the reusable builder app, `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
+The upload JSON must not contain the reusable builder app, `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
 
-Do not upload loose files. Do not remove `make-reign-section-package.json`.
+Do not upload loose files. ZIP exports are still accepted for backward compatibility, but JSON is the preferred export from the local builder.
+
+## Responsive Section Rules
+
+Every generated section must be responsive on desktop, tablet, and mobile. Test at roughly 1440px, 768px, and 390px widths before export.
+
+Use CSS Grid/Flex with wrapping, fluid widths, stable media dimensions, and media queries where needed. Do not rely on fixed desktop-only widths.
+
+On tablet and mobile:
+
+- Text must not overlap images, cards, or controls.
+- Images and media must keep stable aspect ratios and never overflow the viewport.
+- Cards and repeated CMS items should wrap or stack cleanly.
+- Section padding and gaps should scale down while still honoring the section's slider-driven values.
 
 ## Implementation Rules
 

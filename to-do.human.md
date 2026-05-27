@@ -37,14 +37,15 @@ This is the plain‑English plan for the next phase of work. The order here is t
   2. They download a zipped local section builder app to their machine.
   3. They use that local app with their own editor, coding agent, or local model to create one or many sections.
   4. They preview each section locally with the MakeReign-style prop panel.
-  5. When a section is ready, they export that one section as a clean zip and upload it back to the library for review.
+  5. When a section is ready, they export that one section as a clean JSON file and upload it back to the library for review.
 
 **Goal**
 - Make the library a two‑way street: not just "browse and use", but "create and contribute".
 - Keep section authoring close to real code (local), but make the round‑trip easy.
 
 **More to come**
-- First slice: library button downloads a reusable local section builder app with rules, starter section folders, a localhost preview, and export tools; upload stores the exported section zip for review.
+- First slice: library button downloads a reusable local section builder app with rules, starter section folders, a localhost preview, and export tools; upload stores the exported section JSON for review.
+- First local AI prompt: "Start the app inside make-reign-section-builder.zip; run it on local and give me the link." Once it is running, the AI asks what section to make.
 - Temporary public Activate, Deactivate, and Delete controls are visible in the review queue for now, but turning a brand-new uploaded section into real live code is still manually promoted until we build the admin panel later.
 - We'll keep refining the downloaded rules and guidance after the first working path is live.
 

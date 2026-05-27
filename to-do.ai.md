@@ -108,8 +108,9 @@
 - New library hero affordance: "Make a new section".
 - Server endpoint to generate a reusable zipped local section builder app for download.
 - The builder app includes starter `sections/<section-id>/section.json`, `Section.jsx`, `Section.module.css`, `README.md`, section panel rules, export rules, local builder rules, schema guidance, a runnable localhost preview harness, and scripts to create/export sections.
+- The first local AI prompt should be: "Start the app inside make-reign-section-builder.zip; run it on local and give me the link." The AI should launch the app, return the localhost URL, then ask what section to make.
 - The downloaded builder app can create many local section folders. Users should not need to redownload it for every section.
-- Upload endpoint accepts the exported section zip, validates the required section files and panel contract basics, and stores it as a review submission. JSON manifest upload can remain as a compatibility path, but the primary user flow is builder app download/edit/export section zip/upload.
+- Upload endpoint accepts the exported section JSON, validates the required section files and panel contract basics, and stores it as a review submission. ZIP upload remains as a compatibility path, but the primary user flow is builder app download/edit/export section JSON/upload.
 - Library page shows submitted sections waiting for review.
 - Library page includes temporary public Activate, Deactivate, and Delete controls for review submissions. These controls manage DB submission status, while brand-new section implementations still need manual code promotion into `library/sections/` until the admin panel/git-backed activation flow is built.
 - Admin review / full activation workflow remains manual until the admin panel is built later.
@@ -135,7 +136,7 @@
 **Acceptance**
 - A user can click "Make a new section" in the library and download `make-reign-section-builder.zip`.
 - The downloaded zip expands into a reusable local app that can create many `sections/<section-id>/` projects, preview each section on localhost, and show the generated prop panel.
-- The local app can export a clean `make-reign-<section-id>.zip` for one selected section.
+- The local app can export a clean `make-reign-<section-id>.json` for one selected section.
 - A user can upload the exported section package.
 - The uploaded package is validated and saved as a submitted review item.
 - Temporary public Activate, Deactivate, and Delete controls can manage submission status.

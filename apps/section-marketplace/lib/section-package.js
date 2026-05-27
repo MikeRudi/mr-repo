@@ -14,7 +14,7 @@ export async function buildSectionTemplatePackage() {
     packageVersion: PACKAGE_VERSION,
     createdAt: new Date().toISOString(),
     instructions:
-      "Reusable local MakeReign section builder app. Run it locally, let AI create section folders under sections/, preview with the generated panel, then export individual section upload zips.",
+      "Reusable local MakeReign section builder app. Start it locally first, give the user the localhost link, then ask what new section they want to make. Export finished sections as JSON packages for upload.",
     files: buildBuilderFiles(),
   };
 }
@@ -146,35 +146,37 @@ function buildBuilderFiles() {
 }
 
 function buildAiTask() {
-  return `# AI Task: Build MakeReign Sections In This Local App
+  return `# AI Task: Start The MakeReign Local Section Builder
 
-You are inside the reusable MakeReign Local Section Builder app.
+You are helping the user launch the reusable MakeReign Local Section Builder app.
 
 ## User Prompt This App Is Built For
 
 \`\`\`
-Unzip and read all the files in this folder make-reign-section-builder.zip in my downloads folder. Then make this section [URL OR DESCRIPTION] and open the section so we can view and edit it on a localhost.
+Start the app inside make-reign-section-builder.zip; run it on local and give me the link.
 \`\`\`
 
-## What To Do
+## First Run Workflow
 
-1. Read \`README.md\` and every file in \`rules/\`.
-2. Run \`npm install\`.
-3. Run \`npm run dev\` and open the localhost URL.
-4. Create or update one folder in \`sections/<section-id>/\`.
-5. Build only the requested section, not a full website.
-6. Use the local app to preview the section and generated panel.
-7. Use the Export section button in the app, or run \`npm run export -- <section-id>\`.
+1. Unzip \`make-reign-section-builder.zip\`.
+2. Work inside the unzipped \`make-reign-section-builder/\` folder.
+3. Read \`README.md\` and every file in \`rules/\`.
+4. Run \`npm install\`.
+5. Run \`npm run dev\`.
+6. Give the user the localhost URL printed by Vite.
+7. Ask the user what new section they want to make.
 
-## Create Another Section Later
+Do not start building a section until the user gives a section URL or description.
 
-This app is reusable. To start another section:
+## When The User Wants A Section
+
+Create one folder in \`sections/<section-id>/\`:
 
 \`\`\`bash
-npm run new -- my-next-section
+npm run new -- klarheit-contact-01
 \`\`\`
 
-Then edit \`sections/my-next-section/\`, preview it in the app, and export that section when ready.
+Then edit that section folder, preview it in the app, and export it when ready.
 
 ## Source Of Truth
 
@@ -188,7 +190,7 @@ sections/<section-id>/
   README.md
 \`\`\`
 
-Do not create a second app. Do not edit \`node_modules\`, \`dist\`, or generated export zips.
+Do not create a second app. Do not edit \`node_modules\`, \`dist\`, or generated export files.
 `;
 }
 
@@ -200,7 +202,7 @@ This is a reusable local app for creating MakeReign sections with a local AI mod
 ## Main Prompt
 
 \`\`\`
-Unzip and read all the files in this folder make-reign-section-builder.zip in my downloads folder. Then make this section [PASTE SECTION URL OR DESCRIPTION HERE] and open the section so we can view and edit it on a localhost.
+Start the app inside make-reign-section-builder.zip; run it on local and give me the link.
 \`\`\`
 
 ## Run The App
@@ -211,6 +213,8 @@ npm run dev
 \`\`\`
 
 Open the localhost URL printed by Vite.
+
+After the app is running, the AI should ask what new section you want to make.
 
 ## Make A Section
 
@@ -240,13 +244,13 @@ The app shows the selected section and a MakeReign-style prop panel:
 - Update Animation
 - Auto play or Play animation when relevant
 
-When the section is ready, click \`Export section\` in the app. It downloads a clean upload zip for the selected section. You can also run:
+When the section is ready, click \`Export section JSON\` in the app. It downloads a clean JSON upload package for the selected section. You can also run:
 
 \`\`\`bash
 npm run export -- klarheit-contact-01
 \`\`\`
 
-Upload the exported zip to the MakeReign library.
+Upload the exported JSON file to the MakeReign library.
 
 ## Important
 
@@ -262,6 +266,7 @@ function buildPackageJson() {
       private: true,
       type: "module",
       scripts: {
+        start: "vite --host 127.0.0.1",
         dev: "vite --host 127.0.0.1",
         build: "vite build",
         preview: "vite preview --host 127.0.0.1",
@@ -400,6 +405,8 @@ export default function LocalSectionBuilder() {
   const [activePanel, setActivePanel] = useState(null);
   const [previewKey, setPreviewKey] = useState(0);
   const [exportStatus, setExportStatus] = useState("");
+  const [newSectionStatus, setNewSectionStatus] = useState("");
+  const [isPreviewFullscreen, setIsPreviewFullscreen] = useState(false);
 
   if (!selected) {
     return (
@@ -433,28 +440,34 @@ export default function LocalSectionBuilder() {
     setSelectedSlug(slug);
     setActivePanel(null);
     setExportStatus("");
+    setNewSectionStatus("");
+  }
+
+  function showNewSectionHelp() {
+    setNewSectionStatus("Ask your AI to run: npm run new -- kebab-case-section-id. Restart this app if the new project does not appear.");
   }
 
   function exportSection() {
-    const blob = createSectionZip(selected);
+    const packageData = createSectionPackage(selected);
+    const blob = new Blob([JSON.stringify(packageData, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = \`make-reign-\${selected.manifest.id}.zip\`;
+    a.download = \`make-reign-\${selected.manifest.id}.json\`;
     document.body.append(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    setExportStatus(\`Exported make-reign-\${selected.manifest.id}.zip\`);
+    setExportStatus(\`Exported make-reign-\${selected.manifest.id}.json\`);
   }
 
   return (
-    <main className="mr-builder">
-      <aside className="mr-panel">
+    <main className={isPreviewFullscreen ? "mr-builder mr-builder--preview" : "mr-builder"}>
+      <aside className="mr-panel mr-panel--left">
         <div className="mr-panel__header">
-          <p className="mr-eyebrow">MakeReign local builder</p>
-          <h1>{selected.manifest.name}</h1>
-          <p>{selected.manifest.id}</p>
+          <p className="mr-eyebrow">Section project</p>
+          <h1>Build Mode</h1>
+          <p>Create sections locally, then export one JSON package for upload.</p>
         </div>
 
         <label className="mr-control">
@@ -466,10 +479,40 @@ export default function LocalSectionBuilder() {
           </select>
         </label>
 
+        <button type="button" className="mr-full-button" onClick={showNewSectionHelp}>Start a new section</button>
+        <button type="button" className="mr-full-button" onClick={() => setIsPreviewFullscreen(true)}>Preview fullscreen</button>
+        {newSectionStatus ? <p className="mr-status">{newSectionStatus}</p> : null}
+
+        <div className="mr-project-card">
+          <p className="mr-eyebrow">Selected</p>
+          <h2>{selected.manifest.name}</h2>
+          <p>{selected.manifest.id}</p>
+        </div>
+
+        <button type="button" className="mr-export" onClick={exportSection}>Export section JSON</button>
+        {exportStatus ? <p className="mr-status">{exportStatus}</p> : null}
+      </aside>
+
+      <section className="mr-canvas">
+        {isPreviewFullscreen ? (
+          <button type="button" className="mr-preview-exit" onClick={() => setIsPreviewFullscreen(false)}>Exit preview</button>
+        ) : null}
+        <div className="mr-style-scope">
+          <Component key={previewKey} {...props} _editing _onPropChange={update} />
+        </div>
+      </section>
+
+      <aside className="mr-panel mr-panel--right">
+        <div className="mr-panel__header">
+          <p className="mr-eyebrow">Section panel</p>
+          <h1>{selected.manifest.name}</h1>
+          <p>Update the selected section controls.</p>
+        </div>
+
         <div className="mr-actions">
-          {cms ? <button type="button" onClick={() => setActivePanel(activePanel === "cms" ? null : "cms")}>Update CMS</button> : null}
+          <button type="button" onClick={() => setActivePanel(activePanel === "cms" ? null : "cms")}>Update CMS</button>
           <button type="button" onClick={() => setActivePanel(activePanel === "styles" ? null : "styles")}>Update Styles</button>
-          {hasAnimation ? <button type="button" onClick={() => setActivePanel(activePanel === "animation" ? null : "animation")}>Update Animation</button> : null}
+          <button type="button" onClick={() => setActivePanel(activePanel === "animation" ? null : "animation")}>Update Animation</button>
           {autoControl ? (
             <label className="mr-toggle">
               <input
@@ -481,27 +524,20 @@ export default function LocalSectionBuilder() {
             </label>
           ) : hasAnimation ? (
             <button type="button" onClick={() => setPreviewKey((key) => key + 1)}>Play animation</button>
-          ) : null}
-          <button type="button" className="mr-export" onClick={exportSection}>Export section</button>
+          ) : (
+            <button type="button" onClick={() => setPreviewKey((key) => key + 1)}>Play animation</button>
+          )}
         </div>
-
-        {exportStatus ? <p className="mr-status">{exportStatus}</p> : null}
 
         <Panel activePanel={activePanel} cms={cms} groups={groups} props={props} update={update} />
       </aside>
-
-      <section className="mr-canvas">
-        <div className="mr-style-scope">
-          <Component key={previewKey} {...props} _editing _onPropChange={update} />
-        </div>
-      </section>
     </main>
   );
 }
 
 function Panel({ activePanel, cms, groups, props, update }) {
   if (!activePanel) {
-    return <div className="mr-empty">Select a panel above. Double-click visible section text in the preview to edit it inline.</div>;
+    return <div className="mr-empty">Choose Update CMS, Update Styles, or Update Animation. Double-click visible section text in the preview to edit it inline.</div>;
   }
   if (activePanel === "cms" && cms) {
     return <CmsPanel cms={cms} value={props[cms.key] ?? []} onChange={(value) => update(cms.key, value)} />;
@@ -596,84 +632,23 @@ function TokenSelect({ options, value, onChange }) {
   );
 }
 
-function createSectionZip(section) {
+function createSectionPackage(section) {
   const files = {
-    "make-reign-section/section/Section.jsx": section.source,
-    "make-reign-section/section/Section.module.css": section.css,
-    "make-reign-section/section/section.json": section.json,
-    "make-reign-section/section/README.md": section.readme,
+    "section/Section.jsx": section.source,
+    "section/Section.module.css": section.css,
+    "section/section.json": section.json,
+    "section/README.md": section.readme,
   };
   for (const [path, content] of Object.entries(ruleSource)) {
-    files[\`make-reign-section/rules/\${path.split("/").pop()}\`] = content;
+    files[\`rules/\${path.split("/").pop()}\`] = content;
   }
-  const reviewManifest = {
+  return {
     kind: "make-reign-section-package",
     packageVersion: "0.2.0",
     createdAt: new Date().toISOString(),
     instructions: "Exported from the MakeReign Local Section Builder.",
-    files: Object.fromEntries(
-      Object.entries(files).map(([path, content]) => [path.replace("make-reign-section/", ""), content])
-    ),
+    files,
   };
-  files["make-reign-section/make-reign-section-package.json"] = JSON.stringify(reviewManifest, null, 2);
-  return createZip(files);
-}
-
-const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
-  let crc = index;
-  for (let bit = 0; bit < 8; bit += 1) crc = crc & 1 ? 0xedb88320 ^ (crc >>> 1) : crc >>> 1;
-  return crc >>> 0;
-});
-
-function crc32(buffer) {
-  let crc = 0xffffffff;
-  for (const byte of buffer) crc = CRC_TABLE[(crc ^ byte) & 0xff] ^ (crc >>> 8);
-  return (crc ^ 0xffffffff) >>> 0;
-}
-
-function createZip(files) {
-  const encoder = new TextEncoder();
-  const localParts = [];
-  const centralParts = [];
-  let offset = 0;
-  for (const [path, rawContent] of Object.entries(files)) {
-    const name = encoder.encode(path);
-    const content = typeof rawContent === "string" ? encoder.encode(rawContent) : rawContent;
-    const checksum = crc32(content);
-    const localHeader = new Uint8Array(30);
-    const local = new DataView(localHeader.buffer);
-    local.setUint32(0, 0x04034b50, true);
-    local.setUint16(4, 20, true);
-    local.setUint16(6, 0x0800, true);
-    local.setUint16(8, 0, true);
-    local.setUint32(14, checksum, true);
-    local.setUint32(18, content.length, true);
-    local.setUint32(22, content.length, true);
-    local.setUint16(26, name.length, true);
-    localParts.push(localHeader, name, content);
-    const centralHeader = new Uint8Array(46);
-    const central = new DataView(centralHeader.buffer);
-    central.setUint32(0, 0x02014b50, true);
-    central.setUint16(4, 20, true);
-    central.setUint16(6, 20, true);
-    central.setUint16(8, 0x0800, true);
-    central.setUint32(16, checksum, true);
-    central.setUint32(20, content.length, true);
-    central.setUint32(24, content.length, true);
-    central.setUint16(28, name.length, true);
-    central.setUint32(42, offset, true);
-    centralParts.push(centralHeader, name);
-    offset += localHeader.length + name.length + content.length;
-  }
-  const centralSize = centralParts.reduce((size, part) => size + part.length, 0);
-  const end = new Uint8Array(22);
-  const endView = new DataView(end.buffer);
-  endView.setUint32(0, 0x06054b50, true);
-  endView.setUint16(8, Object.keys(files).length, true);
-  endView.setUint16(10, Object.keys(files).length, true);
-  endView.setUint32(12, centralSize, true);
-  endView.setUint32(16, offset, true);
-  return new Blob([...localParts, ...centralParts, end], { type: "application/zip" });
 }
 `;
 }
@@ -706,7 +681,7 @@ button, input, select, textarea { font: inherit; }
 
 .mr-builder {
   display: grid;
-  grid-template-columns: minmax(300px, 380px) 1fr;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr) minmax(300px, 360px);
   min-height: 100vh;
 }
 
@@ -722,9 +697,16 @@ button, input, select, textarea { font: inherit; }
   top: 0;
   height: 100vh;
   overflow: auto;
-  border-right: 1px solid var(--chrome-border);
   background: var(--chrome-surface);
   padding: 1rem;
+}
+
+.mr-panel--left {
+  border-right: 1px solid var(--chrome-border);
+}
+
+.mr-panel--right {
+  border-left: 1px solid var(--chrome-border);
 }
 
 .mr-panel__header {
@@ -758,6 +740,7 @@ button, input, select, textarea { font: inherit; }
 
 .mr-actions button,
 .mr-actions label,
+.mr-full-button,
 .mr-panel-row button,
 .mr-cms-row button {
   min-height: 2.5rem;
@@ -770,11 +753,38 @@ button, input, select, textarea { font: inherit; }
 }
 
 .mr-actions button:hover,
+.mr-full-button:hover,
 .mr-panel-row button:hover,
 .mr-cms-row button:hover,
 .mr-export {
   background: var(--chrome-fg);
   color: #fff;
+}
+
+.mr-full-button,
+.mr-export {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.mr-project-card {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  border: 1px solid var(--chrome-border);
+  border-radius: 0.25rem;
+  padding: 0.85rem;
+}
+
+.mr-project-card h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mr-project-card p {
+  margin: 0;
+  color: var(--chrome-fg-muted);
 }
 
 .mr-toggle {
@@ -854,8 +864,35 @@ button, input, select, textarea { font: inherit; }
 }
 
 .mr-canvas {
+  position: relative;
   min-width: 0;
   overflow: auto;
+}
+
+.mr-builder--preview {
+  grid-template-columns: 1fr;
+}
+
+.mr-builder--preview .mr-panel {
+  display: none;
+}
+
+.mr-builder--preview .mr-canvas {
+  min-height: 100vh;
+}
+
+.mr-preview-exit {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  min-height: 2.5rem;
+  border: 1px solid var(--chrome-border);
+  border-radius: 0.25rem;
+  background: var(--chrome-fg);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
 }
 
 .mr-style-scope {
@@ -866,7 +903,12 @@ button, input, select, textarea { font: inherit; }
 .mr-style-scope h1, .mr-style-scope .sg-h1 { font-size: 4.5rem; line-height: 1; font-weight: 600; }
 .mr-style-scope h2, .mr-style-scope .sg-h2 { font-size: 3.5rem; line-height: 1.04; font-weight: 600; }
 .mr-style-scope h3, .mr-style-scope .sg-h3 { font-size: 2.5rem; line-height: 1.1; font-weight: 600; }
+.mr-style-scope h4, .mr-style-scope .sg-h4 { font-size: 2rem; line-height: 1.15; font-weight: 600; }
+.mr-style-scope h5, .mr-style-scope .sg-h5 { font-size: 1.5rem; line-height: 1.2; font-weight: 600; }
+.mr-style-scope h6, .mr-style-scope .sg-h6 { font-size: 1.125rem; line-height: 1.25; font-weight: 600; }
 .mr-style-scope p, .mr-style-scope .sg-text-main { font-size: 1rem; line-height: 1.55; }
+.mr-style-scope .sg-text-large { font-size: 1.25rem; line-height: 1.45; }
+.mr-style-scope .sg-text-small { font-size: 1rem; line-height: 1.45; }
 
 .sg-button, .sg-button-secondary, .sg-button-ghost {
   display: inline-flex;
@@ -890,7 +932,7 @@ button, input, select, textarea { font: inherit; }
 
 @media (max-width: 900px) {
   .mr-builder { grid-template-columns: 1fr; }
-  .mr-panel { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--chrome-border); }
+  .mr-panel { position: relative; height: auto; border-right: 0; border-left: 0; border-bottom: 1px solid var(--chrome-border); }
 }
 `;
 }
@@ -941,68 +983,6 @@ function buildExportSectionScript() {
   return `import { promises as fs } from "node:fs";
 import path from "node:path";
 
-const SECTION_PACKAGE_FOLDER = "make-reign-section";
-const SECTION_PACKAGE_MANIFEST = "make-reign-section-package.json";
-const LOCAL_FILE_HEADER = 0x04034b50;
-const CENTRAL_DIRECTORY_HEADER = 0x02014b50;
-const END_OF_CENTRAL_DIRECTORY = 0x06054b50;
-
-const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
-  let crc = index;
-  for (let bit = 0; bit < 8; bit += 1) {
-    crc = crc & 1 ? 0xedb88320 ^ (crc >>> 1) : crc >>> 1;
-  }
-  return crc >>> 0;
-});
-
-function crc32(buffer) {
-  let crc = 0xffffffff;
-  for (const byte of buffer) crc = CRC_TABLE[(crc ^ byte) & 0xff] ^ (crc >>> 8);
-  return (crc ^ 0xffffffff) >>> 0;
-}
-
-function createZip(files) {
-  const localParts = [];
-  const centralParts = [];
-  let offset = 0;
-  for (const [filePath, rawContent] of Object.entries(files)) {
-    const name = Buffer.from(filePath, "utf8");
-    const content = Buffer.isBuffer(rawContent) ? rawContent : Buffer.from(String(rawContent), "utf8");
-    const checksum = crc32(content);
-    const localHeader = Buffer.alloc(30);
-    localHeader.writeUInt32LE(LOCAL_FILE_HEADER, 0);
-    localHeader.writeUInt16LE(20, 4);
-    localHeader.writeUInt16LE(0x0800, 6);
-    localHeader.writeUInt16LE(0, 8);
-    localHeader.writeUInt32LE(checksum, 14);
-    localHeader.writeUInt32LE(content.length, 18);
-    localHeader.writeUInt32LE(content.length, 22);
-    localHeader.writeUInt16LE(name.length, 26);
-    localParts.push(localHeader, name, content);
-    const centralHeader = Buffer.alloc(46);
-    centralHeader.writeUInt32LE(CENTRAL_DIRECTORY_HEADER, 0);
-    centralHeader.writeUInt16LE(20, 4);
-    centralHeader.writeUInt16LE(20, 6);
-    centralHeader.writeUInt16LE(0x0800, 8);
-    centralHeader.writeUInt32LE(checksum, 16);
-    centralHeader.writeUInt32LE(content.length, 20);
-    centralHeader.writeUInt32LE(content.length, 24);
-    centralHeader.writeUInt16LE(name.length, 28);
-    centralHeader.writeUInt32LE(offset, 42);
-    centralParts.push(centralHeader, name);
-    offset += localHeader.length + name.length + content.length;
-  }
-  const centralSize = centralParts.reduce((size, part) => size + part.length, 0);
-  const end = Buffer.alloc(22);
-  const fileCount = Object.keys(files).length;
-  end.writeUInt32LE(END_OF_CENTRAL_DIRECTORY, 0);
-  end.writeUInt16LE(fileCount, 8);
-  end.writeUInt16LE(fileCount, 10);
-  end.writeUInt32LE(centralSize, 12);
-  end.writeUInt32LE(offset, 16);
-  return Buffer.concat([...localParts, ...centralParts, end]);
-}
-
 async function read(filePath) {
   return fs.readFile(filePath, "utf8");
 }
@@ -1046,16 +1026,10 @@ const reviewManifest = {
   instructions: "Exported from the MakeReign Local Section Builder.",
   files,
 };
-const zipFiles = Object.fromEntries(
-  Object.entries({
-    ...files,
-    [SECTION_PACKAGE_MANIFEST]: JSON.stringify(reviewManifest, null, 2),
-  }).map(([filePath, content]) => [SECTION_PACKAGE_FOLDER + "/" + filePath, content])
-);
 
-const outPath = path.resolve(root, "exports", "make-reign-" + manifest.id + ".zip");
+const outPath = path.resolve(root, "exports", "make-reign-" + manifest.id + ".json");
 await fs.mkdir(path.dirname(outPath), { recursive: true });
-await fs.writeFile(outPath, createZip(zipFiles));
+await fs.writeFile(outPath, JSON.stringify(reviewManifest, null, 2) + "\\n");
 console.log("Created " + outPath);
 `;
 }
@@ -1231,26 +1205,29 @@ If the referenced section has a form, render a static visual form with semantic 
 
 const SECTION_EXPORT_RULES = `# Export Rules
 
-Use the local app's \`Export section\` button for the selected section, or run:
+Use the local app's \`Export section JSON\` button for the selected section, or run:
 
 \`\`\`bash
 npm run export -- section-id
 \`\`\`
 
-The exported upload zip must contain:
+The exported upload JSON must be a single \`make-reign-section-package\` object with:
 
 \`\`\`text
-make-reign-section/
-  make-reign-section-package.json
-  rules/
-  section/
-    Section.jsx
-    Section.module.css
-    README.md
-    section.json
+{
+  "kind": "make-reign-section-package",
+  "packageVersion": "0.2.0",
+  "files": {
+    "section/Section.jsx": "...",
+    "section/Section.module.css": "...",
+    "section/README.md": "...",
+    "section/section.json": "...",
+    "rules/section-panel.md": "..."
+  }
+}
 \`\`\`
 
-Do not upload the whole local builder app. Upload only the exported \`make-reign-<section-id>.zip\`.
+Do not upload the whole local builder app. Upload only the exported \`make-reign-<section-id>.json\`.
 
 Do not include \`node_modules\`, \`dist\`, temp files, private keys, screenshots, or absolute filesystem paths.
 `;
@@ -1283,15 +1260,30 @@ Restart \`npm run dev\` if a newly created section does not appear in the select
 
 The app previews the selected section and renders a generated MakeReign-style panel:
 
+- Left panel: section project selector, \`Start a new section\`, and export.
+- Left panel: \`Preview fullscreen\` so the user can inspect the selected section without panels.
+- Center: live section preview.
+- Right panel: \`Update CMS\`, \`Update Styles\`, \`Update Animation\`, and \`Play animation\`.
 - \`Update CMS\` appears when \`section.json.cms\` exists.
 - \`Update Styles\` is always expected.
 - \`Update Animation\` appears when animation controls exist.
 - \`Auto play\` appears for automatic animation toggles.
 - \`Play animation\` appears when animation exists without auto-play.
 
+## Responsiveness
+
+Every section must be responsive on desktop, tablet, and mobile. Use CSS Grid/Flex with wrapping, fluid widths, and media queries when needed. Test at roughly 1440px, 768px, and 390px widths before export.
+
+On tablet and mobile:
+
+- Text must not overlap images, cards, or controls.
+- Images and media must keep stable aspect ratios and never overflow the viewport.
+- Cards and repeated CMS items should wrap or stack cleanly.
+- Section padding and gaps should scale down while still using the section's slider-driven values.
+
 ## Export
 
-Use the in-app \`Export section\` button for the selected section. It downloads a clean upload zip for that section only.
+Use the in-app \`Export section JSON\` button for the selected section. It downloads a clean upload JSON package for that section only.
 `;
 
 const URL_REFERENCE_RULES = `# URL Reference Rules
@@ -1385,17 +1377,54 @@ function buildSectionJson() {
       dependencies: [],
       tags: ["starter"],
       controls: [
-        { key: "headingTypography", type: "typography-token", label: "Heading tag", panel: "styles", group: "typography", defaultValue: "h2" },
-        { key: "textColor", type: "color-token", label: "Text color", panel: "styles", group: "color", defaultValue: "dark" },
-        { key: "sectionPaddingPct", type: "slider", label: "Section padding", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "eyebrowTypography", type: "typography-token", label: "Eyebrow typography", panel: "styles", group: "typography", defaultValue: "textSmall" },
+        { key: "headingTypography", type: "typography-token", label: "Heading typography", panel: "styles", group: "typography", defaultValue: "h2" },
+        { key: "eyebrowColor", type: "color-token", label: "Eyebrow color", panel: "styles", group: "color", defaultValue: "dark/70" },
+        { key: "headingColor", type: "color-token", label: "Heading color", panel: "styles", group: "color", defaultValue: "dark" },
+        { key: "image", type: "image", label: "Main image", panel: "styles", group: "layout", defaultValue: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80" },
+        { key: "sectionPaddingYPct", type: "slider", label: "Section padding Y", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "sectionPaddingXPct", type: "slider", label: "Section padding X", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "itemGapPct", type: "slider", label: "Item gap", panel: "styles", group: "spacing", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "imageWidthPct", type: "slider", label: "Image width", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "imageHeightPct", type: "slider", label: "Image height", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "cardOverlayOpacityPct", type: "slider", label: "Card overlay transparency", panel: "styles", group: "color", min: 0, max: 100, step: 5, defaultValue: 45 },
+        {
+          key: "animationStyle",
+          type: "select",
+          label: "Animation style",
+          panel: "animation",
+          defaultValue: "liftFade",
+          options: [
+            { value: "liftFade", label: "Lift and fade" },
+            { value: "scaleFade", label: "Scale and fade" }
+          ]
+        },
+        { key: "animationStrengthPct", type: "slider", label: "Animation strength", panel: "animation", min: 0, max: 100, step: 5, defaultValue: 50 },
       ],
       cms: {
-        key: "items",
-        label: "Items",
-        defaultValue: [{ heading: "Template item", description: "Replace this with real content." }],
+        key: "cards",
+        label: "Cards",
+        defaultValue: [
+          {
+            heading: "Strategy",
+            description: "Shape the section message and hierarchy.",
+            image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"
+          },
+          {
+            heading: "Design",
+            description: "Control spacing, type, color, imagery, and cards.",
+            image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
+          },
+          {
+            heading: "Build",
+            description: "Export a clean JSON package for review.",
+            image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=80"
+          }
+        ],
         fields: [
           { key: "heading", type: "text", label: "Heading" },
           { key: "description", type: "textarea", label: "Description" },
+          { key: "image", type: "image", label: "Image URL" },
         ],
       },
     },
@@ -1411,12 +1440,28 @@ import styles from "./Section.module.css";
 import EditableText from "../../_shared/EditableText.jsx";
 
 const DEFAULT_ITEMS = [
-  { heading: "Template item", description: "Replace this with real content." },
+  {
+    heading: "Strategy",
+    description: "Shape the section message and hierarchy.",
+    image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    heading: "Design",
+    description: "Control spacing, type, color, imagery, and cards.",
+    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    heading: "Build",
+    description: "Export a clean JSON package for review.",
+    image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=80",
+  },
 ];
 
-function pctToPadding(pct) {
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80";
+
+function pctToRange(pct, min, max) {
   const value = typeof pct === "number" ? pct : 50;
-  return Math.round(32 + (value / 100) * 160);
+  return Math.round(min + (value / 100) * (max - min));
 }
 
 function colorTokenValue(token, fallback) {
@@ -1429,18 +1474,36 @@ function colorTokenValue(token, fallback) {
   return "color-mix(in srgb, " + color + " " + (Number.isFinite(amount) ? amount : 100) + "%, transparent)";
 }
 
+function typographyClass(token) {
+  if (!token) return "sg-text-main";
+  return "sg-" + String(token).replace(/[A-Z]/g, (letter) => "-" + letter.toLowerCase());
+}
+
 export default function NewSectionTemplate({
-  eyebrow = "New section",
-  heading = "Build a section with MakeReign.",
+  eyebrow = "Starter template",
+  heading = "A cleaner starting point for new sections.",
+  image = DEFAULT_IMAGE,
+  imageAlt = "Editorial workspace",
+  eyebrowTypography = "textSmall",
   headingTypography = "h2",
-  textColor = "dark",
-  sectionPaddingPct = 50,
-  items = DEFAULT_ITEMS,
+  eyebrowColor = "dark/70",
+  headingColor = "dark",
+  sectionPaddingYPct = 50,
+  sectionPaddingXPct = 50,
+  itemGapPct = 50,
+  imageWidthPct = 50,
+  imageHeightPct = 50,
+  cardOverlayOpacityPct = 45,
+  animationStyle = "liftFade",
+  animationStrengthPct = 50,
+  cards = DEFAULT_ITEMS,
   _editing = false,
   _onPropChange,
 } = {}) {
-  const safeItems = Array.isArray(items) && items.length ? items : DEFAULT_ITEMS;
+  const safeCards = Array.isArray(cards) && cards.length ? cards : DEFAULT_ITEMS;
   const HeadingTag = /^h[1-6]$/.test(headingTypography) ? headingTypography : "h2";
+  const animationClass = styles[animationStyle] ?? styles.liftFade;
+  const strength = Math.max(0, Math.min(100, Number(animationStrengthPct) || 50));
   const persist = (key, value) => {
     if (_onPropChange) _onPropChange(key, value);
   };
@@ -1449,18 +1512,29 @@ export default function NewSectionTemplate({
     <section
       className={styles.root}
       style={{
-        "--section-padding": pctToPadding(sectionPaddingPct) + "px",
-        "--section-text": colorTokenValue(textColor, "var(--chrome-fg)"),
+        "--section-padding-y": pctToRange(sectionPaddingYPct, 32, 220) + "px",
+        "--section-padding-x": pctToRange(sectionPaddingXPct, 16, 120) + "px",
+        "--item-gap": pctToRange(itemGapPct, 12, 84) + "px",
+        "--image-width": pctToRange(imageWidthPct, 44, 100) + "%",
+        "--image-height": pctToRange(imageHeightPct, 220, 720) + "px",
+        "--eyebrow-color": colorTokenValue(eyebrowColor, "rgba(10, 11, 13, 0.7)"),
+        "--heading-color": colorTokenValue(headingColor, "var(--chrome-fg)"),
+        "--card-overlay": Math.max(0, Math.min(100, Number(cardOverlayOpacityPct) || 0)) / 100,
+        "--animation-distance": Math.round(8 + (strength / 100) * 48) + "px",
+        "--animation-scale": 1 + (strength / 100) * 0.08,
       }}
     >
-      <div className={styles.inner}>
-        <EditableText as="p" value={eyebrow} editing={_editing} onChange={(value) => persist("eyebrow", value)} className={styles.eyebrow} placeholder="Eyebrow" />
-        <EditableText as={HeadingTag} value={heading} editing={_editing} onChange={(value) => persist("heading", value)} className={styles.heading} placeholder="Heading" />
-        <ul className={styles.list}>
-          {safeItems.map((item, index) => (
-            <li key={index} className={styles.item}>
-              <h3>{item.heading}</h3>
-              <p>{item.description}</p>
+      <div className={styles.inner + " " + animationClass}>
+        <EditableText as="p" value={eyebrow} editing={_editing} onChange={(value) => persist("eyebrow", value)} className={styles.eyebrow + " " + typographyClass(eyebrowTypography)} placeholder="Eyebrow" />
+        <EditableText as={HeadingTag} value={heading} editing={_editing} onChange={(value) => persist("heading", value)} className={styles.heading + " " + typographyClass(headingTypography)} placeholder="Heading" />
+        <img className={styles.image} src={image} alt={imageAlt} />
+        <ul className={styles.cards}>
+          {safeCards.map((item, index) => (
+            <li key={index} className={styles.card} style={{ "--card-image": "url(" + (item.image || DEFAULT_IMAGE) + ")" }}>
+              <div className={styles.cardContent}>
+                <h3>{item.heading}</h3>
+                <p>{item.description}</p>
+              </div>
             </li>
           ))}
         </ul>
@@ -1473,41 +1547,121 @@ export default function NewSectionTemplate({
 
 function buildSectionCss() {
   return `.root {
-  padding: var(--section-padding, 112px) var(--sg-space-sitePadding, 2rem);
+  padding: var(--section-padding-y, 112px) var(--section-padding-x, var(--sg-space-sitePadding, 2rem));
   background: var(--chrome-ground);
-  color: var(--section-text, var(--chrome-fg));
+  color: var(--chrome-fg);
 }
 
 .inner {
-  max-width: 1120px;
+  display: grid;
+  gap: var(--item-gap, 40px);
+  max-width: 1180px;
   margin: 0 auto;
 }
 
+.liftFade {
+  animation: liftFade 620ms ease both;
+}
+
+.scaleFade {
+  animation: scaleFade 620ms ease both;
+}
+
 .eyebrow {
-  margin: 0 0 16px;
-  color: color-mix(in srgb, currentColor 70%, transparent);
-  font-size: 0.875rem;
+  margin: 0;
+  color: var(--eyebrow-color, color-mix(in srgb, currentColor 70%, transparent));
+  font-size: 1rem;
   text-transform: uppercase;
 }
 
 .heading {
   max-width: 760px;
   margin: 0;
+  color: var(--heading-color, currentColor);
 }
 
-.list {
+.image {
+  display: block;
+  width: min(100%, var(--image-width, 72%));
+  height: var(--image-height, 460px);
+  object-fit: cover;
+  border-radius: 0.25rem;
+}
+
+.cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 24px;
-  margin: 48px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.item {
-  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+.card {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: 280px;
+  overflow: hidden;
   border-radius: 0.25rem;
+  background-image: linear-gradient(
+      rgba(0, 0, 0, var(--card-overlay, 0.45)),
+      rgba(0, 0, 0, var(--card-overlay, 0.45))
+    ),
+    var(--card-image);
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+.cardContent {
+  display: grid;
+  gap: 10px;
   padding: 24px;
+}
+
+.card h3,
+.card p {
+  margin: 0;
+}
+
+@keyframes liftFade {
+  from { opacity: 0; transform: translateY(var(--animation-distance, 32px)); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleFade {
+  from { opacity: 0; transform: scale(var(--animation-scale, 1.04)); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 900px) {
+  .root {
+    padding: min(var(--section-padding-y, 96px), 96px) min(var(--section-padding-x, 40px), 40px);
+  }
+
+  .inner {
+    gap: min(var(--item-gap, 32px), 40px);
+  }
+
+  .image {
+    width: 100%;
+    height: min(var(--image-height, 420px), 460px);
+  }
+}
+
+@media (max-width: 560px) {
+  .root {
+    padding: min(var(--section-padding-y, 72px), 72px) min(var(--section-padding-x, 24px), 24px);
+  }
+
+  .image {
+    height: min(var(--image-height, 320px), 340px);
+  }
+
+  .card {
+    min-height: 220px;
+  }
 }
 `;
 }
