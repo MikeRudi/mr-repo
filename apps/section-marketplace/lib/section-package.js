@@ -244,7 +244,9 @@ The app shows the selected section and a MakeReign-style prop panel:
 - Update Animation
 - Auto play or Play animation when relevant
 
-When the section is ready, click \`Export section JSON\` in the app. It downloads a clean JSON upload package for the selected section. You can also run:
+When the section is ready, click \`Export section JSON\` in the app. It downloads a clean JSON upload package for the selected section and preserves the current panel settings. Use this button after adjusting sliders, dropdowns, CMS items, typography, colors, or animation controls.
+
+You can also run the script below after your AI has written the final approved values into \`section.json\` as \`initialProps\`, matching \`controls[].defaultValue\`, and \`cms.defaultValue\`:
 
 \`\`\`bash
 npm run export -- klarheit-contact-01
@@ -448,7 +450,7 @@ export default function LocalSectionBuilder() {
   }
 
   function exportSection() {
-    const packageData = createSectionPackage(selected);
+    const packageData = createSectionPackage(selected, props);
     const blob = new Blob([JSON.stringify(packageData, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -709,11 +711,26 @@ function TokenSelect({ options, value, onChange }) {
   );
 }
 
-function createSectionPackage(section) {
+function manifestWithCurrentProps(section, props) {
+  const manifest = JSON.parse(section.json);
+  manifest.initialProps = props;
+  manifest.controls = (manifest.controls ?? []).map((control) =>
+    Object.prototype.hasOwnProperty.call(props, control.key)
+      ? { ...control, defaultValue: props[control.key] }
+      : control
+  );
+  if (manifest.cms?.key && Object.prototype.hasOwnProperty.call(props, manifest.cms.key)) {
+    manifest.cms = { ...manifest.cms, defaultValue: props[manifest.cms.key] };
+  }
+  return JSON.stringify(manifest, null, 2) + "\\n";
+}
+
+function createSectionPackage(section, props) {
+  const nextJson = manifestWithCurrentProps(section, props);
   const files = {
     "section/Section.jsx": section.source,
     "section/Section.module.css": section.css,
-    "section/section.json": section.json,
+    "section/section.json": nextJson,
     "section/README.md": section.readme,
   };
   for (const [path, content] of Object.entries(ruleSource)) {
@@ -724,6 +741,7 @@ function createSectionPackage(section) {
     packageVersion: "0.2.0",
     createdAt: new Date().toISOString(),
     instructions: "Exported from the MakeReign Local Section Builder.",
+    initialProps: props,
     files,
   };
 }
@@ -1477,7 +1495,9 @@ If the referenced section has a form, render a static visual form with semantic 
 
 const SECTION_EXPORT_RULES = `# Export Rules
 
-Use the local app's \`Export section JSON\` button for the selected section, or run:
+Use the local app's \`Export section JSON\` button for the selected section. This is the preferred path because it preserves the current panel state.
+
+Only run the script manually after the final approved panel values have been written into \`section.json\` as \`initialProps\`, matching \`controls[].defaultValue\`, and \`cms.defaultValue\`:
 
 \`\`\`bash
 npm run export -- section-id
@@ -1489,6 +1509,7 @@ The exported upload JSON must be a single \`make-reign-section-package\` object 
 {
   "kind": "make-reign-section-package",
   "packageVersion": "0.2.0",
+  "initialProps": { "sectionPaddingYPct": 50, "animationPreset": "scaleShift" },
   "files": {
     "section/Section.jsx": "...",
     "section/Section.module.css": "...",
@@ -1499,6 +1520,15 @@ The exported upload JSON must be a single \`make-reign-section-package\` object 
   }
 }
 \`\`\`
+
+The uploaded section must open in the main MakeReign builder exactly as it looked when exported. Any local panel change made by the user must be represented in the package:
+
+- Put the complete current prop state in top-level \`initialProps\`.
+- Mirror matching values into \`section/section.json -> controls[].defaultValue\`.
+- Mirror CMS list values into \`section/section.json -> cms.defaultValue\`.
+- Do not rely on in-browser React state unless the in-app export button is used.
+
+For animated or absolute-positioned images, set explicit dimensions and guard against app-level image resets. Image classes that need their real configured size should include \`max-width: none\`, \`display: block\`, and an explicit \`width\` or aspect-ratio/object-fit rule.
 
 If the section uses local images or media, place them in \`public/<section-id>/...\` before export. The export script packages that folder into the JSON upload.
 
@@ -1558,7 +1588,7 @@ On tablet and mobile:
 
 ## Export
 
-Use the in-app \`Export section JSON\` button for the selected section. It downloads a clean upload JSON package for that section only.
+Use the in-app \`Export section JSON\` button for the selected section. It downloads a clean upload JSON package for that section only and includes the current panel values.
 `;
 
 const URL_REFERENCE_RULES = `# URL Reference Rules

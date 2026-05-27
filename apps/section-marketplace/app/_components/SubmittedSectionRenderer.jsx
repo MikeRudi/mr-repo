@@ -140,6 +140,14 @@ export default function SubmittedSectionRenderer({
   const cssWithAssets = useMemo(() => rewriteAssetPaths(css, assetUrls), [css, assetUrls]);
   const classMap = useMemo(() => makeClassMap(cssWithAssets, sectionId), [cssWithAssets, sectionId]);
   const scopedCss = useMemo(() => scopeCss(cssWithAssets, classMap), [cssWithAssets, classMap]);
+  const resetCss = useMemo(() => makeSubmittedResetCss(classMap), [classMap]);
+  const effectiveProps = useMemo(
+    () => ({
+      ...(section?.initialProps && typeof section.initialProps === "object" ? section.initialProps : {}),
+      ...props,
+    }),
+    [section?.initialProps, props]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -188,10 +196,16 @@ export default function SubmittedSectionRenderer({
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: scopedCss }} />
-      <Component {...props} _editing={editing} _onPropChange={onPropChange} />
+      <style dangerouslySetInnerHTML={{ __html: scopedCss + resetCss }} />
+      <Component {...effectiveProps} _editing={editing} _onPropChange={onPropChange} />
     </>
   );
+}
+
+function makeSubmittedResetCss(classMap) {
+  const createdMedia = classMap.createdMedia;
+  if (!createdMedia) return "";
+  return `\n.${createdMedia} { max-width: none; display: block; }\n`;
 }
 
 function SubmittedError({ section, message, muted = false }) {

@@ -73,7 +73,7 @@ export default function BuildModeActions() {
         className="text-[16px] text-[var(--chrome-fg-muted)]"
         style={{ textTransform: "none", letterSpacing: "normal" }}
       >
-        Latest update: May 27, 2026 14:28 SAST
+        Latest update: May 27, 2026 15:04 SAST
       </p>
     </div>
   );

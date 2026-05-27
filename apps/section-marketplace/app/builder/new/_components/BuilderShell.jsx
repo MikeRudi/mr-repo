@@ -35,6 +35,18 @@ function makePage(name = "Home", slug = "/") {
   return { id: uid(), name, slug, sections: [] };
 }
 
+function defaultPropsFromSection(section) {
+  const props = {};
+  for (const control of section?.controls ?? []) {
+    if (control?.defaultValue !== undefined) props[control.key] = control.defaultValue;
+  }
+  if (section?.cms?.key) props[section.cms.key] = section.cms.defaultValue ?? [];
+  return {
+    ...props,
+    ...(section?.initialProps && typeof section.initialProps === "object" ? section.initialProps : {}),
+  };
+}
+
 export default function BuilderShell({ initialSections, initialTemplate }) {
   const [activeTool, setActiveTool] = useState("sections");
   const [pages, setPages] = useState([makePage()]);
@@ -199,6 +211,8 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
 
   const addSection = (sectionId) => {
     const newId = uid();
+    const meta = initialSections.find((section) => section.id === sectionId);
+    const props = defaultPropsFromSection(meta);
     setActiveSectionPanel(null);
     setPages((p) =>
       p.map((pg) =>
@@ -206,7 +220,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
           ? pg
           : {
               ...pg,
-              sections: [...pg.sections, { id: newId, sectionId, props: {} }],
+              sections: [...pg.sections, { id: newId, sectionId, props }],
             }
       )
     );

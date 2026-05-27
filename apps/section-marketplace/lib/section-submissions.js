@@ -112,6 +112,7 @@ function submissionToSection(row) {
       description: manifest.description ?? manifest.summary ?? "Activated section submitted through Build Mode.",
       dependencies: manifest.dependencies ?? [],
       tags: [...new Set([...(manifest.tags ?? []), "submitted"])],
+      initialProps: row.package.initialProps ?? manifest.initialProps ?? manifest.defaultProps ?? null,
       kind: "section",
       source: "submission",
       submissionId: row.id,

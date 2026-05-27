@@ -197,6 +197,17 @@ The exported upload JSON must be a single `make-reign-section-package` object wi
 
 If a section uses local images or media, put them under `public/<section-id>/...` before export. The export script packages those assets into JSON so the main app can render them after upload.
 
+The exported package should also preserve the final builder panel state. The local app's **Export section JSON** button writes the current panel values into `initialProps` and updates matching `controls[].defaultValue` and `cms.defaultValue` in `section/section.json`. If exporting with a script or custom AI workflow, persist the final approved panel values the same way before creating the JSON, so the main app opens the uploaded section exactly as it looked at export time.
+
+Do not rely on temporary React state, browser memory, or "the user can adjust it again later" as the exported source of truth. If a slider, select, toggle, inline text edit, or CMS edit is visible in the local preview at export time, that value must exist in the exported JSON.
+
+Image and media sizing must survive the main app builder. For animated, absolute, hover, or overlay images, define explicit sizing in CSS and guard against app-level image resets:
+
+- Use explicit `width`, `height`/`aspect-ratio`, and `object-fit` when the image has a visual box.
+- Add `max-width: none` and `display: block` to image classes that must not be constrained by parent letter/card width.
+- Do not depend on an invisible parent box to size the actual `<img>` element.
+- Test the uploaded section in the main builder, not only the local builder.
+
 The upload JSON must not contain the reusable builder app, `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
 
 Do not upload loose files. ZIP exports are still accepted for backward compatibility, but JSON is the preferred export from the local builder.
