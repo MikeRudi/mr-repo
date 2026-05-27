@@ -503,56 +503,113 @@ export default function LocalSectionBuilder() {
       </section>
 
       <aside className="mr-panel mr-panel--right">
-        <div className="mr-panel__header">
-          <p className="mr-eyebrow">Section panel</p>
-          <h1>{selected.manifest.name}</h1>
-          <p>Update the selected section controls.</p>
-        </div>
-
-        <div className="mr-actions">
-          <button type="button" onClick={() => setActivePanel(activePanel === "cms" ? null : "cms")}>Update CMS</button>
-          <button type="button" onClick={() => setActivePanel(activePanel === "styles" ? null : "styles")}>Update Styles</button>
-          <button type="button" onClick={() => setActivePanel(activePanel === "animation" ? null : "animation")}>Update Animation</button>
-          {autoControl ? (
-            <label className="mr-toggle">
-              <input
-                type="checkbox"
-                checked={Boolean(props[autoControl.key] ?? autoControl.defaultValue)}
-                onChange={(event) => update(autoControl.key, event.target.checked)}
-              />
-              Auto play
-            </label>
-          ) : hasAnimation ? (
-            <button type="button" onClick={() => setPreviewKey((key) => key + 1)}>Play animation</button>
-          ) : (
-            <button type="button" onClick={() => setPreviewKey((key) => key + 1)}>Play animation</button>
-          )}
-        </div>
-
-        <Panel activePanel={activePanel} cms={cms} groups={groups} props={props} update={update} />
+        {!activePanel ? (
+          <InspectorBasePanel
+            name={selected.manifest.name}
+            hasCms={Boolean(cms)}
+            hasAnimation={hasAnimation}
+            autoControl={autoControl}
+            props={props}
+            onOpenCms={() => setActivePanel("cms")}
+            onOpenPanel={setActivePanel}
+            onPlayAnimation={() => setPreviewKey((key) => key + 1)}
+            onToggleAuto={(value) => update(autoControl.key, value)}
+          />
+        ) : activePanel === "cms" ? (
+          <CmsPanel
+            name={selected.manifest.name}
+            cms={cms}
+            value={props[cms?.key] ?? []}
+            onChange={(value) => update(cms.key, value)}
+            onClose={() => setActivePanel(null)}
+          />
+        ) : (
+          <FocusedControlsPanel
+            name={selected.manifest.name}
+            panel={activePanel}
+            controls={groups[activePanel] ?? []}
+            props={props}
+            update={update}
+            onClose={() => setActivePanel(null)}
+          />
+        )}
       </aside>
     </main>
   );
 }
 
-function Panel({ activePanel, cms, groups, props, update }) {
-  if (!activePanel) {
-    return <div className="mr-empty">Choose Update CMS, Update Styles, or Update Animation. Double-click visible section text in the preview to edit it inline.</div>;
-  }
-  if (activePanel === "cms" && cms) {
-    return <CmsPanel cms={cms} value={props[cms.key] ?? []} onChange={(value) => update(cms.key, value)} />;
-  }
-  const controls = groups[activePanel] ?? [];
+function InspectorBasePanel({ name, hasCms, hasAnimation, autoControl, props, onOpenCms, onOpenPanel, onPlayAnimation, onToggleAuto }) {
+  const autoValue = autoControl ? Boolean(props[autoControl.key] ?? autoControl.defaultValue) : false;
   return (
-    <div className="mr-control-list">
-      {controls.length ? controls.map((control) => (
-        <Control key={control.key} control={control} value={props[control.key] ?? control.defaultValue ?? ""} onChange={(value) => update(control.key, value)} />
-      )) : <p>No controls in this panel yet.</p>}
+    <div className="mr-inspector">
+      <header className="mr-inspector-header">
+        <span>{name}</span>
+        <button type="button" aria-label="Close inspector">x</button>
+      </header>
+      <div className="mr-inspector-body">
+        <div className="mr-panel-card">
+          <p className="mr-panel-label">Section panels</p>
+          <div className="mr-panel-actions">
+            {hasCms ? <button type="button" onClick={onOpenCms}>Update CMS</button> : null}
+            <button type="button" className="mr-ghost-button" onClick={() => onOpenPanel("styles")}>Update Styles</button>
+            {hasAnimation ? <button type="button" className="mr-ghost-button" onClick={() => onOpenPanel("animation")}>Update Animation</button> : null}
+            {autoControl ? (
+              <button type="button" className={autoValue ? "" : "mr-ghost-button"} onClick={() => onToggleAuto(!autoValue)} aria-pressed={autoValue}>
+                Auto play {autoValue ? "On" : "Off"}
+              </button>
+            ) : null}
+            <button type="button" className="mr-ghost-button" onClick={onPlayAnimation}>Play animation</button>
+          </div>
+        </div>
+        <p className="mr-empty">Double-click visible section text in the preview to edit it inline.</p>
+      </div>
     </div>
   );
 }
 
-function CmsPanel({ cms, value, onChange }) {
+function FocusedControlsPanel({ name, panel, controls, props, update, onClose }) {
+  const grouped = panel === "styles" ? groupStyleControls(controls) : null;
+  return (
+    <div className="mr-inspector">
+      <PanelHeader title={panel === "styles" ? "Styles" : panel === "animation" ? "Animation" : "Controls"} subtitle={name} onClose={onClose} />
+      <div className="mr-inspector-body">
+        {controls.length === 0 ? <p className="mr-empty">No controls in this panel yet.</p> : null}
+        {grouped ? grouped.map((group) => (
+          <details key={group.id} className="mr-details">
+            <summary>{group.label}</summary>
+            <div className="mr-details-body">
+              {group.controls.map((control) => (
+                <Control key={control.key} control={control} value={props[control.key] ?? control.defaultValue ?? ""} onChange={(value) => update(control.key, value)} />
+              ))}
+            </div>
+          </details>
+        )) : controls.map((control) => (
+          <Control key={control.key} control={control} value={props[control.key] ?? control.defaultValue ?? ""} onChange={(value) => update(control.key, value)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function groupStyleControls(controls) {
+  return [["typography", "Typography"], ["layout", "Layout"], ["color", "Color"], ["spacing", "Spacing"]]
+    .map(([id, label]) => ({ id, label, controls: controls.filter((control) => control.group === id) }))
+    .filter((group) => group.controls.length > 0);
+}
+
+function PanelHeader({ title, subtitle, onClose }) {
+  return (
+    <header className="mr-inspector-header">
+      <div className="mr-inspector-title">
+        <p>{title}</p>
+        <span>{subtitle}</span>
+      </div>
+      <button type="button" onClick={onClose} aria-label="Close panel">x</button>
+    </header>
+  );
+}
+
+function CmsPanel({ name, cms, value, onChange, onClose }) {
   const rows = Array.isArray(value) ? value : [];
   const fields = cms.fields ?? [];
   function updateRow(index, key, nextValue) {
@@ -566,27 +623,37 @@ function CmsPanel({ cms, value, onChange }) {
     onChange(rows.filter((_, rowIndex) => rowIndex !== index));
   }
   return (
-    <div className="mr-control-list">
-      <div className="mr-panel-row">
-        <h2>{cms.label ?? "CMS"}</h2>
-        <button type="button" onClick={addRow}>Add item</button>
-      </div>
-      {rows.map((row, index) => (
-        <fieldset key={index} className="mr-cms-row">
-          <legend>Item {index + 1}</legend>
-          {fields.map((field) => (
-            <label key={field.key}>
-              <span>{field.label ?? field.key}</span>
-              {field.type === "textarea" ? (
-                <textarea value={row[field.key] ?? ""} onChange={(event) => updateRow(index, field.key, event.target.value)} />
-              ) : (
-                <input value={row[field.key] ?? ""} onChange={(event) => updateRow(index, field.key, event.target.value)} />
-              )}
-            </label>
+    <div className="mr-inspector">
+      <PanelHeader title="Section CMS" subtitle={name} onClose={onClose} />
+      <div className="mr-inspector-body">
+        <div className="mr-cms-heading">
+          <p>{cms.label ?? "Items"}</p>
+          <button type="button" onClick={addRow}>+ Add item</button>
+        </div>
+        {rows.length === 0 ? <p className="mr-empty">No items yet.</p> : null}
+        <ul className="mr-cms-list">
+          {rows.map((row, index) => (
+            <li key={index} className="mr-cms-row">
+              <div className="mr-cms-row-header">
+                <span>Item {index + 1}</span>
+                <button type="button" onClick={() => removeRow(index)}>Remove</button>
+              </div>
+              <div className="mr-cms-fields">
+                {fields.map((field) => (
+                  <label key={field.key} className="mr-control">
+                    <span>{field.label ?? field.key}</span>
+                    {field.type === "textarea" ? (
+                      <textarea value={row[field.key] ?? ""} onChange={(event) => updateRow(index, field.key, event.target.value)} />
+                    ) : (
+                      <input value={row[field.key] ?? ""} onChange={(event) => updateRow(index, field.key, event.target.value)} />
+                    )}
+                  </label>
+                ))}
+              </div>
+            </li>
           ))}
-          <button type="button" onClick={() => removeRow(index)}>Remove item</button>
-        </fieldset>
-      ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -602,10 +669,20 @@ function Control({ control, value, onChange }) {
 
 function renderControl(control, value, onChange) {
   if (control.type === "slider") {
+    const min = control.min ?? 0;
+    const max = control.max ?? 100;
+    const mid = Math.round((min + max) / 2);
+    const defaultValue = typeof control.defaultValue === "number" ? control.defaultValue : mid;
+    const current = typeof value === "number" ? value : defaultValue;
+    const isPercent = min === 0 && max === 100;
     return (
       <div className="mr-slider">
-        <input type="range" min={control.min ?? 0} max={control.max ?? 100} step={control.step ?? 1} value={Number(value ?? control.defaultValue ?? 50)} onChange={(event) => onChange(Number(event.target.value))} />
-        <output>{value}</output>
+        <input type="range" min={min} max={max} step={control.step ?? 1} value={current} onChange={(event) => onChange(Number(event.target.value))} onDoubleClick={() => onChange(defaultValue)} />
+        <div className="mr-slider-scale">
+          <span>{isPercent ? "0%" : min}</span>
+          <span>{isPercent ? defaultValue + "%" : defaultValue}</span>
+          <span>{isPercent ? "100%" : max}</span>
+        </div>
       </div>
     );
   }
@@ -707,6 +784,7 @@ button, input, select, textarea { font: inherit; }
 
 .mr-panel--right {
   border-left: 1px solid var(--chrome-border);
+  padding: 0;
 }
 
 .mr-panel__header {
@@ -799,11 +877,184 @@ button, input, select, textarea { font: inherit; }
   line-height: 1.5;
 }
 
+.mr-inspector {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mr-inspector-header {
+  display: flex;
+  min-height: 4rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--chrome-border);
+  padding: 0 1.25rem;
+}
+
+.mr-inspector-header > span,
+.mr-inspector-title p {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--chrome-fg);
+}
+
+.mr-inspector-title {
+  min-width: 0;
+}
+
+.mr-inspector-title span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--chrome-fg-muted);
+  font-size: 1rem;
+}
+
+.mr-inspector-header button,
+.mr-panel-actions button,
+.mr-cms-heading button,
+.mr-cms-row-header button {
+  min-height: 2.5rem;
+  border: 1px solid var(--chrome-border);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--chrome-fg);
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.mr-inspector-header button {
+  width: 2.5rem;
+  padding: 0;
+}
+
+.mr-inspector-header button:hover,
+.mr-panel-actions button:hover,
+.mr-cms-heading button:hover {
+  background: var(--chrome-fg);
+  color: #fff;
+}
+
+.mr-inspector-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+
+.mr-panel-card,
+.mr-details,
+.mr-cms-row {
+  border: 1px solid var(--chrome-border);
+  border-radius: 0.25rem;
+  background: var(--chrome-ground);
+}
+
+.mr-panel-card {
+  padding: 1rem;
+}
+
+.mr-panel-label {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--chrome-fg);
+}
+
+.mr-panel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mr-panel-actions button {
+  width: 100%;
+}
+
+.mr-panel-actions .mr-ghost-button {
+  background: transparent;
+}
+
+.mr-details summary {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--chrome-fg);
+}
+
+.mr-details-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border-top: 1px solid var(--chrome-border);
+  padding: 1rem;
+}
+
+.mr-cms-heading,
+.mr-cms-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.mr-cms-heading p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--chrome-fg);
+}
+
+.mr-cms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mr-cms-row {
+  padding: 1rem;
+}
+
+.mr-cms-row-header {
+  margin-bottom: 0.75rem;
+}
+
+.mr-cms-row-header span {
+  color: var(--chrome-fg-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.mr-cms-row-header button {
+  border: 0;
+  color: #a33;
+  padding: 0;
+}
+
+.mr-cms-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .mr-control,
 .mr-cms-row label {
   display: grid;
   gap: 0.4rem;
-  margin-top: 1rem;
 }
 
 .mr-control span,
@@ -832,35 +1083,14 @@ button, input, select, textarea { font: inherit; }
 
 .mr-slider {
   display: grid;
-  grid-template-columns: 1fr 3rem;
-  align-items: center;
   gap: 0.5rem;
 }
 
-.mr-panel-row {
+.mr-slider-scale {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-}
-
-.mr-panel-row h2 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.mr-cms-row {
-  display: grid;
-  gap: 0.75rem;
-  border: 1px solid var(--chrome-border);
-  border-radius: 0.25rem;
-  padding: 0.75rem;
-}
-
-.mr-cms-row legend {
-  padding: 0 0.35rem;
-  font-weight: 600;
+  color: var(--chrome-fg-muted);
+  font-size: 0.7rem;
 }
 
 .mr-canvas {

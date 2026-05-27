@@ -37,36 +37,44 @@ export default function BuildModeActions() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <a
-        href="/api/library/build-mode/package"
-        className="btn-chrome"
-      >
-        Make a new section
-      </a>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="application/json,.json,application/zip,.zip"
-        className="sr-only"
-        onChange={(event) => uploadPackage(event.target.files?.[0])}
-      />
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        disabled={uploading}
-        className="btn-chrome btn-chrome--ghost"
-      >
-        {uploading ? "Uploading..." : "Upload section"}
-      </button>
-      {status ? (
-        <span
-          className="text-[16px] text-[var(--chrome-fg-muted)]"
-          style={{ textTransform: "none", letterSpacing: "normal" }}
+    <div className="flex flex-col items-start gap-2">
+      <div className="flex flex-wrap items-center gap-3">
+        <a
+          href="/api/library/build-mode/package"
+          className="btn-chrome"
         >
-          {status}
-        </span>
-      ) : null}
+          Make a new section
+        </a>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="application/json,.json,application/zip,.zip"
+          className="sr-only"
+          onChange={(event) => uploadPackage(event.target.files?.[0])}
+        />
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="btn-chrome btn-chrome--ghost"
+        >
+          {uploading ? "Uploading..." : "Upload section"}
+        </button>
+        {status ? (
+          <span
+            className="text-[16px] text-[var(--chrome-fg-muted)]"
+            style={{ textTransform: "none", letterSpacing: "normal" }}
+          >
+            {status}
+          </span>
+        ) : null}
+      </div>
+      <p
+        className="text-[16px] text-[var(--chrome-fg-muted)]"
+        style={{ textTransform: "none", letterSpacing: "normal" }}
+      >
+        Latest update: May 27, 2026 13:37 SAST
+      </p>
     </div>
   );
 }
