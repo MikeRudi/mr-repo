@@ -1654,6 +1654,8 @@ Visible section-level headings, eyebrows, body copy, button labels, and link lab
 ## Animation
 
 If animation is automatic, expose an \`Auto play\` toggle. If animation is manual or scroll-triggered, expose a \`Play animation\` action instead.
+
+The main MakeReign builder provides \`Play animation\` automatically for sections with animation controls. Your section component should accept \`_playAnimationKey\` and replay its manual animation whenever that value changes. Do not put a custom play button inside the section itself.
 `;
 
 const SECTION_SCHEMA_REFERENCE = JSON.stringify(

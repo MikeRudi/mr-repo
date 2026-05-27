@@ -64,6 +64,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
   const [hydrated, setHydrated] = useState(false);
   const [styleEditorOpen, setStyleEditorOpen] = useState(false);
   const [activeSectionPanel, setActiveSectionPanel] = useState(null);
+  const [playAnimationKeys, setPlayAnimationKeys] = useState({});
 
   // Hydrate from the onboarding wizard's sessionStorage payload on mount.
   // If absent (e.g. user came straight to /builder/new), keep defaults.
@@ -266,6 +267,13 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
       )
     );
   };
+  const playSectionAnimation = (instanceId) => {
+    if (!instanceId) return;
+    setPlayAnimationKeys((current) => ({
+      ...current,
+      [instanceId]: (current[instanceId] ?? 0) + 1,
+    }));
+  };
 
   const canvasCss = useMemo(
     () => generateCss(tokens, ".sg-canvas-builder", { scoped: true }),
@@ -424,6 +432,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             page={activePage}
             sectionsMeta={initialSections}
             selectedId={selectedSectionId}
+            playAnimationKeys={playAnimationKeys}
             onSelectSection={(id) => {
               setActiveSectionPanel(null);
               setSelectedSectionId(id);
@@ -463,6 +472,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             props={selectedInstance?.props ?? {}}
             context={inspectorContext}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
+            onPlayAnimation={() => playSectionAnimation(selectedSectionId)}
             onClose={() => setActiveSectionPanel(null)}
           />
         </aside>
@@ -478,6 +488,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
             onOpenCms={() => setActiveSectionPanel("cms")}
             onOpenPanel={setActiveSectionPanel}
+            onPlayAnimation={() => playSectionAnimation(selectedSectionId)}
             onClose={() => setSelectedSectionId(null)}
             onMoveUp={() => moveSection(selectedSectionId, -1)}
             onMoveDown={() => moveSection(selectedSectionId, +1)}
@@ -580,7 +591,16 @@ function humanizeToken(key) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRemove, onPropChange }) {
+function Canvas({
+  page,
+  sectionsMeta,
+  selectedId,
+  playAnimationKeys,
+  onSelectSection,
+  onMove,
+  onRemove,
+  onPropChange,
+}) {
   if (!page) return null;
 
   if (page.sections.length === 0) {
@@ -604,6 +624,7 @@ function Canvas({ page, sectionsMeta, selectedId, onSelectSection, onMove, onRem
           instance={inst}
           meta={sectionsMeta.find((s) => s.id === inst.sectionId)}
           selected={inst.id === selectedId}
+          playAnimationKey={playAnimationKeys[inst.id] ?? 0}
           onSelect={() => onSelectSection(inst.id)}
           onMoveUp={() => onMove(inst.id, -1)}
           onMoveDown={() => onMove(inst.id, +1)}
@@ -619,6 +640,7 @@ function SectionInstance({
   instance,
   meta,
   selected,
+  playAnimationKey,
   onSelect,
   onMoveUp,
   onMoveDown,
@@ -642,13 +664,14 @@ function SectionInstance({
       {Component ? (
         <Component
           {...instance.props}
+          _playAnimationKey={playAnimationKey}
           _editing
           _onPropChange={onPropChange}
         />
       ) : isSubmitted ? (
         <SubmittedSectionRenderer
           section={meta}
-          props={instance.props}
+          props={{ ...instance.props, _playAnimationKey: playAnimationKey }}
           editing
           onPropChange={onPropChange}
         />

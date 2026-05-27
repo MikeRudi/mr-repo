@@ -29,6 +29,7 @@ export default function InspectorPanel({
   onChange,
   onOpenCms,
   onOpenPanel,
+  onPlayAnimation,
   onClose,
 }) {
   const scrollRef = useRef(null);
@@ -92,6 +93,15 @@ export default function InspectorPanel({
                   Update {panel.label}
                 </button>
               ))}
+              {panels.some((panel) => panel.id === "animation") ? (
+                <button
+                  type="button"
+                  onClick={onPlayAnimation}
+                  className="btn-chrome btn-chrome--ghost btn-chrome--block"
+                >
+                  Play animation
+                </button>
+              ) : null}
             </div>
           </div>
         ) : null}

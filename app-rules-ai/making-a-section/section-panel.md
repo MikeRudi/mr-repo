@@ -71,6 +71,8 @@ If a section has automatic rotation or automatic animation playback, the base se
 
 If a section has animation but it is not automatic, such as a scroll-triggered or one-shot reveal, the base selected-section panel should show a `Play animation` button instead of an auto toggle.
 
+The main MakeReign builder provides `Play animation` as a default action for sections with animation controls. New sections should listen for the `_playAnimationKey` prop and replay their manual animation whenever that number changes. Do not create a custom play button inside the section markup.
+
 Animation controls belong in `panel: "animation"`. Examples:
 
 - animation style dropdown

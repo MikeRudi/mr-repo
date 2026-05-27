@@ -21,6 +21,7 @@ export default function SectionControlsPanel({
   props = {},
   context = {},
   onChange,
+  onPlayAnimation,
   onClose,
 }) {
   const groupedControls = panel === "styles" ? groupStyleControls(controls) : null;
@@ -60,6 +61,15 @@ export default function SectionControlsPanel({
       </header>
 
       <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-5">
+        {panel === "animation" ? (
+          <button
+            type="button"
+            onClick={onPlayAnimation}
+            className="btn-chrome btn-chrome--block"
+          >
+            Play animation
+          </button>
+        ) : null}
         {controls.length === 0 ? (
           <p
             className="app-text"
