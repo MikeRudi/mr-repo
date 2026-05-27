@@ -406,6 +406,7 @@ export default function LocalSectionBuilder() {
   );
   const [activePanel, setActivePanel] = useState(null);
   const [previewKey, setPreviewKey] = useState(0);
+  const [playAnimationKey, setPlayAnimationKey] = useState(0);
   const [exportStatus, setExportStatus] = useState("");
   const [newSectionStatus, setNewSectionStatus] = useState("");
   const [isPreviewFullscreen, setIsPreviewFullscreen] = useState(false);
@@ -500,7 +501,7 @@ export default function LocalSectionBuilder() {
           <button type="button" className="mr-preview-exit" onClick={() => setIsPreviewFullscreen(false)}>Exit preview</button>
         ) : null}
         <div className="mr-style-scope">
-          <Component key={previewKey} {...props} _editing _onPropChange={update} />
+          <Component key={previewKey} {...props} _playAnimationKey={playAnimationKey} _editing _onPropChange={update} />
         </div>
       </section>
 
@@ -514,7 +515,7 @@ export default function LocalSectionBuilder() {
             props={props}
             onOpenCms={() => setActivePanel("cms")}
             onOpenPanel={setActivePanel}
-            onPlayAnimation={() => setPreviewKey((key) => key + 1)}
+            onPlayAnimation={() => setPlayAnimationKey((key) => key + 1)}
             onToggleAuto={(value) => update(autoControl.key, value)}
           />
         ) : activePanel === "cms" ? (
@@ -532,6 +533,7 @@ export default function LocalSectionBuilder() {
             controls={groups[activePanel] ?? []}
             props={props}
             update={update}
+            onPlayAnimation={() => setPlayAnimationKey((key) => key + 1)}
             onClose={() => setActivePanel(null)}
           />
         )}
@@ -569,12 +571,13 @@ function InspectorBasePanel({ name, hasCms, hasAnimation, autoControl, props, on
   );
 }
 
-function FocusedControlsPanel({ name, panel, controls, props, update, onClose }) {
+function FocusedControlsPanel({ name, panel, controls, props, update, onPlayAnimation, onClose }) {
   const grouped = panel === "styles" ? groupStyleControls(controls) : null;
   return (
     <div className="mr-inspector">
       <PanelHeader title={panel === "styles" ? "Styles" : panel === "animation" ? "Animation" : "Controls"} subtitle={name} onClose={onClose} />
       <div className="mr-inspector-body">
+        {panel === "animation" ? <button type="button" className="mr-full-button" onClick={onPlayAnimation}>Play animation</button> : null}
         {controls.length === 0 ? <p className="mr-empty">No controls in this panel yet.</p> : null}
         {grouped ? grouped.map((group) => (
           <details key={group.id} className="mr-details">
@@ -1529,6 +1532,8 @@ The uploaded section must open in the main MakeReign builder exactly as it looke
 - Do not rely on in-browser React state unless the in-app export button is used.
 
 For animated or absolute-positioned images, set explicit dimensions and guard against app-level image resets. Image classes that need their real configured size should include \`max-width: none\`, \`display: block\`, and an explicit \`width\` or aspect-ratio/object-fit rule.
+
+Spacing controls must visibly affect their named gap. For text stack controls such as \`eyebrowHeadingGapPct\`, apply the value through parent \`gap\`/\`row-gap\` or a wrapper rule instead of a margin that can collapse or be cancelled by another style.
 
 If the section uses local images or media, place them in \`public/<section-id>/...\` before export. The export script packages that folder into the JSON upload.
 

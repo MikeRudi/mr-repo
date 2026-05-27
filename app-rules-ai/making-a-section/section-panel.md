@@ -210,6 +210,8 @@ Image and media sizing must survive the main app builder. For animated, absolute
 - Do not depend on an invisible parent box to size the actual `<img>` element.
 - Test the uploaded section in the main builder, not only the local builder.
 
+Spacing controls must visibly affect the named gap. For text-stack controls like `eyebrowHeadingGapPct`, prefer applying the value through a parent `gap`/`row-gap` or an explicit wrapper spacing rule. Do not rely on a margin that can collapse, be hidden by grid placement, or be visually cancelled by another text style.
+
 The upload JSON must not contain the reusable builder app, `node_modules`, `dist`, build output, temp files, private keys, or absolute filesystem paths.
 
 Do not upload loose files. ZIP exports are still accepted for backward compatibility, but JSON is the preferred export from the local builder.
