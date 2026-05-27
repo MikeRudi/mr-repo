@@ -26,10 +26,12 @@ export default function InspectorPanel({
   context = {},
   hasCms = false,
   panels = [],
+  autoControl = null,
   onChange,
   onOpenCms,
   onOpenPanel,
   onPlayAnimation,
+  onToggleAuto,
   onClose,
 }) {
   const scrollRef = useRef(null);
@@ -47,6 +49,10 @@ export default function InspectorPanel({
     }
     onChange(next);
   };
+  const autoValue = autoControl
+    ? Boolean(props[autoControl.key] ?? autoControl.defaultValue)
+    : false;
+  const hasAnimationPanel = panels.some((panel) => panel.id === "animation");
 
   return (
     <div className="flex h-full flex-col overflow-hidden border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
@@ -93,7 +99,19 @@ export default function InspectorPanel({
                   Update {panel.label}
                 </button>
               ))}
-              {panels.some((panel) => panel.id === "animation") ? (
+              {hasAnimationPanel && autoControl ? (
+                <button
+                  type="button"
+                  onClick={() => onToggleAuto?.(!autoValue)}
+                  className={`btn-chrome btn-chrome--block ${
+                    autoValue ? "" : "btn-chrome--ghost"
+                  }`}
+                  aria-pressed={autoValue}
+                >
+                  Auto play {autoValue ? "On" : "Off"}
+                </button>
+              ) : null}
+              {hasAnimationPanel && !autoControl ? (
                 <button
                   type="button"
                   onClick={onPlayAnimation}

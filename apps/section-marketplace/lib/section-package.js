@@ -1,4 +1,4 @@
-const PACKAGE_VERSION = "0.2.1";
+const PACKAGE_VERSION = "0.2.2";
 const ALLOWED_COLOR_TOKENS = new Set(["light", "dark", "brand"]);
 const ALLOWED_TYPOGRAPHY_TOKENS = new Set(["h1", "h2", "h3", "h4", "h5", "h6", "textLarge", "textMain", "textSmall"]);
 const ALLOWED_BUTTON_VARIANTS = new Set(["primary", "secondary", "ghost"]);
@@ -562,7 +562,7 @@ function InspectorBasePanel({ name, hasCms, hasAnimation, autoControl, props, on
                 Auto play {autoValue ? "On" : "Off"}
               </button>
             ) : null}
-            <button type="button" className="mr-ghost-button" onClick={onPlayAnimation}>Play animation</button>
+            {hasAnimation && !autoControl ? <button type="button" className="mr-ghost-button" onClick={onPlayAnimation}>Play animation</button> : null}
           </div>
         </div>
         <p className="mr-empty">Double-click visible section text in the preview to edit it inline.</p>
@@ -572,13 +572,17 @@ function InspectorBasePanel({ name, hasCms, hasAnimation, autoControl, props, on
 }
 
 function FocusedControlsPanel({ name, panel, controls, props, update, onPlayAnimation, onClose }) {
-  const grouped = panel === "styles" ? groupStyleControls(controls) : null;
+  const autoControl = panel === "animation" ? findAutoControl(controls) : null;
+  const autoValue = autoControl ? Boolean(props[autoControl.key] ?? autoControl.defaultValue) : false;
+  const visibleControls = autoControl ? controls.filter((control) => control.key !== autoControl.key) : controls;
+  const grouped = panel === "styles" ? groupStyleControls(visibleControls) : panel === "animation" ? groupAnimationControls(visibleControls) : null;
   return (
     <div className="mr-inspector">
       <PanelHeader title={panel === "styles" ? "Styles" : panel === "animation" ? "Animation" : "Controls"} subtitle={name} onClose={onClose} />
       <div className="mr-inspector-body">
-        {panel === "animation" ? <button type="button" className="mr-full-button" onClick={onPlayAnimation}>Play animation</button> : null}
-        {controls.length === 0 ? <p className="mr-empty">No controls in this panel yet.</p> : null}
+        {panel === "animation" && autoControl ? <button type="button" className={autoValue ? "mr-full-button" : "mr-full-button mr-ghost-button"} onClick={() => update(autoControl.key, !autoValue)} aria-pressed={autoValue}>Auto play {autoValue ? "On" : "Off"}</button> : null}
+        {panel === "animation" && !autoControl ? <button type="button" className="mr-full-button" onClick={onPlayAnimation}>Play animation</button> : null}
+        {visibleControls.length === 0 ? <p className="mr-empty">No controls in this panel yet.</p> : null}
         {grouped ? grouped.map((group) => (
           <details key={group.id} className="mr-details">
             <summary>{group.label}</summary>
@@ -588,7 +592,7 @@ function FocusedControlsPanel({ name, panel, controls, props, update, onPlayAnim
               ))}
             </div>
           </details>
-        )) : controls.map((control) => (
+        )) : visibleControls.map((control) => (
           <Control key={control.key} control={control} value={props[control.key] ?? control.defaultValue ?? ""} onChange={(value) => update(control.key, value)} />
         ))}
       </div>
@@ -600,6 +604,50 @@ function groupStyleControls(controls) {
   return [["typography", "Typography"], ["layout", "Layout"], ["color", "Color"], ["spacing", "Spacing"]]
     .map(([id, label]) => ({ id, label, controls: controls.filter((control) => control.group === id) }))
     .filter((group) => group.controls.length > 0);
+}
+
+function groupAnimationControls(controls) {
+  const presetControl = controls.find(isPresetSelector);
+  const remaining = controls.filter((control) => control !== presetControl);
+  const globalControls = remaining.filter(isGlobalAnimationControl);
+  const presetGroups = [];
+  for (const control of remaining) {
+    if (isGlobalAnimationControl(control)) continue;
+    const id = control.group || "presetControls";
+    let group = presetGroups.find((item) => item.id === id);
+    if (!group) {
+      group = { id, label: humanizeGroup(id), controls: [] };
+      presetGroups.push(group);
+    }
+    group.controls.push(control);
+  }
+  return [
+    presetControl ? { id: "animationPreset", label: "Animation preset", controls: [presetControl] } : null,
+    globalControls.length ? { id: "animationGlobal", label: "Global controls", controls: globalControls } : null,
+    ...presetGroups,
+  ].filter(Boolean);
+}
+
+function findAutoControl(controls) {
+  return controls.find((control) => control?.type === "toggle" && /auto/i.test((control.key || "") + " " + (control.label || "")));
+}
+
+function isPresetSelector(control) {
+  return control?.type === "select" && /preset|style/i.test((control.key || "") + " " + (control.label || ""));
+}
+
+function isGlobalAnimationControl(control) {
+  const group = String(control?.group ?? "").toLowerCase();
+  if (group === "global" || group === "shared") return true;
+  if (group) return false;
+  return !isPresetSelector(control);
+}
+
+function humanizeGroup(id) {
+  return String(id)
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[-_]+/g, " ")
+    .replace(/\\b\\w/g, (char) => char.toUpperCase());
 }
 
 function PanelHeader({ title, subtitle, onClose }) {
@@ -1511,8 +1559,8 @@ The exported upload JSON must be a single \`make-reign-section-package\` object 
 \`\`\`text
 {
   "kind": "make-reign-section-package",
-  "packageVersion": "0.2.0",
-  "initialProps": { "sectionPaddingYPct": 50, "animationPreset": "scaleShift" },
+  "packageVersion": "0.2.2",
+  "initialProps": { "sectionPaddingYPct": 50, "animationPreset": "liftFade" },
   "files": {
     "section/Section.jsx": "...",
     "section/Section.module.css": "...",
@@ -1575,12 +1623,13 @@ The app previews the selected section and renders a generated MakeReign-style pa
 - Left panel: section project selector, \`Start a new section\`, and export.
 - Left panel: \`Preview fullscreen\` so the user can inspect the selected section without panels.
 - Center: live section preview.
-- Right panel: \`Update CMS\`, \`Update Styles\`, \`Update Animation\`, and \`Play animation\`.
+- Right panel: \`Update CMS\`, \`Update Styles\`, \`Update Animation\`, and either \`Auto play\` or \`Play animation\` when animation exists.
 - \`Update CMS\` appears when \`section.json.cms\` exists.
 - \`Update Styles\` is always expected.
 - \`Update Animation\` appears when animation controls exist.
 - \`Auto play\` appears for automatic animation toggles.
 - \`Play animation\` appears when animation exists without auto-play.
+- Never show both \`Auto play\` and \`Play animation\` for the same section.
 
 ## Responsiveness
 
@@ -1670,7 +1719,16 @@ Visible section-level headings, eyebrows, body copy, button labels, and link lab
 
 If animation is automatic, expose an \`Auto play\` toggle. If animation is manual or scroll-triggered, expose a \`Play animation\` action instead.
 
+Never show both \`Auto play\` and \`Play animation\` for the same section. It is one or the other.
+
 The main MakeReign builder provides \`Play animation\` automatically for sections with animation controls. Your section component should accept \`_playAnimationKey\` and replay its manual animation whenever that value changes. Do not put a custom play button inside the section itself.
+
+Preset-based animation controls must use this structure:
+
+- One preset dropdown, preferably \`animationPreset\`, with \`type: "select"\`, \`panel: "animation"\`, \`group: "preset"\`, and a real default value that matches the section's starting animation.
+- Global controls that affect every preset, such as duration, easing, stagger, or overall strength, with \`group: "global"\` or \`group: "shared"\`.
+- One collapsible control group per preset. The \`group\` value must match the preset value, such as \`liftFade\`, \`scalePop\`, or \`scaleJiggle\`.
+- Per-preset sliders should only affect that preset. Global sliders should affect all presets.
 `;
 
 const SECTION_SCHEMA_REFERENCE = JSON.stringify(
@@ -1716,17 +1774,23 @@ function buildSectionJson() {
         { key: "imageHeightPct", type: "slider", label: "Image height", panel: "styles", group: "layout", min: 0, max: 100, step: 5, defaultValue: 50 },
         { key: "cardOverlayOpacityPct", type: "slider", label: "Card overlay transparency", panel: "styles", group: "color", min: 0, max: 100, step: 5, defaultValue: 45 },
         {
-          key: "animationStyle",
+          key: "animationPreset",
           type: "select",
-          label: "Animation style",
+          label: "Animation preset",
           panel: "animation",
+          group: "preset",
           defaultValue: "liftFade",
           options: [
             { value: "liftFade", label: "Lift and fade" },
             { value: "scaleFade", label: "Scale and fade" }
           ]
         },
-        { key: "animationStrengthPct", type: "slider", label: "Animation strength", panel: "animation", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "animationDurationPct", type: "slider", label: "Duration", panel: "animation", group: "global", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "animationEasePct", type: "slider", label: "Ease", panel: "animation", group: "global", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "liftFadeDistancePct", type: "slider", label: "Lift distance", panel: "animation", group: "liftFade", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "liftFadeOpacityPct", type: "slider", label: "Starting opacity", panel: "animation", group: "liftFade", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "scaleFadeScalePct", type: "slider", label: "Scale amount", panel: "animation", group: "scaleFade", min: 0, max: 100, step: 5, defaultValue: 50 },
+        { key: "scaleFadeOpacityPct", type: "slider", label: "Starting opacity", panel: "animation", group: "scaleFade", min: 0, max: 100, step: 5, defaultValue: 50 },
       ],
       cms: {
         key: "cards",
@@ -1827,8 +1891,13 @@ export default function NewSectionTemplate({
   imageWidthPct = 50,
   imageHeightPct = 50,
   cardOverlayOpacityPct = 45,
-  animationStyle = "liftFade",
-  animationStrengthPct = 50,
+  animationPreset = "liftFade",
+  animationDurationPct = 50,
+  animationEasePct = 50,
+  liftFadeDistancePct = 50,
+  liftFadeOpacityPct = 50,
+  scaleFadeScalePct = 50,
+  scaleFadeOpacityPct = 50,
   cards = DEFAULT_ITEMS,
   _editing = false,
   _playAnimationKey = 0,
@@ -1836,8 +1905,11 @@ export default function NewSectionTemplate({
 } = {}) {
   const safeCards = Array.isArray(cards) && cards.length ? cards : DEFAULT_ITEMS;
   const HeadingTag = /^h[1-6]$/.test(headingTypography) ? headingTypography : "h2";
-  const animationClass = styles[animationStyle] ?? styles.liftFade;
-  const strength = Math.max(0, Math.min(100, Number(animationStrengthPct) || 50));
+  const animationClass = styles[animationPreset] ?? styles.liftFade;
+  const duration = pctToRange(animationDurationPct, 320, 1400);
+  const easeAmount = Math.max(0, Math.min(100, Number(animationEasePct) || 50)) / 100;
+  const liftOpacity = Math.max(0, Math.min(100, Number(liftFadeOpacityPct) || 50)) / 100;
+  const scaleOpacity = Math.max(0, Math.min(100, Number(scaleFadeOpacityPct) || 50)) / 100;
   const persist = (key, value) => {
     if (_onPropChange) _onPropChange(key, value);
   };
@@ -1858,8 +1930,12 @@ export default function NewSectionTemplate({
         "--heading-color": colorTokenValue(headingColor, "var(--chrome-fg)"),
         "--body-color": colorTokenValue(bodyColor, "rgba(10, 11, 13, 0.7)"),
         "--card-overlay": Math.max(0, Math.min(100, Number(cardOverlayOpacityPct) || 0)) / 100,
-        "--animation-distance": Math.round(8 + (strength / 100) * 48) + "px",
-        "--animation-scale": 1 + (strength / 100) * 0.08,
+        "--animation-duration": duration + "ms",
+        "--animation-ease": "cubic-bezier(0.16, " + (0.7 + easeAmount * 0.3).toFixed(2) + ", " + (0.22 + easeAmount * 0.5).toFixed(2) + ", 1)",
+        "--lift-distance": pctToRange(liftFadeDistancePct, 8, 88) + "px",
+        "--lift-start-opacity": Math.max(0, Math.min(0.8, liftOpacity * 0.8)),
+        "--scale-start": (1 + pctToRange(scaleFadeScalePct, 2, 18) / 100).toFixed(2),
+        "--scale-start-opacity": Math.max(0, Math.min(0.8, scaleOpacity * 0.8)),
       }}
     >
       <div key={_playAnimationKey} className={styles.inner + " " + animationClass}>
@@ -1907,11 +1983,11 @@ function buildSectionCss() {
 }
 
 .liftFade {
-  animation: liftFade 620ms ease both;
+  animation: liftFade var(--animation-duration, 720ms) var(--animation-ease, ease) both;
 }
 
 .scaleFade {
-  animation: scaleFade 620ms ease both;
+  animation: scaleFade var(--animation-duration, 720ms) var(--animation-ease, ease) both;
 }
 
 .eyebrow {
@@ -1980,12 +2056,12 @@ function buildSectionCss() {
 }
 
 @keyframes liftFade {
-  from { opacity: 0; transform: translateY(var(--animation-distance, 32px)); }
+  from { opacity: var(--lift-start-opacity, 0); transform: translateY(var(--lift-distance, 32px)); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleFade {
-  from { opacity: 0; transform: scale(var(--animation-scale, 1.04)); }
+  from { opacity: var(--scale-start-opacity, 0); transform: scale(var(--scale-start, 1.06)); }
   to { opacity: 1; transform: scale(1); }
 }
 

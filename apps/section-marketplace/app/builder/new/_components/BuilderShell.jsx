@@ -289,6 +289,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
 
   const showInspector = Boolean(selectedSectionId && selectedMeta);
   const groupedControls = groupControls(selectedMeta?.controls ?? []);
+  const selectedAutoControl = findAutoAnimationControl(selectedMeta?.controls ?? []);
   const availablePanels = [
     groupedControls.styles.length
       ? { id: "styles", label: "Styles" }
@@ -471,6 +472,7 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             controls={activeControls}
             props={selectedInstance?.props ?? {}}
             context={inspectorContext}
+            autoControl={selectedAutoControl}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
             onPlayAnimation={() => playSectionAnimation(selectedSectionId)}
             onClose={() => setActiveSectionPanel(null)}
@@ -485,10 +487,19 @@ export default function BuilderShell({ initialSections, initialTemplate }) {
             context={inspectorContext}
             hasCms={Boolean(selectedMeta?.cms)}
             panels={availablePanels}
+            autoControl={selectedAutoControl}
             onChange={(next) => updateSectionProps(selectedSectionId, next)}
             onOpenCms={() => setActiveSectionPanel("cms")}
             onOpenPanel={setActiveSectionPanel}
             onPlayAnimation={() => playSectionAnimation(selectedSectionId)}
+            onToggleAuto={(value) =>
+              selectedAutoControl
+                ? updateSectionProps(selectedSectionId, {
+                    ...(selectedInstance?.props ?? {}),
+                    [selectedAutoControl.key]: value,
+                  })
+                : null
+            }
             onClose={() => setSelectedSectionId(null)}
             onMoveUp={() => moveSection(selectedSectionId, -1)}
             onMoveDown={() => moveSection(selectedSectionId, +1)}
@@ -550,6 +561,13 @@ function groupControls(controls) {
     }
   }
   return groups;
+}
+
+function findAutoAnimationControl(controls) {
+  return controls.find((control) => {
+    if (control?.type !== "toggle") return false;
+    return /auto/i.test(`${control.key ?? ""} ${control.label ?? ""}`);
+  });
 }
 
 function makeInspectorContext(tokens) {

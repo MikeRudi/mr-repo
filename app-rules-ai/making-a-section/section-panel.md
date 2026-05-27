@@ -71,16 +71,26 @@ If a section has automatic rotation or automatic animation playback, the base se
 
 If a section has animation but it is not automatic, such as a scroll-triggered or one-shot reveal, the base selected-section panel should show a `Play animation` button instead of an auto toggle.
 
+Never show both `Auto play` and `Play animation` for the same section. It is one or the other.
+
 The main MakeReign builder provides `Play animation` as a default action for sections with animation controls. New sections should listen for the `_playAnimationKey` prop and replay their manual animation whenever that number changes. Do not create a custom play button inside the section markup.
 
-Animation controls belong in `panel: "animation"`. Examples:
+Animation controls belong in `panel: "animation"`. Preset-based animation controls must use this structure:
 
-- animation style dropdown
-- timing sliders
-- reveal strength sliders
+- One preset dropdown, preferably `animationPreset`, with `type: "select"`, `panel: "animation"`, `group: "preset"`, and a real default value that matches how the section first renders.
+- Global controls that affect every preset, such as duration, easing, stagger, or overall strength, with `group: "global"` or `group: "shared"`.
+- One collapsible control group per preset. The `group` value must match the preset value, such as `liftFade`, `scalePop`, or `scaleJiggle`.
+- Per-preset sliders should only affect that preset. Global sliders should affect all presets.
+
+Examples:
+
+- animation preset dropdown
+- global duration and ease sliders
+- lift-and-fade distance slider inside `group: "liftFade"`
+- scale-pop overshoot slider inside `group: "scalePop"`
 - scroll trigger mode controls
 
-Changing `animationStyle` must restart the animation preview so the user can immediately see the selected style.
+Changing `animationPreset` or the older `animationStyle` key must restart the animation preview so the user can immediately see the selected style.
 
 ## Text Editing Rules
 
@@ -160,7 +170,7 @@ The local builder UI template must use this structure:
 - Left panel: section project selector, `Start a new section`, and export.
 - Left panel: `Preview fullscreen` so the user can inspect the selected section without panels.
 - Center: live section preview.
-- Right panel: `Update CMS`, `Update Styles`, `Update Animation`, and `Play animation`.
+- Right panel: `Update CMS`, `Update Styles`, `Update Animation`, and either `Auto play` or `Play animation` when animation exists.
 
 When the user first gives this prompt:
 

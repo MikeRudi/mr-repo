@@ -20,12 +20,11 @@ export default function SectionControlsPanel({
   controls = [],
   props = {},
   context = {},
+  autoControl = null,
   onChange,
   onPlayAnimation,
   onClose,
 }) {
-  const groupedControls = panel === "styles" ? groupStyleControls(controls) : null;
-
   const setField = (key, value) => {
     const next = { ...props };
     if (value === undefined) {
@@ -35,6 +34,19 @@ export default function SectionControlsPanel({
     }
     onChange(next);
   };
+  const autoValue = autoControl
+    ? Boolean(props[autoControl.key] ?? autoControl.defaultValue)
+    : false;
+  const visibleControls =
+    panel === "animation" && autoControl
+      ? controls.filter((control) => control.key !== autoControl.key)
+      : controls;
+  const groupedControls =
+    panel === "styles"
+      ? groupStyleControls(visibleControls)
+      : panel === "animation"
+        ? groupAnimationControls(visibleControls)
+        : null;
 
   return (
     <div className="flex h-full flex-col overflow-hidden border-l border-[var(--chrome-border)] bg-[var(--chrome-surface)]">
@@ -61,7 +73,19 @@ export default function SectionControlsPanel({
       </header>
 
       <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-5">
-        {panel === "animation" ? (
+        {panel === "animation" && autoControl ? (
+          <button
+            type="button"
+            onClick={() => setField(autoControl.key, !autoValue)}
+            className={`btn-chrome btn-chrome--block ${
+              autoValue ? "" : "btn-chrome--ghost"
+            }`}
+            aria-pressed={autoValue}
+          >
+            Auto play {autoValue ? "On" : "Off"}
+          </button>
+        ) : null}
+        {panel === "animation" && !autoControl ? (
           <button
             type="button"
             onClick={onPlayAnimation}
@@ -70,7 +94,7 @@ export default function SectionControlsPanel({
             Play animation
           </button>
         ) : null}
-        {controls.length === 0 ? (
+        {visibleControls.length === 0 ? (
           <p
             className="app-text"
             style={{ textTransform: "none", letterSpacing: "normal" }}
@@ -101,7 +125,7 @@ export default function SectionControlsPanel({
                 </div>
               </details>
             ))
-          : controls.map((control) => (
+          : visibleControls.map((control) => (
               <ControlField
                 key={control.key}
                 control={control}
@@ -122,4 +146,59 @@ function groupStyleControls(controls) {
     open: false,
     controls: controls.filter((control) => control.group === id),
   })).filter((group) => group.controls.length > 0);
+}
+
+function groupAnimationControls(controls) {
+  const presetControl = controls.find(isPresetSelector);
+  const remaining = controls.filter((control) => control !== presetControl);
+  const globalControls = remaining.filter(isGlobalAnimationControl);
+  const presetGroups = [];
+  for (const control of remaining) {
+    if (isGlobalAnimationControl(control)) continue;
+    const id = control.group || "presetControls";
+    let group = presetGroups.find((item) => item.id === id);
+    if (!group) {
+      group = { id, label: humanizeGroup(id), open: false, controls: [] };
+      presetGroups.push(group);
+    }
+    group.controls.push(control);
+  }
+  return [
+    presetControl
+      ? {
+          id: "animationPreset",
+          label: "Animation preset",
+          open: true,
+          controls: [presetControl],
+        }
+      : null,
+    globalControls.length
+      ? {
+          id: "animationGlobal",
+          label: "Global controls",
+          open: true,
+          controls: globalControls,
+        }
+      : null,
+    ...presetGroups,
+  ].filter(Boolean);
+}
+
+function isPresetSelector(control) {
+  if (control?.type !== "select") return false;
+  return /preset|style/i.test(`${control.key ?? ""} ${control.label ?? ""}`);
+}
+
+function isGlobalAnimationControl(control) {
+  const group = String(control?.group ?? "").toLowerCase();
+  if (group === "global" || group === "shared") return true;
+  if (group) return false;
+  return !isPresetSelector(control);
+}
+
+function humanizeGroup(id) {
+  return String(id)
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
