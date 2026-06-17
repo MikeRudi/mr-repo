@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-26T21:38:08.394Z",
+  "generatedAt": "2026-06-17T13:40:36.394Z",
   "counts": {
-    "sections": 2,
+    "sections": 7,
     "templates": 1
   },
   "sections": [
@@ -352,6 +352,638 @@
       },
       "kind": "section",
       "path": "sections/accordion/auto-accordion"
+    },
+    {
+      "id": "made-with-gsap-000",
+      "name": "Made With GSAP 000",
+      "category": "gallery",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Interactive saved-items grid with pointer-responsive object tiles inspired by Made With GSAP effect 000.",
+      "dependencies": [
+        "gsap"
+      ],
+      "tags": [
+        "made-with-gsap",
+        "hover",
+        "gallery"
+      ],
+      "controls": [
+        {
+          "key": "sectionBackground",
+          "type": "color-token",
+          "label": "Background color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "dark"
+        },
+        {
+          "key": "textColor",
+          "type": "color-token",
+          "label": "Text color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "light"
+        },
+        {
+          "key": "gridGapPct",
+          "type": "slider",
+          "label": "Grid gap",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "mediaSizePct",
+          "type": "slider",
+          "label": "Media size",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "hoverStrengthPct",
+          "type": "slider",
+          "label": "Hover strength",
+          "panel": "animation",
+          "group": "global",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        }
+      ],
+      "cms": {
+        "key": "items",
+        "label": "Gallery items",
+        "defaultValue": [
+          {
+            "image": "/madewithgsap/000/01.png",
+            "alt": "Saved object 01"
+          },
+          {
+            "image": "/madewithgsap/000/02.png",
+            "alt": "Saved object 02"
+          },
+          {
+            "image": "/madewithgsap/000/03.png",
+            "alt": "Saved object 03"
+          },
+          {
+            "image": "/madewithgsap/000/04.png",
+            "alt": "Saved object 04"
+          },
+          {
+            "image": "/madewithgsap/000/05.png",
+            "alt": "Saved object 05"
+          },
+          {
+            "image": "/madewithgsap/000/06.png",
+            "alt": "Saved object 06"
+          },
+          {
+            "image": "/madewithgsap/000/07.png",
+            "alt": "Saved object 07"
+          },
+          {
+            "image": "/madewithgsap/000/08.png",
+            "alt": "Saved object 08"
+          },
+          {
+            "image": "/madewithgsap/000/09.png",
+            "alt": "Saved object 09"
+          },
+          {
+            "image": "/madewithgsap/000/10.png",
+            "alt": "Saved object 10"
+          },
+          {
+            "image": "/madewithgsap/000/11.png",
+            "alt": "Saved object 11"
+          },
+          {
+            "image": "/madewithgsap/000/12.png",
+            "alt": "Saved object 12"
+          }
+        ],
+        "fields": [
+          {
+            "key": "image",
+            "type": "image",
+            "label": "Image"
+          },
+          {
+            "key": "alt",
+            "type": "text",
+            "label": "Alt text"
+          }
+        ]
+      },
+      "kind": "section",
+      "path": "sections/gallery/made-with-gsap-000"
+    },
+    {
+      "id": "made-with-gsap-001",
+      "name": "Made With GSAP 001",
+      "category": "gallery",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Pinned horizontal scroll card gallery with drifting cards and poster imagery.",
+      "dependencies": [
+        "gsap",
+        "ScrollTrigger"
+      ],
+      "tags": [
+        "made-with-gsap",
+        "scroll",
+        "cards"
+      ],
+      "controls": [
+        {
+          "key": "sectionBackground",
+          "type": "color-token",
+          "label": "Background color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "dark"
+        },
+        {
+          "key": "textColor",
+          "type": "color-token",
+          "label": "Text color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "light"
+        },
+        {
+          "key": "cardGapPct",
+          "type": "slider",
+          "label": "Card gap",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "cardWidthPct",
+          "type": "slider",
+          "label": "Card width",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "scatterPct",
+          "type": "slider",
+          "label": "Card drift",
+          "panel": "animation",
+          "group": "global",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        }
+      ],
+      "cms": {
+        "key": "cards",
+        "label": "Cards",
+        "defaultValue": [
+          {
+            "image": "/madewithgsap/001/1.jpg",
+            "collection": "indie pop",
+            "title": "Neon Waves",
+            "accent": "#BCEFFF"
+          },
+          {
+            "image": "/madewithgsap/001/2.jpg",
+            "collection": "indie pop",
+            "title": "Velvet Drift",
+            "accent": "#C9FE6E"
+          },
+          {
+            "image": "/madewithgsap/001/3.jpg",
+            "collection": "indie pop",
+            "title": "Echo Flame",
+            "accent": "#FAFF9E"
+          },
+          {
+            "image": "/madewithgsap/001/4.jpg",
+            "collection": "indie pop",
+            "title": "Phantom Beat",
+            "accent": "#FC4C3B"
+          },
+          {
+            "image": "/madewithgsap/001/5.jpg",
+            "collection": "indie pop",
+            "title": "Crystal Tide",
+            "accent": "#F1F1F1"
+          },
+          {
+            "image": "/madewithgsap/001/6.jpg",
+            "collection": "indie pop",
+            "title": "Riot in Silence",
+            "accent": "#8CEDFF"
+          },
+          {
+            "image": "/madewithgsap/001/7.jpg",
+            "collection": "indie pop",
+            "title": "Jet Flame",
+            "accent": "#FAFF9E"
+          }
+        ],
+        "fields": [
+          {
+            "key": "image",
+            "type": "image",
+            "label": "Image"
+          },
+          {
+            "key": "collection",
+            "type": "text",
+            "label": "Collection"
+          },
+          {
+            "key": "title",
+            "type": "text",
+            "label": "Title"
+          },
+          {
+            "key": "accent",
+            "type": "text",
+            "label": "Accent color"
+          }
+        ]
+      },
+      "kind": "section",
+      "path": "sections/gallery/made-with-gsap-001"
+    },
+    {
+      "id": "made-with-gsap-002",
+      "name": "Made With GSAP 002",
+      "category": "gallery",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Cursor-following product image card that swaps imagery as the pointer moves.",
+      "dependencies": [
+        "gsap"
+      ],
+      "tags": [
+        "made-with-gsap",
+        "cursor",
+        "product"
+      ],
+      "controls": [
+        {
+          "key": "sectionBackground",
+          "type": "color-token",
+          "label": "Background color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "dark"
+        },
+        {
+          "key": "textColor",
+          "type": "color-token",
+          "label": "Text color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "light"
+        },
+        {
+          "key": "cardWidthPct",
+          "type": "slider",
+          "label": "Follower size",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "followLagPct",
+          "type": "slider",
+          "label": "Follow lag",
+          "panel": "animation",
+          "group": "global",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "imageSwitchDistancePct",
+          "type": "slider",
+          "label": "Image switch distance",
+          "panel": "animation",
+          "group": "global",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        }
+      ],
+      "cms": {
+        "key": "images",
+        "label": "Follower images",
+        "defaultValue": [
+          {
+            "image": "/madewithgsap/002/1.jpg",
+            "alt": "Look 1"
+          },
+          {
+            "image": "/madewithgsap/002/2.jpg",
+            "alt": "Look 2"
+          },
+          {
+            "image": "/madewithgsap/002/3.jpg",
+            "alt": "Look 3"
+          },
+          {
+            "image": "/madewithgsap/002/4.jpg",
+            "alt": "Look 4"
+          },
+          {
+            "image": "/madewithgsap/002/5.jpg",
+            "alt": "Look 5"
+          }
+        ],
+        "fields": [
+          {
+            "key": "image",
+            "type": "image",
+            "label": "Image"
+          },
+          {
+            "key": "alt",
+            "type": "text",
+            "label": "Alt text"
+          }
+        ]
+      },
+      "kind": "section",
+      "path": "sections/gallery/made-with-gsap-002"
+    },
+    {
+      "id": "made-with-gsap-003",
+      "name": "Made With GSAP 003",
+      "category": "gallery",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Pinned circular fan of artist cards that rotates through a stacked scroll sequence.",
+      "dependencies": [
+        "gsap",
+        "ScrollTrigger"
+      ],
+      "tags": [
+        "made-with-gsap",
+        "scroll",
+        "cards"
+      ],
+      "controls": [
+        {
+          "key": "sectionBackground",
+          "type": "color-token",
+          "label": "Background color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "dark"
+        },
+        {
+          "key": "textColor",
+          "type": "color-token",
+          "label": "Text color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "light"
+        },
+        {
+          "key": "cardWidthPct",
+          "type": "slider",
+          "label": "Card width",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "fanAnglePct",
+          "type": "slider",
+          "label": "Fan angle",
+          "panel": "animation",
+          "group": "global",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        }
+      ],
+      "cms": {
+        "key": "artists",
+        "label": "Artist cards",
+        "defaultValue": [
+          {
+            "genre": "psychedelic pop",
+            "firstName": "Kevin",
+            "lastName": "Parker",
+            "prefix": "aka",
+            "name": "Tame Impala",
+            "albums": "Innerspeaker\nLonerism\nCurrents\nThe Slow Rush",
+            "background": "#FC4C3B",
+            "color": "#702626"
+          },
+          {
+            "genre": "indie pop",
+            "firstName": "Devonte",
+            "lastName": "Hynes",
+            "prefix": "aka",
+            "name": "Blood Orange",
+            "albums": "Coastal Grooves\nCupid Deluxe\nFreetown Sound\nNegro Swan",
+            "background": "#FF8308",
+            "color": "#FFDF40"
+          },
+          {
+            "genre": "rock",
+            "firstName": "Julian",
+            "lastName": "Casablancas",
+            "prefix": "of",
+            "name": "The Strokes",
+            "albums": "Is This it\nRoom on Fire\nFirst Impression of Earth\nAngles\nComedown Machine\nThe New Abnormal",
+            "background": "#DEDA8D",
+            "color": "#3D4331"
+          },
+          {
+            "genre": "soul R&B",
+            "firstName": "Stephen Lee",
+            "lastName": "Bruner",
+            "prefix": "aka",
+            "name": "Thunder Cat",
+            "albums": "The Golden Age of Apocalypse\nApocalypse\nDrunk\nDrank\nIs it What it is",
+            "background": "#71CFA3",
+            "color": "#184739"
+          },
+          {
+            "genre": "indie pop",
+            "firstName": "Emmanuelle",
+            "lastName": "Proulx",
+            "prefix": "of",
+            "name": "Men I Trust",
+            "albums": "Men I Trust\nHeadroom\nOncle Jazz\nForever Live Session\nUntourable Album",
+            "background": "#C4EF7A",
+            "color": "#184739"
+          },
+          {
+            "genre": "indie rock",
+            "firstName": "MCBriare",
+            "lastName": "Demarco",
+            "prefix": "aka",
+            "name": "Mac Demarco",
+            "albums": "2\nSalad Days\nThis Old Dog\nHere Comes The Cowboy\nFive East Hot Dogs",
+            "background": "#BCEFFF",
+            "color": "#0C3FD3"
+          }
+        ],
+        "fields": [
+          {
+            "key": "genre",
+            "type": "text",
+            "label": "Genre"
+          },
+          {
+            "key": "firstName",
+            "type": "text",
+            "label": "First name"
+          },
+          {
+            "key": "lastName",
+            "type": "text",
+            "label": "Last name"
+          },
+          {
+            "key": "prefix",
+            "type": "text",
+            "label": "Prefix"
+          },
+          {
+            "key": "name",
+            "type": "text",
+            "label": "Artist name"
+          },
+          {
+            "key": "albums",
+            "type": "textarea",
+            "label": "Albums"
+          },
+          {
+            "key": "background",
+            "type": "text",
+            "label": "Background color"
+          },
+          {
+            "key": "color",
+            "type": "text",
+            "label": "Text color"
+          }
+        ]
+      },
+      "kind": "section",
+      "path": "sections/gallery/made-with-gsap-003"
+    },
+    {
+      "id": "made-with-gsap-004",
+      "name": "Made With GSAP 004",
+      "category": "gallery",
+      "version": "0.1.0",
+      "track": "experimental",
+      "lifecycle": "Approved",
+      "description": "Pinned editorial text section where words slide into place across the scroll.",
+      "dependencies": [
+        "gsap",
+        "ScrollTrigger"
+      ],
+      "tags": [
+        "made-with-gsap",
+        "scroll",
+        "text"
+      ],
+      "controls": [
+        {
+          "key": "sectionBackground",
+          "type": "color-token",
+          "label": "Background color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "dark"
+        },
+        {
+          "key": "textColor",
+          "type": "color-token",
+          "label": "Text color",
+          "panel": "styles",
+          "group": "color",
+          "defaultValue": "light"
+        },
+        {
+          "key": "image",
+          "type": "image",
+          "label": "Artwork image",
+          "panel": "styles",
+          "group": "layout",
+          "defaultValue": "/madewithgsap/004/painting.jpg"
+        },
+        {
+          "key": "paragraphWidthPct",
+          "type": "slider",
+          "label": "Paragraph width",
+          "panel": "styles",
+          "group": "layout",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "paragraphSizePct",
+          "type": "slider",
+          "label": "Paragraph size",
+          "panel": "styles",
+          "group": "typography",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        },
+        {
+          "key": "wordStaggerPct",
+          "type": "slider",
+          "label": "Word stagger",
+          "panel": "animation",
+          "group": "global",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "defaultValue": 50
+        }
+      ],
+      "kind": "section",
+      "path": "sections/gallery/made-with-gsap-004"
     },
     {
       "id": "klarheit-testimonial-05",

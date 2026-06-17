@@ -1,0 +1,46 @@
+{
+  "id": "made-with-gsap-003",
+  "name": "Made With GSAP 003",
+  "category": "gallery",
+  "version": "0.1.0",
+  "track": "experimental",
+  "lifecycle": "Approved",
+  "description": "Pinned circular fan of artist cards that rotates through a stacked scroll sequence.",
+  "dependencies": [
+    "gsap",
+    "ScrollTrigger"
+  ],
+  "tags": [
+    "made-with-gsap",
+    "scroll",
+    "cards"
+  ],
+  "controls": [
+    { "key": "sectionBackground", "type": "color-token", "label": "Background color", "panel": "styles", "group": "color", "defaultValue": "dark" },
+    { "key": "textColor", "type": "color-token", "label": "Text color", "panel": "styles", "group": "color", "defaultValue": "light" },
+    { "key": "cardWidthPct", "type": "slider", "label": "Card width", "panel": "styles", "group": "layout", "min": 0, "max": 100, "step": 5, "defaultValue": 50 },
+    { "key": "fanAnglePct", "type": "slider", "label": "Fan angle", "panel": "animation", "group": "global", "min": 0, "max": 100, "step": 5, "defaultValue": 50 }
+  ],
+  "cms": {
+    "key": "artists",
+    "label": "Artist cards",
+    "defaultValue": [
+      { "genre": "psychedelic pop", "firstName": "Kevin", "lastName": "Parker", "prefix": "aka", "name": "Tame Impala", "albums": "Innerspeaker\nLonerism\nCurrents\nThe Slow Rush", "background": "#FC4C3B", "color": "#702626" },
+      { "genre": "indie pop", "firstName": "Devonte", "lastName": "Hynes", "prefix": "aka", "name": "Blood Orange", "albums": "Coastal Grooves\nCupid Deluxe\nFreetown Sound\nNegro Swan", "background": "#FF8308", "color": "#FFDF40" },
+      { "genre": "rock", "firstName": "Julian", "lastName": "Casablancas", "prefix": "of", "name": "The Strokes", "albums": "Is This it\nRoom on Fire\nFirst Impression of Earth\nAngles\nComedown Machine\nThe New Abnormal", "background": "#DEDA8D", "color": "#3D4331" },
+      { "genre": "soul R&B", "firstName": "Stephen Lee", "lastName": "Bruner", "prefix": "aka", "name": "Thunder Cat", "albums": "The Golden Age of Apocalypse\nApocalypse\nDrunk\nDrank\nIs it What it is", "background": "#71CFA3", "color": "#184739" },
+      { "genre": "indie pop", "firstName": "Emmanuelle", "lastName": "Proulx", "prefix": "of", "name": "Men I Trust", "albums": "Men I Trust\nHeadroom\nOncle Jazz\nForever Live Session\nUntourable Album", "background": "#C4EF7A", "color": "#184739" },
+      { "genre": "indie rock", "firstName": "MCBriare", "lastName": "Demarco", "prefix": "aka", "name": "Mac Demarco", "albums": "2\nSalad Days\nThis Old Dog\nHere Comes The Cowboy\nFive East Hot Dogs", "background": "#BCEFFF", "color": "#0C3FD3" }
+    ],
+    "fields": [
+      { "key": "genre", "type": "text", "label": "Genre" },
+      { "key": "firstName", "type": "text", "label": "First name" },
+      { "key": "lastName", "type": "text", "label": "Last name" },
+      { "key": "prefix", "type": "text", "label": "Prefix" },
+      { "key": "name", "type": "text", "label": "Artist name" },
+      { "key": "albums", "type": "textarea", "label": "Albums" },
+      { "key": "background", "type": "text", "label": "Background color" },
+      { "key": "color", "type": "text", "label": "Text color" }
+    ]
+  }
+}

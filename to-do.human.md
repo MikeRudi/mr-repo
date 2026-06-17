@@ -48,6 +48,7 @@ This is the plain‑English plan for the next phase of work. The order here is t
 - First local AI prompt: "Start the app inside make-reign-section-builder.zip; run it on local and give me the link." Once it is running, the AI asks what section to make.
 - Temporary public Activate, Deactivate, and Delete controls are visible in the review queue for now, but turning a brand-new uploaded section into real live code is still manually promoted until we build the admin panel later.
 - We'll keep refining the downloaded rules and guidance after the first working path is live.
+- Current live-section import loop: first Made With GSAP batch (`000`-`004`) is being promoted manually from raw zip exports into the main builder. Lessons from this batch must keep feeding back into the downloadable local builder package.
 
 ---
 

@@ -1,0 +1,120 @@
+.root {
+  position: relative;
+  overflow: hidden;
+  background: var(--mwg-bg);
+  color: var(--mwg-text);
+  font: 500 22px/1.3 var(--chrome-font-body, Inter, sans-serif);
+}
+
+.header {
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font: 500 clamp(12px, 0.9vw, 18px) / normal var(--chrome-font-mono, monospace);
+  text-transform: uppercase;
+  padding: 25px;
+}
+
+.header > * {
+  flex: 1;
+}
+
+.header > *:nth-child(2) {
+  text-align: center;
+}
+
+.header > *:nth-child(3) {
+  text-align: right;
+}
+
+.scroll {
+  position: fixed;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pinHeight {
+  height: 500vh;
+}
+
+.container {
+  position: relative;
+  height: 100vh;
+}
+
+.circles {
+  height: 100%;
+}
+
+.circle {
+  width: 250vw;
+  height: 250vw;
+  border-radius: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  will-change: transform;
+}
+
+.card {
+  width: var(--mwg-card-width);
+  min-width: 280px;
+  aspect-ratio: 0.75;
+  border-radius: 0.7vw;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 55vh);
+  will-change: transform;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 1vw;
+  background: var(--mwg-card-bg);
+  color: var(--mwg-card-color);
+}
+
+.card p {
+  font-size: clamp(12px, 1vw, 20px);
+  line-height: 0.94;
+}
+
+.aka {
+  display: inline-block;
+  font-size: clamp(11px, 0.85vw, 16px);
+  border: 0.15em solid currentColor;
+  border-radius: 100%;
+  padding: 0.3em 1em 0.15em;
+  margin: 0 0 1em;
+}
+
+.top p {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card h2 {
+  font: 800 clamp(52px, 4.6vw, 98px) / 0.8 var(--chrome-font-display, Inter, sans-serif);
+}
+
+@media (max-width: 900px) {
+  .header {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .header > * {
+    text-align: center !important;
+  }
+
+  .circles {
+    transform: scale(1.6);
+  }
+}

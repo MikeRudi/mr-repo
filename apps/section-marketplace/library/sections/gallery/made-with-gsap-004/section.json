@@ -1,0 +1,26 @@
+{
+  "id": "made-with-gsap-004",
+  "name": "Made With GSAP 004",
+  "category": "gallery",
+  "version": "0.1.0",
+  "track": "experimental",
+  "lifecycle": "Approved",
+  "description": "Pinned editorial text section where words slide into place across the scroll.",
+  "dependencies": [
+    "gsap",
+    "ScrollTrigger"
+  ],
+  "tags": [
+    "made-with-gsap",
+    "scroll",
+    "text"
+  ],
+  "controls": [
+    { "key": "sectionBackground", "type": "color-token", "label": "Background color", "panel": "styles", "group": "color", "defaultValue": "dark" },
+    { "key": "textColor", "type": "color-token", "label": "Text color", "panel": "styles", "group": "color", "defaultValue": "light" },
+    { "key": "image", "type": "image", "label": "Artwork image", "panel": "styles", "group": "layout", "defaultValue": "/madewithgsap/004/painting.jpg" },
+    { "key": "paragraphWidthPct", "type": "slider", "label": "Paragraph width", "panel": "styles", "group": "layout", "min": 0, "max": 100, "step": 5, "defaultValue": 50 },
+    { "key": "paragraphSizePct", "type": "slider", "label": "Paragraph size", "panel": "styles", "group": "typography", "min": 0, "max": 100, "step": 5, "defaultValue": 50 },
+    { "key": "wordStaggerPct", "type": "slider", "label": "Word stagger", "panel": "animation", "group": "global", "min": 0, "max": 100, "step": 5, "defaultValue": 50 }
+  ]
+}

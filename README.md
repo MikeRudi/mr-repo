@@ -49,6 +49,12 @@ npm run build                # build all apps
 npm run library:manifest     # regenerate library/index.json
 ```
 
+## Section Library Growth
+
+New section libraries are added in small reviewed batches. As we import real sections into `apps/section-marketplace/library/sections/`, we use the patterns, bugs, panel needs, animation needs, and export issues we discover to improve the downloadable `make-reign-section-builder.zip` rules and local builder experience.
+
+The local builder is a living product, not a one-off export tool. When a batch of sections teaches us a better convention, validation rule, default panel shape, animation contract, asset rule, or QA step, update the source docs/code that generate the downloadable builder package before continuing with large-scale imports.
+
 ## Folder Layout
 
 ```

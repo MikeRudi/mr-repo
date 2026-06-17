@@ -114,6 +114,8 @@
 - Library page shows submitted sections waiting for review.
 - Library page includes temporary public Activate, Deactivate, and Delete controls for review submissions. These controls manage DB submission status, while brand-new section implementations still need manual code promotion into `library/sections/` until the admin panel/git-backed activation flow is built.
 - Admin review / full activation workflow remains manual until the admin panel is built later.
+- Current manual promotion loop: Made With GSAP raw zip exports are being added in reviewed batches directly to `library/sections/` so the main builder can be tested with real animated sections. The first batch is `made-with-gsap-000` through `made-with-gsap-004`.
+- Builder package feedback from the first batch: downloaded/local-builder rules must reject hidden CDN/global/plugin dependencies and require sections to import only approved app dependencies such as React, GSAP, and ScrollTrigger.
 
 **Likely touchpoints**
 - `app/library/page.jsx`

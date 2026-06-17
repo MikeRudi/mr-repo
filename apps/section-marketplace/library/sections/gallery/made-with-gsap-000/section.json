@@ -1,0 +1,98 @@
+{
+  "id": "made-with-gsap-000",
+  "name": "Made With GSAP 000",
+  "category": "gallery",
+  "version": "0.1.0",
+  "track": "experimental",
+  "lifecycle": "Approved",
+  "description": "Interactive saved-items grid with pointer-responsive object tiles inspired by Made With GSAP effect 000.",
+  "dependencies": [
+    "gsap"
+  ],
+  "tags": [
+    "made-with-gsap",
+    "hover",
+    "gallery"
+  ],
+  "controls": [
+    {
+      "key": "sectionBackground",
+      "type": "color-token",
+      "label": "Background color",
+      "panel": "styles",
+      "group": "color",
+      "defaultValue": "dark"
+    },
+    {
+      "key": "textColor",
+      "type": "color-token",
+      "label": "Text color",
+      "panel": "styles",
+      "group": "color",
+      "defaultValue": "light"
+    },
+    {
+      "key": "gridGapPct",
+      "type": "slider",
+      "label": "Grid gap",
+      "panel": "styles",
+      "group": "layout",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "defaultValue": 50
+    },
+    {
+      "key": "mediaSizePct",
+      "type": "slider",
+      "label": "Media size",
+      "panel": "styles",
+      "group": "layout",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "defaultValue": 50
+    },
+    {
+      "key": "hoverStrengthPct",
+      "type": "slider",
+      "label": "Hover strength",
+      "panel": "animation",
+      "group": "global",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "defaultValue": 50
+    }
+  ],
+  "cms": {
+    "key": "items",
+    "label": "Gallery items",
+    "defaultValue": [
+      { "image": "/madewithgsap/000/01.png", "alt": "Saved object 01" },
+      { "image": "/madewithgsap/000/02.png", "alt": "Saved object 02" },
+      { "image": "/madewithgsap/000/03.png", "alt": "Saved object 03" },
+      { "image": "/madewithgsap/000/04.png", "alt": "Saved object 04" },
+      { "image": "/madewithgsap/000/05.png", "alt": "Saved object 05" },
+      { "image": "/madewithgsap/000/06.png", "alt": "Saved object 06" },
+      { "image": "/madewithgsap/000/07.png", "alt": "Saved object 07" },
+      { "image": "/madewithgsap/000/08.png", "alt": "Saved object 08" },
+      { "image": "/madewithgsap/000/09.png", "alt": "Saved object 09" },
+      { "image": "/madewithgsap/000/10.png", "alt": "Saved object 10" },
+      { "image": "/madewithgsap/000/11.png", "alt": "Saved object 11" },
+      { "image": "/madewithgsap/000/12.png", "alt": "Saved object 12" }
+    ],
+    "fields": [
+      {
+        "key": "image",
+        "type": "image",
+        "label": "Image"
+      },
+      {
+        "key": "alt",
+        "type": "text",
+        "label": "Alt text"
+      }
+    ]
+  }
+}

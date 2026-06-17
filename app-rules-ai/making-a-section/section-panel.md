@@ -145,6 +145,10 @@ Library Build Mode downloads `make-reign-section-builder.zip`. It expands into a
 
 The local app is downloaded once and can create many sections. Do not tell the user to redownload the app for every new section unless the MakeReign app ships a newer builder package.
 
+The downloadable local builder must improve as real sections are added to the main app. When adding section batches directly in this repo, treat every repeated issue, missing control, animation mismatch, asset problem, responsive fix, export gap, or QA lesson as feedback for the builder package. Update the rules and/or generator code that ships inside `make-reign-section-builder.zip` so future users get those improvements locally.
+
+For large libraries, add sections in small batches first, validate them in the main app builder, then increase batch size only after the pattern is reliable. Early batches should prioritize learning the section structure and updating the local builder contract over raw import speed.
+
 Each local section lives in:
 
 ```text
@@ -219,6 +223,8 @@ Image and media sizing must survive the main app builder. For animated, absolute
 - Add `max-width: none` and `display: block` to image classes that must not be constrained by parent letter/card width.
 - Do not depend on an invisible parent box to size the actual `<img>` element.
 - Test the uploaded section in the main builder, not only the local builder.
+
+Exported sections must not depend on hidden CDN scripts, global browser variables, or optional plugin files that are not declared and available in the MakeReign app. If an original reference uses helpers such as Lenis, paid/member GSAP plugins, or a page-level script tag, either replace that behavior with standard app dependencies or explicitly document the approved dependency before export. The uploaded section should import what it needs from package dependencies and run without extra `<script>` tags.
 
 Spacing controls must visibly affect the named gap. For text-stack controls like `eyebrowHeadingGapPct`, prefer applying the value through a parent `gap`/`row-gap` or an explicit wrapper spacing rule. Do not rely on a margin that can collapse, be hidden by grid placement, or be visually cancelled by another text style.
 

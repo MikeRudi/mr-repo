@@ -1,0 +1,39 @@
+{
+  "id": "made-with-gsap-002",
+  "name": "Made With GSAP 002",
+  "category": "gallery",
+  "version": "0.1.0",
+  "track": "experimental",
+  "lifecycle": "Approved",
+  "description": "Cursor-following product image card that swaps imagery as the pointer moves.",
+  "dependencies": [
+    "gsap"
+  ],
+  "tags": [
+    "made-with-gsap",
+    "cursor",
+    "product"
+  ],
+  "controls": [
+    { "key": "sectionBackground", "type": "color-token", "label": "Background color", "panel": "styles", "group": "color", "defaultValue": "dark" },
+    { "key": "textColor", "type": "color-token", "label": "Text color", "panel": "styles", "group": "color", "defaultValue": "light" },
+    { "key": "cardWidthPct", "type": "slider", "label": "Follower size", "panel": "styles", "group": "layout", "min": 0, "max": 100, "step": 5, "defaultValue": 50 },
+    { "key": "followLagPct", "type": "slider", "label": "Follow lag", "panel": "animation", "group": "global", "min": 0, "max": 100, "step": 5, "defaultValue": 50 },
+    { "key": "imageSwitchDistancePct", "type": "slider", "label": "Image switch distance", "panel": "animation", "group": "global", "min": 0, "max": 100, "step": 5, "defaultValue": 50 }
+  ],
+  "cms": {
+    "key": "images",
+    "label": "Follower images",
+    "defaultValue": [
+      { "image": "/madewithgsap/002/1.jpg", "alt": "Look 1" },
+      { "image": "/madewithgsap/002/2.jpg", "alt": "Look 2" },
+      { "image": "/madewithgsap/002/3.jpg", "alt": "Look 3" },
+      { "image": "/madewithgsap/002/4.jpg", "alt": "Look 4" },
+      { "image": "/madewithgsap/002/5.jpg", "alt": "Look 5" }
+    ],
+    "fields": [
+      { "key": "image", "type": "image", "label": "Image" },
+      { "key": "alt", "type": "text", "label": "Alt text" }
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "made-with-gsap-001",
+  "name": "Made With GSAP 001",
+  "category": "gallery",
+  "version": "0.1.0",
+  "track": "experimental",
+  "lifecycle": "Approved",
+  "description": "Pinned horizontal scroll card gallery with drifting cards and poster imagery.",
+  "dependencies": [
+    "gsap",
+    "ScrollTrigger"
+  ],
+  "tags": [
+    "made-with-gsap",
+    "scroll",
+    "cards"
+  ],
+  "controls": [
+    { "key": "sectionBackground", "type": "color-token", "label": "Background color", "panel": "styles", "group": "color", "defaultValue": "dark" },
+    { "key": "textColor", "type": "color-token", "label": "Text color", "panel": "styles", "group": "color", "defaultValue": "light" },
+    { "key": "cardGapPct", "type": "slider", "label": "Card gap", "panel": "styles", "group": "layout", "min": 0, "max": 100, "step": 5, "defaultValue": 50 },
+    { "key": "cardWidthPct", "type": "slider", "label": "Card width", "panel": "styles", "group": "layout", "min": 0, "max": 100, "step": 5, "defaultValue": 50 },
+    { "key": "scatterPct", "type": "slider", "label": "Card drift", "panel": "animation", "group": "global", "min": 0, "max": 100, "step": 5, "defaultValue": 50 }
+  ],
+  "cms": {
+    "key": "cards",
+    "label": "Cards",
+    "defaultValue": [
+      { "image": "/madewithgsap/001/1.jpg", "collection": "indie pop", "title": "Neon Waves", "accent": "#BCEFFF" },
+      { "image": "/madewithgsap/001/2.jpg", "collection": "indie pop", "title": "Velvet Drift", "accent": "#C9FE6E" },
+      { "image": "/madewithgsap/001/3.jpg", "collection": "indie pop", "title": "Echo Flame", "accent": "#FAFF9E" },
+      { "image": "/madewithgsap/001/4.jpg", "collection": "indie pop", "title": "Phantom Beat", "accent": "#FC4C3B" },
+      { "image": "/madewithgsap/001/5.jpg", "collection": "indie pop", "title": "Crystal Tide", "accent": "#F1F1F1" },
+      { "image": "/madewithgsap/001/6.jpg", "collection": "indie pop", "title": "Riot in Silence", "accent": "#8CEDFF" },
+      { "image": "/madewithgsap/001/7.jpg", "collection": "indie pop", "title": "Jet Flame", "accent": "#FAFF9E" }
+    ],
+    "fields": [
+      { "key": "image", "type": "image", "label": "Image" },
+      { "key": "collection", "type": "text", "label": "Collection" },
+      { "key": "title", "type": "text", "label": "Title" },
+      { "key": "accent", "type": "text", "label": "Accent color" }
+    ]
+  }
+}
