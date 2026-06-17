@@ -6,10 +6,7 @@
   "track": "experimental",
   "lifecycle": "Approved",
   "description": "Pinned editorial text section where words slide into place across the scroll.",
-  "dependencies": [
-    "gsap",
-    "ScrollTrigger"
-  ],
+  "dependencies": [],
   "tags": [
     "made-with-gsap",
     "scroll",

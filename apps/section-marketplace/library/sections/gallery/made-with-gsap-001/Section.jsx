@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./Section.module.css";
 import EditableText from "../../_shared/EditableText.jsx";
 
@@ -31,6 +29,30 @@ function pctToScatter(pct) {
   return 0.4 + (value / 100) * 1.2;
 }
 
+function clamp(value, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function getScrollParent(element) {
+  let parent = element?.parentElement;
+  while (parent) {
+    const styles = window.getComputedStyle(parent);
+    if (/(auto|scroll)/.test(styles.overflowY) && parent.scrollHeight > parent.clientHeight) {
+      return parent;
+    }
+    parent = parent.parentElement;
+  }
+  return window;
+}
+
+function getViewportRect(scroller) {
+  if (scroller === window) {
+    return { top: 0, height: window.innerHeight };
+  }
+  const rect = scroller.getBoundingClientRect();
+  return { top: rect.top, height: rect.height };
+}
+
 export default function MadeWithGsap001({
   leftLabel = "Spotify datas",
   centerLabel = "New solo artists you liked during 2024",
@@ -46,7 +68,6 @@ export default function MadeWithGsap001({
   _onPropChange,
 } = {}) {
   const rootRef = useRef(null);
-  const containerRef = useRef(null);
   const cardsRef = useRef(null);
   const safeCards = Array.isArray(cards) && cards.length ? cards : DEFAULT_CARDS;
 
@@ -55,64 +76,53 @@ export default function MadeWithGsap001({
   };
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
     const root = rootRef.current;
-    const container = containerRef.current;
     const cardsEl = cardsRef.current;
-    if (!root || !container || !cardsEl) return undefined;
+    if (!root || !cardsEl) return undefined;
 
-    const ctx = gsap.context(() => {
-      const distance = Math.max(1, cardsEl.scrollWidth - window.innerWidth);
-      gsap.to(root.querySelector(`.${styles.scroll}`), {
-        autoAlpha: 0,
-        duration: 0.2,
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "top top-=1",
-          toggleActions: "play none reverse none"
-        }
-      });
-
-      const scrollTween = gsap.to(cardsEl, {
-        x: -distance,
-        ease: "none",
-        scrollTrigger: {
-          trigger: container,
-          pin: true,
-          scrub: true,
-          start: "top top",
-          end: `+=${distance}`
-        }
-      });
-
+    let frame = 0;
+    let scroller = getScrollParent(root);
+    const update = () => {
+      const viewport = getViewportRect(scroller);
+      const rootRect = root.getBoundingClientRect();
+      const distance = Math.max(1, cardsEl.scrollWidth - root.clientWidth);
+      const scrollDistance = Math.max(viewport.height * 2, distance + viewport.height);
+      root.style.setProperty("--mwg-scroll-height", `${Math.round(scrollDistance)}px`);
+      const progress = clamp((viewport.top - rootRect.top) / Math.max(1, scrollDistance - viewport.height));
+      cardsEl.style.transform = `translate3d(${-distance * progress}px, 0, 0)`;
+      const scrollLabel = root.querySelector(`.${styles.scroll}`);
+      if (scrollLabel) scrollLabel.style.opacity = progress > 0.01 ? "0" : "1";
       const scatter = pctToScatter(scatterPct);
-      gsap.utils.toArray(`.${styles.card}`).forEach((card, index) => {
+      Array.from(root.querySelectorAll(`.${styles.card}`)).forEach((card, index) => {
         const direction = index % 2 === 0 ? 1 : -1;
         const x = (30 + (index % 3) * 7) * direction * scatter;
         const y = (10 + (index % 4) * 2) * -direction * scatter;
         const rotation = (10 + (index % 4) * 3) * direction * scatter;
-        gsap.fromTo(card, {
-          rotation,
-          xPercent: x,
-          yPercent: y
-        }, {
-          rotation: -rotation,
-          xPercent: -x,
-          yPercent: -y,
-          ease: "none",
-          scrollTrigger: {
-            trigger: card,
-            containerAnimation: scrollTween,
-            start: "left 120%",
-            end: "right -20%",
-            scrub: true
-          }
-        });
+        const localProgress = clamp((progress - index / safeCards.length) * 1.8 + 0.2);
+        const currentX = x + (-x - x) * localProgress;
+        const currentY = y + (-y - y) * localProgress;
+        const currentRotation = rotation + (-rotation - rotation) * localProgress;
+        card.style.transform = `translate3d(${currentX}%, ${currentY}%, 0) rotate(${currentRotation}deg)`;
       });
-    }, root);
+    };
+    const requestUpdate = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(update);
+    };
 
-    return () => ctx.revert();
+    requestUpdate();
+    scroller.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    const observer = new ResizeObserver(requestUpdate);
+    observer.observe(root);
+    observer.observe(cardsEl);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      scroller.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      observer.disconnect();
+    };
   }, [safeCards.length, scatterPct]);
 
   return (
@@ -134,7 +144,7 @@ export default function MadeWithGsap001({
         className={styles.scroll}
         placeholder="Scroll label"
       />
-      <div ref={containerRef} className={styles.container}>
+      <div className={styles.frame}>
         <header className={styles.header}>
           <EditableText as="p" value={leftLabel} editing={_editing} onChange={(value) => persist("leftLabel", value)} placeholder="Left label" />
           <EditableText as="p" value={centerLabel} editing={_editing} onChange={(value) => persist("centerLabel", value)} placeholder="Center label" />

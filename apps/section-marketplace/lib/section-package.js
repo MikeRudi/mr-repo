@@ -1584,6 +1584,8 @@ For animated or absolute-positioned images, set explicit dimensions and guard ag
 
 Exported sections must not depend on hidden CDN scripts, global browser variables, or optional plugin files that are not declared and available in the MakeReign app. If an original reference uses helpers such as Lenis, paid/member GSAP plugins, or a page-level script tag, either replace that behavior with standard app dependencies or explicitly document the approved dependency before export. The uploaded section should import what it needs from package dependencies and run without extra \`<script>\` tags.
 
+Scroll-scrubbed sections must work inside overflow-based builder canvases, not only on the document body. Prefer a tall parent that defines the scroll distance, with a child frame using \`position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden;\`. Drive transforms from the parent section's progress through the active scroll container. Avoid \`ScrollTrigger pin\` for reusable library sections unless the section explicitly supports custom scrollers and has been tested inside the main builder canvas.
+
 Spacing controls must visibly affect their named gap. For text stack controls such as \`eyebrowHeadingGapPct\`, apply the value through parent \`gap\`/\`row-gap\` or a wrapper rule instead of a margin that can collapse or be cancelled by another style.
 
 For multi-line text groups, create explicit elements or wrappers for each named gap. Example: eyebrow uses \`margin-bottom: var(--eyebrow-heading-gap)\`, heading uses \`margin-bottom: var(--heading-body-gap)\`, and the whole text/media stack uses a separate \`gap\` for the media. Never map two different sliders to the same CSS gap, and never leave a slider key unused in \`Section.jsx\`.
@@ -1723,6 +1725,8 @@ Visible section-level headings, eyebrows, body copy, button labels, and link lab
 If animation is automatic, expose an \`Auto play\` toggle. If animation is manual or scroll-triggered, expose a \`Play animation\` action instead.
 
 Sections must import their own animation dependencies from approved package dependencies. Do not rely on CDN script tags, globals such as \`window.lenis\`, or optional plugin files copied beside the section. Replace unsupported helpers with standard React, CSS, GSAP, or ScrollTrigger behavior before export.
+
+For scroll-scrubbed animation, use the sticky-frame pattern: a tall section for scroll distance and an inner \`position: sticky\` 100vh frame for the visual scene. Do not assume \`window\` is the scroller, because the MakeReign builder canvas scrolls inside an overflow container.
 
 Never show both \`Auto play\` and \`Play animation\` for the same section. It is one or the other.
 

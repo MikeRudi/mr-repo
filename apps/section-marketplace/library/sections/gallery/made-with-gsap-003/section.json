@@ -6,10 +6,7 @@
   "track": "experimental",
   "lifecycle": "Approved",
   "description": "Pinned circular fan of artist cards that rotates through a stacked scroll sequence.",
-  "dependencies": [
-    "gsap",
-    "ScrollTrigger"
-  ],
+  "dependencies": [],
   "tags": [
     "made-with-gsap",
     "scroll",

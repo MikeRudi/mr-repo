@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./Section.module.css";
 import EditableText from "../../_shared/EditableText.jsx";
 
@@ -25,6 +23,34 @@ function pctToCardWidth(pct) {
   return `${20 + (value / 100) * 13}vw`;
 }
 
+function clamp(value, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function easeOut(value) {
+  return 1 - Math.pow(1 - value, 2);
+}
+
+function getScrollParent(element) {
+  let parent = element?.parentElement;
+  while (parent) {
+    const styles = window.getComputedStyle(parent);
+    if (/(auto|scroll)/.test(styles.overflowY) && parent.scrollHeight > parent.clientHeight) {
+      return parent;
+    }
+    parent = parent.parentElement;
+  }
+  return window;
+}
+
+function getViewportRect(scroller) {
+  if (scroller === window) {
+    return { top: 0, height: window.innerHeight };
+  }
+  const rect = scroller.getBoundingClientRect();
+  return { top: rect.top, height: rect.height };
+}
+
 function lines(value) {
   return String(value ?? "").split("\n").filter(Boolean);
 }
@@ -43,8 +69,6 @@ export default function MadeWithGsap003({
   _onPropChange,
 } = {}) {
   const rootRef = useRef(null);
-  const pinRef = useRef(null);
-  const containerRef = useRef(null);
   const safeArtists = Array.isArray(artists) && artists.length ? artists : DEFAULT_ARTISTS;
 
   const persist = (key, value) => {
@@ -52,68 +76,52 @@ export default function MadeWithGsap003({
   };
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
     const root = rootRef.current;
-    const pinHeight = pinRef.current;
-    const container = containerRef.current;
-    if (!root || !pinHeight || !container) return undefined;
+    if (!root) return undefined;
 
-    const ctx = gsap.context(() => {
-      gsap.to(root.querySelector(`.${styles.scroll}`), {
-        autoAlpha: 0,
-        duration: 0.2,
-        scrollTrigger: {
-          trigger: root,
-          start: "top top",
-          end: "top top-=1",
-          toggleActions: "play none reverse none"
-        }
-      });
-
-      gsap.fromTo(`.${styles.circles}`, { y: "5%" }, {
-        y: "-5%",
-        ease: "none",
-        scrollTrigger: {
-          trigger: pinHeight,
-          start: "top top",
-          end: "bottom bottom",
-          pin: container,
-          scrub: true
-        }
-      });
-
-      const circles = gsap.utils.toArray(`.${styles.circle}`);
+    let frame = 0;
+    const scroller = getScrollParent(root);
+    const update = () => {
+      const viewport = getViewportRect(scroller);
+      const rootRect = root.getBoundingClientRect();
+      const scrollDistance = Math.max(root.offsetHeight - viewport.height, 1);
+      const progress = clamp((viewport.top - rootRect.top) / scrollDistance);
+      const scrollLabel = root.querySelector(`.${styles.scroll}`);
+      if (scrollLabel) scrollLabel.style.opacity = progress > 0.01 ? "0" : "1";
+      const circlesWrap = root.querySelector(`.${styles.circles}`);
+      if (circlesWrap) circlesWrap.style.transform = `translate3d(0, ${5 + (-10 * progress)}%, 0)`;
+      const circles = Array.from(root.querySelectorAll(`.${styles.circle}`));
       const angle = pctToFanAngle(fanAnglePct);
       const halfRange = ((circles.length - 1) * angle) / 2;
-      const distPerCard = Math.max(1, (pinHeight.clientHeight - window.innerHeight) / circles.length);
 
       circles.forEach((circle, index) => {
         const rotation = -halfRange + angle * index;
-        gsap.to(circle, {
-          rotation,
-          ease: "power1.out",
-          scrollTrigger: {
-            trigger: pinHeight,
-            start: `top top-=${distPerCard * index}`,
-            end: `+=${distPerCard}`,
-            scrub: true
-          }
-        });
-        gsap.to(circle.querySelector(`.${styles.card}`), {
-          rotation,
-          y: "-50%",
-          ease: "power1.out",
-          scrollTrigger: {
-            trigger: pinHeight,
-            start: `top top-=${distPerCard * index}`,
-            end: `+=${distPerCard}`,
-            scrub: true
-          }
-        });
+        const cardProgress = easeOut(clamp(progress * circles.length - index));
+        circle.style.transform = `translate(-50%, 0) rotate(${rotation * cardProgress}deg)`;
+        const card = circle.querySelector(`.${styles.card}`);
+        if (card) {
+          const y = 55 + (-105 * cardProgress);
+          card.style.transform = `translate(-50%, ${y}vh) rotate(${rotation * cardProgress}deg)`;
+        }
       });
-    }, root);
+    };
+    const requestUpdate = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(update);
+    };
 
-    return () => ctx.revert();
+    requestUpdate();
+    scroller.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    const observer = new ResizeObserver(requestUpdate);
+    observer.observe(root);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      scroller.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      observer.disconnect();
+    };
   }, [safeArtists.length, fanAnglePct]);
 
   return (
@@ -127,8 +135,7 @@ export default function MadeWithGsap003({
       }}
     >
       <EditableText as="p" value={scrollLabel} editing={_editing} onChange={(value) => persist("scrollLabel", value)} className={styles.scroll} placeholder="Scroll label" />
-      <div ref={pinRef} className={styles.pinHeight}>
-        <div ref={containerRef} className={styles.container}>
+      <div className={styles.frame}>
           <header className={styles.header}>
             <EditableText as="p" value={leftLabel} editing={_editing} onChange={(value) => persist("leftLabel", value)} placeholder="Left label" />
             <EditableText as="p" value={centerLabel} editing={_editing} onChange={(value) => persist("centerLabel", value)} placeholder="Center label" />
@@ -153,7 +160,6 @@ export default function MadeWithGsap003({
               </div>
             ))}
           </div>
-        </div>
       </div>
     </section>
   );

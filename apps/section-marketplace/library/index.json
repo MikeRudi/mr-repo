@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T13:40:36.394Z",
+  "generatedAt": "2026-06-17T13:52:51.023Z",
   "counts": {
     "sections": 7,
     "templates": 1
@@ -497,10 +497,7 @@
       "track": "experimental",
       "lifecycle": "Approved",
       "description": "Pinned horizontal scroll card gallery with drifting cards and poster imagery.",
-      "dependencies": [
-        "gsap",
-        "ScrollTrigger"
-      ],
+      "dependencies": [],
       "tags": [
         "made-with-gsap",
         "scroll",
@@ -746,10 +743,7 @@
       "track": "experimental",
       "lifecycle": "Approved",
       "description": "Pinned circular fan of artist cards that rotates through a stacked scroll sequence.",
-      "dependencies": [
-        "gsap",
-        "ScrollTrigger"
-      ],
+      "dependencies": [],
       "tags": [
         "made-with-gsap",
         "scroll",
@@ -914,10 +908,7 @@
       "track": "experimental",
       "lifecycle": "Approved",
       "description": "Pinned editorial text section where words slide into place across the scroll.",
-      "dependencies": [
-        "gsap",
-        "ScrollTrigger"
-      ],
+      "dependencies": [],
       "tags": [
         "made-with-gsap",
         "scroll",

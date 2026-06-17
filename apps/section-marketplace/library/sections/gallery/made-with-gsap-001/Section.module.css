@@ -1,6 +1,5 @@
 .root {
-  min-height: 100vh;
-  overflow: hidden;
+  height: var(--mwg-scroll-height, 420vh);
   position: relative;
   background: var(--mwg-bg);
   color: var(--mwg-text);
@@ -40,12 +39,15 @@
   text-align: right;
 }
 
-.container {
+.frame {
+  position: sticky;
+  top: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
+  overflow: hidden;
   font-size: clamp(12px, 1vw, 20px);
 }
 
@@ -56,6 +58,7 @@
   gap: var(--mwg-card-gap);
   will-change: transform;
   padding: 0 120vw;
+  transform: translate3d(0, 0, 0);
 }
 
 .card {
@@ -69,6 +72,7 @@
   text-transform: uppercase;
   border: 0.5vw solid var(--mwg-accent);
   color: var(--mwg-accent);
+  will-change: transform;
 }
 
 .card img {

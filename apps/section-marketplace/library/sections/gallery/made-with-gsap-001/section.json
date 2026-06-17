@@ -6,10 +6,7 @@
   "track": "experimental",
   "lifecycle": "Approved",
   "description": "Pinned horizontal scroll card gallery with drifting cards and poster imagery.",
-  "dependencies": [
-    "gsap",
-    "ScrollTrigger"
-  ],
+  "dependencies": [],
   "tags": [
     "made-with-gsap",
     "scroll",
